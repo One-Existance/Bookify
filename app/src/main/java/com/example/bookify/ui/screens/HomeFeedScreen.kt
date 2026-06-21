@@ -18,40 +18,46 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.bookify.data.DatabaseHelper
+import com.example.bookify.data.Event
+import com.example.bookify.data.User
 import com.example.bookify.ui.theme.*
-
-private data class Event(
-    val title: String,
-    val location: String,
-    val date: String,
-    val category: String,
-    val price: String,
-    val cardColor: Color,
-    val icon: ImageVector
-)
 
 private data class NavItem(val label: String, val icon: ImageVector)
 
 @Composable
-fun HomeFeedScreen() {
-    val events = listOf(
-        Event("Sauti Sol Live in DSM", "Mlimani City Ground", "Jun 20", "Concert", "Tsh 15,000", CardPurple, Icons.Default.Favorite),
-        Event("DSM Tech Conference 2025", "Julius Nyerere CC", "Jun 25", "Conference", "Tsh 30,000", CardGreen, Icons.Default.Star)
-    )
+fun HomeFeedScreen(
+    db: DatabaseHelper,
+    currentUser: User? = null,
+    selectedNav: Int = 0,
+    onNavSelected: (Int) -> Unit = {},
+    onEventClick: (Event) -> Unit = {}
+) {
+    val events = remember { db.getAllPublicEvents() }
 
-    val categories = listOf("All", "Concerts", "Sports")
+    val allCategories = listOf("All") + events.map { it.category }.distinct()
     var selectedCategory by remember { mutableStateOf("All") }
-    var selectedNav by remember { mutableIntStateOf(0) }
+
+    val displayed = if (selectedCategory == "All") events
+    else events.filter { it.category == selectedCategory }
 
     val navItems = listOf(
         NavItem("Home", Icons.Default.Home),
         NavItem("Explore", Icons.Default.Search),
-        NavItem("Tickets", Icons.Default.Check),
+        NavItem("Tickets", Icons.Default.ConfirmationNumber),
         NavItem("Profile", Icons.Default.Person)
     )
+
+    val greeting = when (java.util.Calendar.getInstance().get(java.util.Calendar.HOUR_OF_DAY)) {
+        in 0..11 -> "Good morning,"
+        in 12..16 -> "Good afternoon,"
+        else -> "Good evening,"
+    }
+    val displayName = currentUser?.fullName?.split(" ")?.firstOrNull() ?: "Guest"
 
     Scaffold(
         containerColor = BackgroundDark,
@@ -71,7 +77,7 @@ fun HomeFeedScreen() {
                         val active = index == selectedNav
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.clickable { selectedNav = index }
+                            modifier = Modifier.clickable { onNavSelected(index) }
                         ) {
                             Icon(
                                 imageVector = item.icon,
@@ -80,11 +86,7 @@ fun HomeFeedScreen() {
                                 modifier = Modifier.size(22.dp)
                             )
                             Spacer(Modifier.height(4.dp))
-                            Text(
-                                item.label,
-                                color = if (active) PrimaryPurple else TextMuted,
-                                fontSize = 11.sp
-                            )
+                            Text(item.label, color = if (active) PrimaryPurple else TextMuted, fontSize = 11.sp)
                         }
                     }
                 }
@@ -99,7 +101,6 @@ fun HomeFeedScreen() {
             contentPadding = PaddingValues(bottom = 16.dp)
         ) {
             item {
-                // Header
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -108,8 +109,8 @@ fun HomeFeedScreen() {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column {
-                        Text("Good morning,", color = TextMuted, fontSize = 14.sp)
-                        Text("Sarah ✨", color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                        Text(greeting, color = TextMuted, fontSize = 14.sp)
+                        Text("$displayName ✨", color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold)
                     }
                     Box(
                         modifier = Modifier
@@ -118,13 +119,17 @@ fun HomeFeedScreen() {
                             .background(PrimaryPurple),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text("SJ", color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                        Text(
+                            displayName.take(2).uppercase(),
+                            color = Color.White,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold
+                        )
                     }
                 }
             }
 
             item {
-                // Search bar
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -134,30 +139,29 @@ fun HomeFeedScreen() {
                         .padding(horizontal = 16.dp, vertical = 14.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(Icons.Default.Search, contentDescription = null, tint = TextMuted, modifier = Modifier.size(20.dp))
+                    Icon(Icons.Default.Search, null, tint = TextMuted, modifier = Modifier.size(20.dp))
                     Spacer(Modifier.width(10.dp))
                     Text("Search events near you...", color = TextMuted, fontSize = 14.sp)
                 }
             }
 
             item {
-                // Category chips
                 LazyRow(
                     contentPadding = PaddingValues(horizontal = 20.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier.padding(vertical = 16.dp)
                 ) {
-                    items(categories.size) { i ->
-                        val selected = categories[i] == selectedCategory
+                    items(allCategories.size) { i ->
+                        val selected = allCategories[i] == selectedCategory
                         Box(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(50))
                                 .background(if (selected) PrimaryPurple else ChipBg)
-                                .clickable { selectedCategory = categories[i] }
+                                .clickable { selectedCategory = allCategories[i] }
                                 .padding(horizontal = 18.dp, vertical = 8.dp)
                         ) {
                             Text(
-                                categories[i],
+                                allCategories[i],
                                 color = if (selected) Color.White else TextMuted,
                                 fontSize = 13.sp,
                                 fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal
@@ -168,7 +172,6 @@ fun HomeFeedScreen() {
             }
 
             item {
-                // Section header
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -182,27 +185,40 @@ fun HomeFeedScreen() {
                 Spacer(Modifier.height(14.dp))
             }
 
-            items(events.size) { i ->
-                EventCard(event = events[i])
-                Spacer(Modifier.height(14.dp))
+            if (displayed.isEmpty()) {
+                item {
+                    Box(
+                        modifier = Modifier.fillMaxWidth().padding(40.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text("No events in this category", color = TextMuted, fontSize = 14.sp)
+                    }
+                }
+            } else {
+                items(displayed.size) { i ->
+                    EventFeedCard(event = displayed[i], onClick = { onEventClick(displayed[i]) })
+                    Spacer(Modifier.height(14.dp))
+                }
             }
         }
     }
 }
 
 @Composable
-private fun EventCard(event: Event) {
+private fun EventFeedCard(event: Event, onClick: () -> Unit) {
+    val cardBg = parseHexColor(event.cardColorHex)
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 20.dp)
             .clip(RoundedCornerShape(18.dp))
-            .background(event.cardColor)
+            .background(cardBg)
+            .clickable { onClick() }
             .padding(20.dp)
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Icon(
-                imageVector = event.icon,
+                imageVector = Icons.Default.MusicNote,
                 contentDescription = null,
                 tint = Color.White.copy(alpha = 0.5f),
                 modifier = Modifier.size(44.dp)
@@ -211,7 +227,7 @@ private fun EventCard(event: Event) {
             Text(event.title, color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold, lineHeight = 24.sp)
 
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Default.LocationOn, contentDescription = null, tint = TextMuted, modifier = Modifier.size(14.dp))
+                Icon(Icons.Default.LocationOn, null, tint = TextMuted, modifier = Modifier.size(14.dp))
                 Spacer(Modifier.width(4.dp))
                 Text("${event.location} · ${event.date}", color = TextMuted, fontSize = 13.sp)
             }
@@ -240,13 +256,5 @@ private fun EventCard(event: Event) {
                 }
             }
         }
-    }
-}
-
-@Preview(showBackground = true, widthDp = 360, heightDp = 800)
-@Composable
-fun HomeFeedScreenPreview() {
-    BookifyTheme {
-        HomeFeedScreen()
     }
 }
