@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bookify – Technical Documentation</title>
+<style>
+  /* ── Reset & Base ─────────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 13.5pt;
+    line-height: 1.75;
+    color: #1a1a2e;
+    background: #fff;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 48px 80px;
+  }
+
+  /* ── Typography ───────────────────────────────────────────── */
+  h1 { font-size: 28pt; color: #0f0c1f; border-bottom: 4px solid #7b5cf6; padding-bottom: 10px; margin-bottom: 6px; }
+  h2 { font-size: 18pt; color: #7b5cf6; margin-top: 42px; margin-bottom: 14px; padding-left: 12px; border-left: 5px solid #7b5cf6; }
+  h3 { font-size: 13.5pt; color: #1a1a2e; margin-top: 28px; margin-bottom: 8px; font-weight: 700; }
+  h4 { font-size: 11.5pt; color: #4a4a6a; margin-top: 18px; margin-bottom: 6px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+  p  { margin-bottom: 12px; }
+  ul, ol { margin: 10px 0 14px 28px; }
+  li { margin-bottom: 5px; }
+  strong { color: #0f0c1f; }
+  em { color: #7b5cf6; font-style: normal; font-weight: 600; }
+
+  /* ── Cover page ───────────────────────────────────────────── */
+  .cover {
+    text-align: center;
+    padding: 60px 0 50px;
+    border-bottom: 2px solid #e8e4ff;
+    margin-bottom: 48px;
+  }
+  .cover .logo {
+    display: inline-block;
+    background: linear-gradient(135deg, #7b5cf6, #5b3cd6);
+    width: 80px; height: 80px;
+    border-radius: 22px;
+    margin-bottom: 20px;
+  }
+  .cover h1 { border: none; font-size: 36pt; color: #7b5cf6; }
+  .cover .subtitle { font-size: 14pt; color: #666; margin-top: 6px; }
+  .cover .meta { margin-top: 30px; font-size: 11pt; color: #999; line-height: 2; }
+  .cover .meta strong { color: #444; }
+
+  /* ── Info box ─────────────────────────────────────────────── */
+  .infobox {
+    background: #f3f0ff;
+    border-left: 5px solid #7b5cf6;
+    border-radius: 6px;
+    padding: 14px 18px;
+    margin: 18px 0;
+    font-size: 12.5pt;
+  }
+  .infobox.green  { background: #f0fff4; border-color: #22c55e; }
+  .infobox.amber  { background: #fffbeb; border-color: #f5a623; }
+  .infobox.danger { background: #fff1f1; border-color: #ef4444; }
+
+  /* ── Code blocks ──────────────────────────────────────────── */
+  pre {
+    background: #0f0c1f;
+    color: #e2e0f5;
+    border-radius: 10px;
+    padding: 20px 22px;
+    overflow-x: auto;
+    margin: 16px 0 22px;
+    font-size: 10pt;
+    line-height: 1.65;
+    border: 1px solid #2a2650;
+  }
+  code {
+    font-family: 'Consolas', 'Courier New', monospace;
+  }
+  p code, li code {
+    background: #ede9ff;
+    color: #5b3cd6;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 10.5pt;
+  }
+
+  /* Syntax colouring (manual) */
+  .kw  { color: #c084fc; }   /* keyword: fun, val, var, class, data */
+  .ty  { color: #67e8f9; }   /* type names */
+  .str { color: #86efac; }   /* strings */
+  .cm  { color: #6b7280; font-style: italic; } /* comments */
+  .fn  { color: #fde68a; }   /* function names */
+  .num { color: #fb923c; }   /* numbers */
+  .an  { color: #a78bfa; }   /* annotations */
+
+  /* ── Tables ───────────────────────────────────────────────── */
+  table { width: 100%; border-collapse: collapse; margin: 16px 0 24px; font-size: 11.5pt; }
+  th { background: #7b5cf6; color: #fff; padding: 10px 14px; text-align: left; }
+  td { padding: 9px 14px; border-bottom: 1px solid #e8e4ff; vertical-align: top; }
+  tr:nth-child(even) td { background: #f9f7ff; }
+
+  /* ── Section divider ──────────────────────────────────────── */
+  hr { border: none; border-top: 1px solid #e8e4ff; margin: 36px 0; }
+
+  /* ── Print settings ───────────────────────────────────────── */
+  @media print {
+    body { padding: 20px 30px; font-size: 11pt; }
+    pre  { font-size: 8.5pt; page-break-inside: avoid; }
+    h2   { page-break-before: always; }
+    .cover { page-break-after: always; }
+    .no-break { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════
+     COVER PAGE
+═══════════════════════════════════════════════════════════ -->
+<div class="cover">
+  <div class="logo"></div>
+  <h1>Bookify</h1>
+  <div class="subtitle">Technical Documentation — Android Application</div>
+  <div class="meta">
+    <strong>Course:</strong> Mobile Application Development &nbsp;|&nbsp; OD23IT<br>
+    <strong>Group No.:</strong> 8<br>
+    <strong>Institution:</strong> Dar es Salaam Institute of Technology (DIT)<br>
+    <strong>Team:</strong> Sunday Julius Kihiyo &nbsp;·&nbsp; Sarah John Mahwera &nbsp;·&nbsp; Omary Isihaka Athuman &nbsp;·&nbsp; Yusuph Samwel Mniko &nbsp;·&nbsp; Peter Ladislaus Msimbira<br>
+    <strong>Date:</strong> June 2026<br>
+    <strong>Tech Stack:</strong> Kotlin &nbsp;·&nbsp; Jetpack Compose &nbsp;·&nbsp; Material 3 &nbsp;·&nbsp; SQLite
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     1. ANDROID ACTIVITY LIFECYCLE
+═══════════════════════════════════════════════════════════ -->
+<h2>1. Android Activity Lifecycle</h2>
+
+<h3>1.1 What Is an Activity?</h3>
+<p>In Android development, an <strong>Activity</strong> is the single most important building block of any app. It represents one screen with a user interface. Every Android app must have at least one Activity declared in its <code>AndroidManifest.xml</code>. When the user taps the app icon on their phone, Android creates an instance of the main (launcher) Activity and the app starts.</p>
+
+<p>Bookify uses a <strong>Single-Activity Architecture</strong> — the entire app (all 8 screens, all navigation, all logic) lives inside one Activity class called <code>MainActivity</code>. The different screens are not separate Activities; they are Jetpack Compose functions that swap in and out inside the same Activity. This is the modern recommended approach for Android apps.</p>
+
+<h3>1.2 The Lifecycle — How Android Manages Your Activity</h3>
+<p>Android controls when your Activity is created, shown, hidden, and destroyed. It does this through a set of <strong>lifecycle callback methods</strong> that Android automatically calls as the app changes state. As a developer, you override these methods to run your own code at the right moment.</p>
+
+<p>The lifecycle follows this order:</p>
+
+<table>
+  <tr><th>Order</th><th>Method</th><th>When Android Calls It</th><th>What It Means</th></tr>
+  <tr>
+    <td>1</td>
+    <td><code>onCreate()</code></td>
+    <td>The very first time the Activity is created</td>
+    <td>App is starting up — initialise everything here</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td><code>onStart()</code></td>
+    <td>Activity is about to become visible</td>
+    <td>Screen is becoming visible but not yet interactive</td>
+  </tr>
+  <tr>
+    <td>3</td>
+    <td><code>onResume()</code></td>
+    <td>Activity is fully visible and in the foreground</td>
+    <td>User can now tap and interact with the app</td>
+  </tr>
+  <tr>
+    <td>4</td>
+    <td><code>onPause()</code></td>
+    <td>Another app/dialog is partially covering this one</td>
+    <td>App is still partially visible but losing focus</td>
+  </tr>
+  <tr>
+    <td>5</td>
+    <td><code>onStop()</code></td>
+    <td>Activity is fully hidden (user pressed Home)</td>
+    <td>App is in the background — not visible at all</td>
+  </tr>
+  <tr>
+    <td>6</td>
+    <td><code>onDestroy()</code></td>
+    <td>Activity is being permanently shut down</td>
+    <td>App is closing — release all resources here</td>
+  </tr>
+</table>
+
+<div class="infobox amber">
+  <strong>The golden rule:</strong> Every lifecycle method must call <code>super.methodName()</code> as its first line. If you forget this, Android's internal setup code will not run and the app will behave incorrectly or crash.
+</div>
+
+<h3>1.3 How Bookify Implements the Lifecycle</h3>
+<p>Below is the complete <code>MainActivity.kt</code> showing all six lifecycle methods as implemented in the Bookify app. Each method is explained in the subsections that follow.</p>
+
+<pre><code><span class="kw">class</span> <span class="ty">MainActivity</span> : <span class="ty">ComponentActivity</span>() {
+
+    <span class="cm">// Database declared at Activity level so all lifecycle methods can access it</span>
+    <span class="kw">private lateinit var</span> db: <span class="ty">DatabaseHelper</span>
+
+    <span class="cm">// ── LIFECYCLE METHOD 1: onCreate ───────────────────────────</span>
+    <span class="kw">override fun</span> <span class="fn">onCreate</span>(savedInstanceState: <span class="ty">Bundle</span>?) {
+        <span class="kw">super</span>.<span class="fn">onCreate</span>(savedInstanceState)
+        <span class="ty">Log</span>.<span class="fn">d</span>(<span class="str">"BookifyLifecycle"</span>, <span class="str">"onCreate: App is starting"</span>)
+        db = <span class="ty">DatabaseHelper</span>(<span class="kw">this</span>)
+        <span class="fn">enableEdgeToEdge</span>()
+        <span class="fn">setContent</span> {
+            <span class="ty">BookifyTheme</span> { <span class="fn">BookifyApp</span>(db) }
+        }
+    }
+
+    <span class="cm">// ── LIFECYCLE METHOD 2: onStart ────────────────────────────</span>
+    <span class="kw">override fun</span> <span class="fn">onStart</span>() {
+        <span class="kw">super</span>.<span class="fn">onStart</span>()
+        <span class="ty">Log</span>.<span class="fn">d</span>(<span class="str">"BookifyLifecycle"</span>, <span class="str">"onStart: App is now visible to the user"</span>)
+    }
+
+    <span class="cm">// ── LIFECYCLE METHOD 3: onResume ───────────────────────────</span>
+    <span class="kw">override fun</span> <span class="fn">onResume</span>() {
+        <span class="kw">super</span>.<span class="fn">onResume</span>()
+        <span class="ty">Log</span>.<span class="fn">d</span>(<span class="str">"BookifyLifecycle"</span>, <span class="str">"onResume: App is in the foreground — user can interact"</span>)
+    }
+
+    <span class="cm">// ── LIFECYCLE METHOD 4: onPause ────────────────────────────</span>
+    <span class="kw">override fun</span> <span class="fn">onPause</span>() {
+        <span class="kw">super</span>.<span class="fn">onPause</span>()
+        <span class="ty">Log</span>.<span class="fn">d</span>(<span class="str">"BookifyLifecycle"</span>, <span class="str">"onPause: App is partially hidden"</span>)
+    }
+
+    <span class="cm">// ── LIFECYCLE METHOD 5: onStop ─────────────────────────────</span>
+    <span class="kw">override fun</span> <span class="fn">onStop</span>() {
+        <span class="kw">super</span>.<span class="fn">onStop</span>()
+        <span class="ty">Log</span>.<span class="fn">d</span>(<span class="str">"BookifyLifecycle"</span>, <span class="str">"onStop: App is no longer visible"</span>)
+    }
+
+    <span class="cm">// ── LIFECYCLE METHOD 6: onDestroy ──────────────────────────</span>
+    <span class="kw">override fun</span> <span class="fn">onDestroy</span>() {
+        <span class="kw">super</span>.<span class="fn">onDestroy</span>()
+        db.<span class="fn">close</span>()
+        <span class="ty">Log</span>.<span class="fn">d</span>(<span class="str">"BookifyLifecycle"</span>, <span class="str">"onDestroy: App is closing — database closed"</span>)
+    }
+}</code></pre>
+
+<div class="infobox green">
+  <strong>How to see this working:</strong> Open Android Studio → Logcat tab → filter by tag <code>BookifyLifecycle</code>. Then press Home, switch apps, rotate the phone — you will see each method logged in real time.
+</div>
+
+<hr>
+
+<h3>1.4 onCreate() — Starting the App</h3>
+<p><code>onCreate()</code> is the most important lifecycle method. It runs <strong>exactly once</strong> when the Activity is first created. This is where we set up everything the app needs to run.</p>
+
+<p><strong>What we do in Bookify's <code>onCreate()</code>:</strong></p>
+
+<pre><code><span class="kw">override fun</span> <span class="fn">onCreate</span>(savedInstanceState: <span class="ty">Bundle</span>?) {
+    <span class="kw">super</span>.<span class="fn">onCreate</span>(savedInstanceState)       <span class="cm">// ① Must always call this first</span>
+    <span class="ty">Log</span>.<span class="fn">d</span>(<span class="str">"BookifyLifecycle"</span>, <span class="str">"onCreate: App is starting"</span>)
+
+    db = <span class="ty">DatabaseHelper</span>(<span class="kw">this</span>)               <span class="cm">// ② Open the SQLite database</span>
+    <span class="fn">enableEdgeToEdge</span>()                        <span class="cm">// ③ Draw behind status/nav bar</span>
+
+    <span class="fn">setContent</span> {                              <span class="cm">// ④ Attach Compose UI to Activity</span>
+        <span class="ty">BookifyTheme</span> {
+            <span class="fn">BookifyApp</span>(db)                   <span class="cm">// ⑤ Pass db into the UI</span>
+        }
+    }
+}</code></pre>
+
+<ul>
+  <li><strong>① <code>super.onCreate()</code></strong> — Calls the parent class setup. Always required as the first line or the app will crash.</li>
+  <li><strong>② <code>DatabaseHelper(this)</code></strong> — Opens the SQLite database once at startup. The <code>this</code> keyword passes the Activity as a Context, which Android needs to find the app's storage folder. The database stays open for the entire lifetime of the Activity and is closed in <code>onDestroy()</code>.</li>
+  <li><strong>③ <code>enableEdgeToEdge()</code></strong> — Tells Android to allow the app to draw under the status bar and bottom navigation bar, giving Bookify its dark full-screen look.</li>
+  <li><strong>④ <code>setContent { }</code></strong> — This is the bridge between Android and Jetpack Compose. It replaces the traditional <code>setContentView(R.layout.activity_main)</code> call. Everything inside is Compose UI, not XML.</li>
+  <li><strong>⑤ <code>BookifyApp(db)</code></strong> — Passes the single shared database instance into the entire Compose UI tree so all screens can use the same connection.</li>
+</ul>
+
+<hr>
+
+<h3>1.5 onStart() — App Becomes Visible</h3>
+<p><code>onStart()</code> is called immediately after <code>onCreate()</code>, and also every time the app returns from a fully hidden state (e.g. user comes back from another app). At this point the screen is visible but the user cannot interact with it yet.</p>
+
+<pre><code><span class="kw">override fun</span> <span class="fn">onStart</span>() {
+    <span class="kw">super</span>.<span class="fn">onStart</span>()
+    <span class="ty">Log</span>.<span class="fn">d</span>(<span class="str">"BookifyLifecycle"</span>, <span class="str">"onStart: App is now visible to the user"</span>)
+}</code></pre>
+
+<p><strong>When this fires in Bookify:</strong></p>
+<ul>
+  <li>The moment the app first launches (straight after <code>onCreate</code>)</li>
+  <li>When the user presses the Recent Apps button and then taps back into Bookify</li>
+  <li>When a phone call ends and the user returns to the app</li>
+</ul>
+
+<div class="infobox">
+  In Bookify we only log here. In a more advanced app you might restart a location listener or refresh data from a server — things you stopped in <code>onStop()</code>.
+</div>
+
+<hr>
+
+<h3>1.6 onResume() — App is Interactive</h3>
+<p><code>onResume()</code> is called after <code>onStart()</code> and means the Activity is now in the foreground and the user can fully interact with it — touching buttons, scrolling, typing. This is the state the app is in for most of its life.</p>
+
+<pre><code><span class="kw">override fun</span> <span class="fn">onResume</span>() {
+    <span class="kw">super</span>.<span class="fn">onResume</span>()
+    <span class="ty">Log</span>.<span class="fn">d</span>(<span class="str">"BookifyLifecycle"</span>, <span class="str">"onResume: App is in the foreground — user can interact"</span>)
+}</code></pre>
+
+<p><strong>When this fires in Bookify:</strong></p>
+<ul>
+  <li>Right after <code>onStart()</code> when the app first opens</li>
+  <li>After a system dialog (like a permission prompt) is dismissed</li>
+  <li>After the user returns from pressing Home or switching away</li>
+</ul>
+
+<div class="infobox">
+  Normal app usage — browsing events, booking tickets, navigating between screens — all happens while the app is in the <strong>Resumed</strong> state.
+</div>
+
+<hr>
+
+<h3>1.7 onPause() — App Partially Hidden</h3>
+<p><code>onPause()</code> is called when the Activity is still partially visible but is no longer in focus. This happens when a dialog appears on top of the app, or when the user starts swiping to another app. The Activity is still running but the user is not actively using it.</p>
+
+<pre><code><span class="kw">override fun</span> <span class="fn">onPause</span>() {
+    <span class="kw">super</span>.<span class="fn">onPause</span>()
+    <span class="ty">Log</span>.<span class="fn">d</span>(<span class="str">"BookifyLifecycle"</span>, <span class="str">"onPause: App is partially hidden"</span>)
+}</code></pre>
+
+<p><strong>When this fires in Bookify:</strong></p>
+<ul>
+  <li>When the booking confirmation <code>AlertDialog</code> appears over the Event Detail screen</li>
+  <li>When the user starts the gesture to swipe to another app</li>
+  <li>When a phone call notification drops down from the status bar</li>
+</ul>
+
+<div class="infobox amber">
+  <strong>Important:</strong> <code>onPause()</code> must execute quickly. Android may kill the process shortly after this method returns if system resources are low. Never do heavy work (network calls, database writes) in <code>onPause()</code>.
+</div>
+
+<hr>
+
+<h3>1.8 onStop() — App Fully Hidden</h3>
+<p><code>onStop()</code> is called when the Activity is completely invisible to the user. This happens when the user presses the Home button, switches to another app, or when a new Activity fully covers this one.</p>
+
+<pre><code><span class="kw">override fun</span> <span class="fn">onStop</span>() {
+    <span class="kw">super</span>.<span class="fn">onStop</span>()
+    <span class="ty">Log</span>.<span class="fn">d</span>(<span class="str">"BookifyLifecycle"</span>, <span class="str">"onStop: App is no longer visible"</span>)
+}</code></pre>
+
+<p><strong>When this fires in Bookify:</strong></p>
+<ul>
+  <li>User presses the Home button — Bookify goes to the background</li>
+  <li>User switches to WhatsApp or another app from the Recents screen</li>
+  <li>Phone screen turns off</li>
+</ul>
+
+<p>The app's data is safe because it is stored in SQLite on disk. The database connection stays open — we only close it in <code>onDestroy()</code> because we want the database to remain accessible when the user comes back.</p>
+
+<hr>
+
+<h3>1.9 onDestroy() — App is Closing</h3>
+<p><code>onDestroy()</code> is the last lifecycle method called before the Activity is permanently shut down. This is the place to release any resources that would otherwise cause a memory leak.</p>
+
+<pre><code><span class="kw">override fun</span> <span class="fn">onDestroy</span>() {
+    <span class="kw">super</span>.<span class="fn">onDestroy</span>()
+    db.<span class="fn">close</span>()    <span class="cm">// close the SQLite database connection</span>
+    <span class="ty">Log</span>.<span class="fn">d</span>(<span class="str">"BookifyLifecycle"</span>, <span class="str">"onDestroy: App is closing — database closed"</span>)
+}</code></pre>
+
+<p><strong>When this fires in Bookify:</strong></p>
+<ul>
+  <li>User swipes the app off the Recents screen (force-close)</li>
+  <li>The app calls <code>finish()</code> (not used in Bookify, but possible)</li>
+  <li>Android kills the process to recover memory</li>
+</ul>
+
+<p><strong>Why <code>db.close()</code> here?</strong> The <code>DatabaseHelper</code> holds a reference to an open SQLite file. If we never close it, the file handle leaks. By closing it in <code>onDestroy()</code>, we match the database lifetime to the Activity lifetime — it opens in <code>onCreate()</code> and closes in <code>onDestroy()</code>.</p>
+
+<hr>
+
+<h3>1.10 Lifecycle Flow Diagram</h3>
+<p>The following shows the exact sequence of lifecycle calls you will see in Logcat for common user actions in Bookify:</p>
+
+<table>
+  <tr><th>User Action</th><th>Lifecycle Methods Called (in order)</th></tr>
+  <tr><td>Opens Bookify for the first time</td><td>onCreate → onStart → onResume</td></tr>
+  <tr><td>Presses Home button</td><td>onPause → onStop</td></tr>
+  <tr><td>Returns to Bookify from Recents</td><td>onStart → onResume</td></tr>
+  <tr><td>A dialog pops up over the app</td><td>onPause</td></tr>
+  <tr><td>Dismisses the dialog</td><td>onResume</td></tr>
+  <tr><td>Rotates the phone</td><td>onPause → onStop → onDestroy → onCreate → onStart → onResume</td></tr>
+  <tr><td>Swipes app off Recents (kills it)</td><td>onPause → onStop → onDestroy</td></tr>
+</table>
+
+<div class="infobox amber">
+  <strong>Note on screen rotation:</strong> Rotating the phone causes Android to <em>destroy and recreate</em> the Activity. This is why we use <code>rememberSaveable</code> (not just <code>remember</code>) for the current screen name and selected tab — so those values survive the rotation and the user stays on the same screen.
+</div>
+
+<h3>1.11 rememberSaveable vs remember — Surviving Rotation</h3>
+<p>Because rotation destroys and recreates the Activity, any state stored in plain <code>remember { }</code> is lost. We upgraded the navigation state variables to use <code>rememberSaveable</code> which persists values across configuration changes:</p>
+
+<pre><code><span class="an">@Composable</span>
+<span class="kw">fun</span> <span class="fn">BookifyApp</span>(db: <span class="ty">DatabaseHelper</span>) {
+
+    <span class="cm">// rememberSaveable — survives rotation (screen & tab are basic types)</span>
+    <span class="kw">var</span> screen      <span class="kw">by</span> <span class="fn">rememberSaveable</span> { <span class="fn">mutableStateOf</span>(<span class="str">"splash"</span>) }
+    <span class="kw">var</span> selectedNav <span class="kw">by</span> <span class="fn">rememberSaveable</span> { <span class="fn">mutableIntStateOf</span>(<span class="num">0</span>) }
+
+    <span class="cm">// remember only — User and Event are not simple types, so they reset on rotation</span>
+    <span class="kw">var</span> currentUser: <span class="ty">User</span>?  <span class="kw">by</span> <span class="fn">remember</span> { <span class="fn">mutableStateOf</span>(<span class="kw">null</span>) }
+    <span class="kw">var</span> selectedEvent: <span class="ty">Event</span>? <span class="kw">by</span> <span class="fn">remember</span> { <span class="fn">mutableStateOf</span>(<span class="kw">null</span>) }
+    <span class="cm">// ...</span>
+}</code></pre>
+
+<table>
+  <tr><th>Variable</th><th>Type Used</th><th>Survives Rotation?</th><th>Why</th></tr>
+  <tr><td><code>screen</code> (e.g. "home")</td><td><code>rememberSaveable</code></td><td>✅ Yes</td><td>String is a primitive — can be saved automatically</td></tr>
+  <tr><td><code>selectedNav</code> (0–3)</td><td><code>rememberSaveable</code></td><td>✅ Yes</td><td>Int is a primitive — can be saved automatically</td></tr>
+  <tr><td><code>currentUser</code></td><td><code>remember</code></td><td>❌ No</td><td>Custom class — would need Parcelable to save; user must log in again after rotation</td></tr>
+  <tr><td><code>selectedEvent</code></td><td><code>remember</code></td><td>❌ No</td><td>Custom class — event detail is lost on rotation but the user returns to Home safely</td></tr>
+</table>
+
+<h3>1.12 Database Tied to Activity Lifecycle</h3>
+<p>One of the key design decisions in Bookify is that the <code>DatabaseHelper</code> is managed entirely by the Activity lifecycle. It is declared as a class-level property and opened/closed at the right lifecycle moments:</p>
+
+<pre><code><span class="kw">class</span> <span class="ty">MainActivity</span> : <span class="ty">ComponentActivity</span>() {
+
+    <span class="kw">private lateinit var</span> db: <span class="ty">DatabaseHelper</span>   <span class="cm">// declared here, not inside any screen</span>
+
+    <span class="kw">override fun</span> <span class="fn">onCreate</span>(...) {
+        db = <span class="ty">DatabaseHelper</span>(<span class="kw">this</span>)              <span class="cm">// opened once when app starts</span>
+        <span class="fn">setContent</span> { <span class="ty">BookifyTheme</span> { <span class="fn">BookifyApp</span>(db) } }  <span class="cm">// passed to all screens</span>
+    }
+
+    <span class="kw">override fun</span> <span class="fn">onDestroy</span>() {
+        <span class="kw">super</span>.<span class="fn">onDestroy</span>()
+        db.<span class="fn">close</span>()                              <span class="cm">// closed once when app ends</span>
+    }
+}</code></pre>
+
+<p>The <code>db</code> instance is then passed as a parameter from <code>BookifyApp()</code> down into every screen that needs it — <code>LoginScreen(db)</code>, <code>HomeFeedScreen(db)</code>, <code>EventDetailScreen(db)</code>, etc. This means there is always exactly <strong>one</strong> database connection for the entire app lifetime — no connection is accidentally left open or opened twice.</p>
+
+<h3>1.13 AndroidManifest.xml — Registering the Activity</h3>
+<p>Every Activity must be listed in <code>AndroidManifest.xml</code>. Without this registration, Android will not know the Activity exists and will refuse to launch it. The <code>intent-filter</code> block marks it as the launcher — the screen that appears when the user taps the Bookify icon:</p>
+
+<pre><code><span class="cm">&lt;!-- app/src/main/AndroidManifest.xml --&gt;</span>
+&lt;application
+    android:label=<span class="str">"Bookify"</span>
+    android:theme=<span class="str">"@style/Theme.Bookify"</span>&gt;
+
+    &lt;activity
+        android:name=<span class="str">".MainActivity"</span>
+        android:exported=<span class="str">"true"</span>&gt;
+
+        &lt;intent-filter&gt;
+            &lt;action android:name=<span class="str">"android.intent.action.MAIN"</span> /&gt;
+            &lt;category android:name=<span class="str">"android.intent.category.LAUNCHER"</span> /&gt;
+        &lt;/intent-filter&gt;
+    &lt;/activity&gt;
+
+&lt;/application&gt;</code></pre>
+
+<ul>
+  <li><strong><code>android:name=".MainActivity"</code></strong> — The dot prefix means it is inside the app's own package (<code>com.example.bookify.MainActivity</code>).</li>
+  <li><strong><code>android:exported="true"</code></strong> — Required on Android 12+ for any Activity with an intent-filter. Without it the build fails.</li>
+  <li><strong><code>action.MAIN + category.LAUNCHER</code></strong> — Together these two lines tell Android: "this is the Activity to open when the user taps the app icon."</li>
+</ul>
+
+<hr>
+
+<!-- ═══════════════════════════════════════════════════════════
+     2. OVERVIEW
+═══════════════════════════════════════════════════════════ -->
+<h2>2. Project Overview</h2>
+
+<p><strong>Bookify</strong> is a native Android event-booking application built for Tanzania. Users can browse public events, book tickets, access private invite-only events, and manage all their bookings in one place. The app runs entirely offline — all data is persisted on-device using <strong>SQLite</strong>.</p>
+
+<h3>Screens</h3>
+<table>
+  <tr><th>#</th><th>Screen</th><th>Purpose</th></tr>
+  <tr><td>1</td><td>Splash</td><td>Entry point — route to Register or Login</td></tr>
+  <tr><td>2</td><td>Register</td><td>Create a new Bookify account</td></tr>
+  <tr><td>3</td><td>Login</td><td>Authenticate with email and password</td></tr>
+  <tr><td>4</td><td>Home Feed</td><td>Browse and filter public events</td></tr>
+  <tr><td>5</td><td>Event Detail</td><td>Full event info and ticket booking</td></tr>
+  <tr><td>6</td><td>My Tickets</td><td>View confirmed bookings (Upcoming / Past)</td></tr>
+  <tr><td>7</td><td>Private Event</td><td>Access invite-only events via code or link</td></tr>
+  <tr><td>8</td><td>Profile</td><td>User info and logout</td></tr>
+</table>
+
+<h3>Project Structure</h3>
+<pre><code>app/src/main/java/com/example/bookify/
+│
+├── MainActivity.kt                   ← App entry point + navigation controller
+│
+├── data/
+│   ├── Models.kt                     ← User, Event, Booking data classes
+│   └── DatabaseHelper.kt             ← SQLite database (CRUD + seed data)
+│
+└── ui/
+    ├── theme/
+    │   ├── Color.kt                  ← Brand colours
+    │   ├── Type.kt                   ← Typography
+    │   └── Theme.kt                  ← MaterialTheme setup
+    │
+    └── screens/
+        ├── SplashScreen.kt
+        ├── LoginScreen.kt
+        ├── RegisterScreen.kt
+        ├── HomeFeedScreen.kt
+        ├── EventDetailScreen.kt
+        ├── MyTicketsScreen.kt
+        ├── PrivateEventScreen.kt
+        ├── TicketsTabScreen.kt
+        └── ProfileScreen.kt</code></pre>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     2. DATA LAYER — WHERE DATA IS STORED
+═══════════════════════════════════════════════════════════ -->
+<h2>3. Data Layer — Where Data is Stored</h2>
+
+<p>All data is stored in an <strong>on-device SQLite database</strong> named <code>bookify.db</code>. Android places this file at:</p>
+
+<div class="infobox amber">
+  <code>/data/data/com.example.bookify/databases/bookify.db</code><br>
+  This is private to the app — no external app can access it without root.
+</div>
+
+<p>The database is managed by a class called <code>DatabaseHelper</code> which extends Android's built-in <code>SQLiteOpenHelper</code>.</p>
+
+<h3>3.1 Data Models</h3>
+<p>Three Kotlin data classes in <code>data/Models.kt</code> represent the app's core entities:</p>
+
+<pre><code><span class="cm">// data/Models.kt</span>
+
+<span class="kw">data class</span> <span class="ty">User</span>(
+    <span class="kw">val</span> id: <span class="ty">Int</span>,
+    <span class="kw">val</span> fullName: <span class="ty">String</span>,
+    <span class="kw">val</span> email: <span class="ty">String</span>,
+    <span class="kw">val</span> phone: <span class="ty">String</span>
+)
+
+<span class="kw">data class</span> <span class="ty">Event</span>(
+    <span class="kw">val</span> id: <span class="ty">Int</span>,
+    <span class="kw">val</span> title: <span class="ty">String</span>,
+    <span class="kw">val</span> location: <span class="ty">String</span>,
+    <span class="kw">val</span> date: <span class="ty">String</span>,
+    <span class="kw">val</span> time: <span class="ty">String</span>,
+    <span class="kw">val</span> category: <span class="ty">String</span>,
+    <span class="kw">val</span> price: <span class="ty">String</span>,
+    <span class="kw">val</span> slotsLeft: <span class="ty">Int</span>,
+    <span class="kw">val</span> description: <span class="ty">String</span>,
+    <span class="kw">val</span> isPrivate: <span class="ty">Boolean</span>,
+    <span class="kw">val</span> inviteCode: <span class="ty">String</span>?,
+    <span class="kw">val</span> cardColorHex: <span class="ty">String</span>
+)
+
+<span class="kw">data class</span> <span class="ty">Booking</span>(
+    <span class="kw">val</span> id: <span class="ty">Int</span>,
+    <span class="kw">val</span> ticketNo: <span class="ty">String</span>,
+    <span class="kw">val</span> status: <span class="ty">String</span>,       <span class="cm">// "upcoming" or "past"</span>
+    <span class="kw">val</span> eventTitle: <span class="ty">String</span>,
+    <span class="kw">val</span> eventDate: <span class="ty">String</span>,
+    <span class="kw">val</span> eventTime: <span class="ty">String</span>,
+    <span class="kw">val</span> eventCategory: <span class="ty">String</span>,
+    <span class="kw">val</span> cardColorHex: <span class="ty">String</span>
+)</code></pre>
+
+<h3>3.2 Database Tables</h3>
+<table>
+  <tr><th>Table</th><th>Columns</th><th>Purpose</th></tr>
+  <tr>
+    <td><strong>users</strong></td>
+    <td>id, fullName, email (UNIQUE), password, phone</td>
+    <td>Stores registered accounts</td>
+  </tr>
+  <tr>
+    <td><strong>events</strong></td>
+    <td>id, title, location, date, time, category, price, slotsLeft, description, isPrivate, inviteCode, cardColorHex</td>
+    <td>All events (public &amp; private)</td>
+  </tr>
+  <tr>
+    <td><strong>bookings</strong></td>
+    <td>id, userId, eventId, ticketNo, status</td>
+    <td>Links users to their booked events</td>
+  </tr>
+</table>
+
+<h3>3.3 DatabaseHelper — Creating the Tables</h3>
+<p>The <code>onCreate()</code> method runs exactly once when the database is first created on the device. It creates all three tables and calls <code>seedEvents()</code> to pre-load sample data.</p>
+
+<pre><code><span class="kw">class</span> <span class="ty">DatabaseHelper</span>(context: <span class="ty">Context</span>) :
+    <span class="ty">SQLiteOpenHelper</span>(context, <span class="str">"bookify.db"</span>, <span class="kw">null</span>, <span class="num">1</span>) {
+
+    <span class="kw">override fun</span> <span class="fn">onCreate</span>(db: <span class="ty">SQLiteDatabase</span>) {
+        db.<span class="fn">execSQL</span>(<span class="str">"""
+            CREATE TABLE users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                fullName TEXT NOT NULL,
+                email TEXT NOT NULL UNIQUE,
+                password TEXT NOT NULL,
+                phone TEXT NOT NULL
+            )
+        """</span>)
+
+        db.<span class="fn">execSQL</span>(<span class="str">"""
+            CREATE TABLE events (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                title TEXT NOT NULL,
+                location TEXT NOT NULL,
+                date TEXT NOT NULL,
+                time TEXT NOT NULL,
+                category TEXT NOT NULL,
+                price TEXT NOT NULL,
+                slotsLeft INTEGER NOT NULL,
+                description TEXT NOT NULL,
+                isPrivate INTEGER NOT NULL DEFAULT 0,
+                inviteCode TEXT,
+                cardColorHex TEXT NOT NULL
+            )
+        """</span>)
+
+        db.<span class="fn">execSQL</span>(<span class="str">"""
+            CREATE TABLE bookings (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                userId INTEGER NOT NULL,
+                eventId INTEGER NOT NULL,
+                ticketNo TEXT NOT NULL,
+                status TEXT NOT NULL DEFAULT 'upcoming'
+            )
+        """</span>)
+
+        <span class="fn">seedEvents</span>(db)  <span class="cm">// Insert demo events on first launch</span>
+    }
+}</code></pre>
+
+<h3>3.4 Seed Data</h3>
+<p>Four events are inserted on first launch — two public events visible on the Home feed, and two private events accessible only via invite code:</p>
+
+<pre><code><span class="kw">private fun</span> <span class="fn">seedEvents</span>(db: <span class="ty">SQLiteDatabase</span>) {
+    <span class="kw">val</span> events = <span class="fn">listOf</span>(
+        <span class="ty">ContentValues</span>().<span class="fn">apply</span> {
+            <span class="fn">put</span>(<span class="str">"title"</span>, <span class="str">"Sauti Sol Live in DSM"</span>)
+            <span class="fn">put</span>(<span class="str">"isPrivate"</span>, <span class="num">0</span>)       <span class="cm">// public</span>
+            <span class="fn">put</span>(<span class="str">"slotsLeft"</span>, <span class="num">48</span>)
+            <span class="fn">put</span>(<span class="str">"price"</span>, <span class="str">"Tsh 15,000"</span>)
+            <span class="cm">// ... more fields</span>
+        },
+        <span class="ty">ContentValues</span>().<span class="fn">apply</span> {
+            <span class="fn">put</span>(<span class="str">"title"</span>, <span class="str">"DIT Alumni Gala 2025"</span>)
+            <span class="fn">put</span>(<span class="str">"isPrivate"</span>, <span class="num">1</span>)       <span class="cm">// private</span>
+            <span class="fn">put</span>(<span class="str">"inviteCode"</span>, <span class="str">"DIT2025"</span>)
+        }
+    )
+    events.<span class="fn">forEach</span> { db.<span class="fn">insert</span>(<span class="str">"events"</span>, <span class="kw">null</span>, it) }
+}</code></pre>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     4. NAVIGATION & SCREEN ROUTING
+═══════════════════════════════════════════════════════════ -->
+<h2>4. Navigation &amp; Screen Routing</h2>
+
+<p>Bookify has a <strong>single Activity</strong> (<code>MainActivity</code>) — the entire app is driven by Jetpack Compose. Instead of multiple Activities or Fragments, we use a single <code>@Composable</code> function called <code>BookifyApp()</code> that holds a <code>screen</code> state variable and switches what is shown using a <code>when</code> expression. This pattern is called <strong>state-driven navigation</strong>.</p>
+
+<h3>4.1 MainActivity</h3>
+
+<pre><code><span class="kw">class</span> <span class="ty">MainActivity</span> : <span class="ty">ComponentActivity</span>() {
+    <span class="kw">override fun</span> <span class="fn">onCreate</span>(savedInstanceState: <span class="ty">Bundle</span>?) {
+        <span class="kw">super</span>.<span class="fn">onCreate</span>(savedInstanceState)
+        <span class="fn">enableEdgeToEdge</span>()   <span class="cm">// draw behind system bars</span>
+        <span class="fn">setContent</span> {
+            <span class="ty">BookifyTheme</span> {
+                <span class="fn">BookifyApp</span>()
+            }
+        }
+    }
+}</code></pre>
+
+<div class="infobox">
+  <strong>enableEdgeToEdge()</strong> tells Android to let the app draw underneath the status bar and navigation bar, giving the modern full-bleed look seen in the mockups.
+</div>
+
+<h3>4.2 BookifyApp — The Navigation Controller</h3>
+
+<pre><code><span class="an">@Composable</span>
+<span class="kw">fun</span> <span class="fn">BookifyApp</span>() {
+    <span class="cm">// State variables — changes to these trigger recomposition</span>
+    <span class="kw">var</span> screen       <span class="kw">by</span> <span class="fn">remember</span> { <span class="fn">mutableStateOf</span>(<span class="str">"splash"</span>) }
+    <span class="kw">var</span> currentUser: <span class="ty">User</span>? <span class="kw">by</span> <span class="fn">remember</span> { <span class="fn">mutableStateOf</span>(<span class="kw">null</span>) }
+    <span class="kw">var</span> selectedNav  <span class="kw">by</span> <span class="fn">remember</span> { <span class="fn">mutableIntStateOf</span>(<span class="num">0</span>) }
+    <span class="kw">var</span> selectedEvent: <span class="ty">Event</span>? <span class="kw">by</span> <span class="fn">remember</span> { <span class="fn">mutableStateOf</span>(<span class="kw">null</span>) }
+
+    <span class="cm">// Physical back button handling</span>
+    <span class="ty">BackHandler</span>(enabled = screen == <span class="str">"detail"</span> || screen == <span class="str">"login"</span>) {
+        screen = <span class="kw">if</span> (screen == <span class="str">"detail"</span>) <span class="str">"home"</span> <span class="kw">else</span> <span class="str">"splash"</span>
+    }
+
+    <span class="kw">when</span> (screen) {
+        <span class="str">"splash"</span>   -> <span class="fn">SplashScreen</span>(
+            onGetStarted = { screen = <span class="str">"register"</span> },
+            onLogin      = { screen = <span class="str">"login"</span> }
+        )
+        <span class="str">"login"</span>    -> <span class="fn">LoginScreen</span>(
+            onLoginSuccess      = { user -> currentUser = user; screen = <span class="str">"home"</span> },
+            onNavigateToRegister = { screen = <span class="str">"register"</span> }
+        )
+        <span class="str">"register"</span> -> <span class="fn">RegisterScreen</span>(
+            onRegisterSuccess   = { user -> currentUser = user; screen = <span class="str">"home"</span> },
+            onNavigateToLogin   = { screen = <span class="str">"login"</span> }
+        )
+        <span class="str">"home"</span>     -> { <span class="cm">/* bottom nav routing — see section 3.3 */</span> }
+        <span class="str">"detail"</span>   -> <span class="fn">EventDetailScreen</span>(
+            event          = selectedEvent!!,
+            currentUser    = currentUser,
+            onBack         = { screen = <span class="str">"home"</span> },
+            onBookingSuccess = { selectedNav = <span class="num">2</span>; screen = <span class="str">"home"</span> }
+        )
+    }
+}</code></pre>
+
+<p>Each screen composable receives <strong>callback lambdas</strong> instead of knowing about the navigation directly. This keeps every screen isolated — a screen just calls <code>onLoginSuccess(user)</code> and the controller decides what to do next.</p>
+
+<h3>4.3 Bottom Navigation Routing</h3>
+<p>Inside the <code>"home"</code> case, a second <code>when</code> on <code>selectedNav</code> (0–3) selects which screen to show:</p>
+
+<pre><code><span class="str">"home"</span> -> {
+    <span class="kw">when</span> (selectedNav) {
+        <span class="num">0</span>, <span class="num">1</span> -> <span class="fn">HomeFeedScreen</span>(
+            currentUser  = currentUser,
+            selectedNav  = selectedNav,
+            onNavSelected = { selectedNav = it },
+            onEventClick  = { event -> selectedEvent = event; screen = <span class="str">"detail"</span> }
+        )
+        <span class="num">2</span> -> <span class="fn">TicketsTabScreen</span>(
+            currentUser  = currentUser,
+            selectedNav  = selectedNav,
+            onNavSelected = { selectedNav = it },
+            onEventFound  = { event -> selectedEvent = event; screen = <span class="str">"detail"</span> }
+        )
+        <span class="num">3</span> -> <span class="fn">ProfileScreen</span>(
+            currentUser  = currentUser,
+            onLogout     = { currentUser = <span class="kw">null</span>; selectedNav = <span class="num">0</span>; screen = <span class="str">"splash"</span> },
+            onLoginRequest = { screen = <span class="str">"login"</span> }
+        )
+    }
+}</code></pre>
+
+<div class="infobox green">
+  <strong>Navigation flow diagram:</strong><br><br>
+  Splash → Register / Login → Home Feed → Event Detail → (back to Home)<br>
+  Home (tab 2) → My Tickets &nbsp;|&nbsp; Private Event → Event Detail<br>
+  Home (tab 3) → Profile → Logout → Splash
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     5. FRONTEND — JETPACK COMPOSE UI
+═══════════════════════════════════════════════════════════ -->
+<h2>5. Frontend — Jetpack Compose UI</h2>
+
+<p>The entire UI is built with <strong>Jetpack Compose</strong>, Android's modern declarative UI toolkit. Instead of XML layouts, every screen is a Kotlin function annotated with <code>@Composable</code>. The UI automatically re-renders whenever state changes.</p>
+
+<h3>5.1 Theme &amp; Brand Colours</h3>
+<p>All colours are defined once in <code>ui/theme/Color.kt</code> and reused everywhere:</p>
+
+<pre><code><span class="cm">// ui/theme/Color.kt</span>
+<span class="kw">val</span> BackgroundDark = <span class="ty">Color</span>(<span class="num">0xFF0F0C1F</span>)  <span class="cm">// Deep navy — main background</span>
+<span class="kw">val</span> SurfaceDark    = <span class="ty">Color</span>(<span class="num">0xFF1A1635</span>)  <span class="cm">// Slightly lighter — cards, bars</span>
+<span class="kw">val</span> CardPurple     = <span class="ty">Color</span>(<span class="num">0xFF251F5C</span>)  <span class="cm">// Concert event cards</span>
+<span class="kw">val</span> CardGreen      = <span class="ty">Color</span>(<span class="num">0xFF1A3D2B</span>)  <span class="cm">// Conference event cards</span>
+<span class="kw">val</span> PrimaryPurple  = <span class="ty">Color</span>(<span class="num">0xFF7B5CF6</span>)  <span class="cm">// Buttons, active icons</span>
+<span class="kw">val</span> Amber          = <span class="ty">Color</span>(<span class="num">0xFFF5A623</span>)  <span class="cm">// Price badges, CTA</span>
+<span class="kw">val</span> TextMuted      = <span class="ty">Color</span>(<span class="num">0xFF9B98B8</span>)  <span class="cm">// Secondary text</span>
+<span class="kw">val</span> ChipBg         = <span class="ty">Color</span>(<span class="num">0xFF2A2650</span>)  <span class="cm">// Unselected category chips</span></code></pre>
+
+<p>These colours are wired into a Material 3 dark colour scheme in <code>Theme.kt</code>:</p>
+
+<pre><code><span class="kw">private val</span> BookifyColorScheme = <span class="fn">darkColorScheme</span>(
+    primary    = PrimaryPurple,
+    secondary  = Amber,
+    background = BackgroundDark,
+    surface    = SurfaceDark,
+    onPrimary  = <span class="ty">Color</span>.White,
+    onSurface  = <span class="ty">Color</span>.White
+)</code></pre>
+
+<h3>5.2 Splash Screen</h3>
+<p>The splash screen uses a <code>Box</code> as a full-screen container, with the logo centred and the two action buttons pinned to the bottom using <code>Alignment.BottomCenter</code>:</p>
+
+<pre><code><span class="an">@Composable</span>
+<span class="kw">fun</span> <span class="fn">SplashScreen</span>(onGetStarted: () -> <span class="ty">Unit</span>, onLogin: () -> <span class="ty">Unit</span>) {
+    <span class="ty">Box</span>(
+        modifier = <span class="ty">Modifier</span>
+            .<span class="fn">fillMaxSize</span>()
+            .<span class="fn">background</span>(BackgroundDark)
+            .<span class="fn">padding</span>(horizontal = <span class="num">32</span>.dp)
+    ) {
+        <span class="cm">// ── Logo + tagline in the centre ──</span>
+        <span class="ty">Column</span>(modifier = <span class="ty">Modifier</span>.<span class="fn">align</span>(<span class="ty">Alignment</span>.Center), ...) {
+            <span class="fn">Text</span>(<span class="str">"Bookify"</span>, color = <span class="ty">Color</span>.White, fontSize = <span class="num">34</span>.sp, fontWeight = <span class="ty">FontWeight</span>.Bold)
+            <span class="fn">Text</span>(<span class="str">"Book events, anywhere in Tanzania."</span>, color = TextMuted)
+        }
+
+        <span class="cm">// ── Buttons pinned to the bottom ──</span>
+        <span class="ty">Column</span>(modifier = <span class="ty">Modifier</span>.<span class="fn">align</span>(<span class="ty">Alignment</span>.BottomCenter).<span class="fn">padding</span>(bottom = <span class="num">52</span>.dp)) {
+            <span class="ty">Button</span>(onClick = onGetStarted, ...) { <span class="fn">Text</span>(<span class="str">"Get started"</span>) }
+            <span class="ty">TextButton</span>(onClick = onLogin)    { <span class="fn">Text</span>(<span class="str">"Log in"</span>) }
+        }
+    }
+}</code></pre>
+
+<h3>5.3 Shared Text Field Component</h3>
+<p>Rather than duplicating text field styling across Login and Register, a shared composable <code>BookifyTextField</code> is defined in <code>RegisterScreen.kt</code> and used in both screens:</p>
+
+<pre><code><span class="an">@Composable</span>
+<span class="kw">fun</span> <span class="fn">BookifyTextField</span>(
+    value: <span class="ty">String</span>,
+    onValueChange: (<span class="ty">String</span>) -> <span class="ty">Unit</span>,
+    label: <span class="ty">String</span>,
+    leadingIcon: <span class="an">@Composable</span> (() -> <span class="ty">Unit</span>)? = <span class="kw">null</span>,
+    trailingIcon: <span class="an">@Composable</span> (() -> <span class="ty">Unit</span>)? = <span class="kw">null</span>,
+    keyboardType: <span class="ty">KeyboardType</span> = <span class="ty">KeyboardType</span>.Text,
+    visualTransformation: <span class="ty">VisualTransformation</span> = <span class="ty">VisualTransformation</span>.None
+) {
+    <span class="ty">Column</span> {
+        <span class="fn">Text</span>(label, color = TextMuted, fontSize = <span class="num">13</span>.sp)
+        <span class="ty">Spacer</span>(<span class="ty">Modifier</span>.<span class="fn">height</span>(<span class="num">6</span>.dp))
+        <span class="ty">OutlinedTextField</span>(
+            value            = value,
+            onValueChange    = onValueChange,
+            singleLine       = <span class="kw">true</span>,
+            leadingIcon      = leadingIcon,
+            trailingIcon     = trailingIcon,
+            visualTransformation = visualTransformation,
+            colors           = <span class="ty">OutlinedTextFieldDefaults</span>.<span class="fn">colors</span>(
+                focusedBorderColor   = PrimaryPurple,
+                unfocusedBorderColor = SurfaceDark,
+                focusedContainerColor   = SurfaceDark,
+                unfocusedContainerColor = SurfaceDark,
+                focusedTextColor     = <span class="ty">Color</span>.White,
+                unfocusedTextColor   = <span class="ty">Color</span>.White
+            ),
+            shape = <span class="ty">RoundedCornerShape</span>(<span class="num">12</span>.dp)
+        )
+    }
+}</code></pre>
+
+<h3>5.4 Home Feed Screen</h3>
+<p>The Home feed uses a <code>LazyColumn</code> — Android's efficient scrollable list that only renders visible items. Inside it, the header, search bar, category chips, and event cards are each wrapped in <code>item { }</code> blocks:</p>
+
+<pre><code><span class="ty">LazyColumn</span>(modifier = <span class="ty">Modifier</span>.<span class="fn">fillMaxSize</span>()) {
+    <span class="fn">item</span> { <span class="cm">/* Greeting header */</span> }
+    <span class="fn">item</span> { <span class="cm">/* Search bar */</span> }
+    <span class="fn">item</span> {
+        <span class="cm">// Category chips in a horizontal scroll row</span>
+        <span class="ty">LazyRow</span>(horizontalArrangement = <span class="ty">Arrangement</span>.<span class="fn">spacedBy</span>(<span class="num">8</span>.dp)) {
+            <span class="fn">items</span>(allCategories.size) { i ->
+                <span class="kw">val</span> selected = allCategories[i] == selectedCategory
+                <span class="ty">Box</span>(
+                    modifier = <span class="ty">Modifier</span>
+                        .<span class="fn">clip</span>(<span class="ty">RoundedCornerShape</span>(<span class="num">50</span>))
+                        .<span class="fn">background</span>(<span class="kw">if</span> (selected) PrimaryPurple <span class="kw">else</span> ChipBg)
+                        .<span class="fn">clickable</span> { selectedCategory = allCategories[i] }
+                        .<span class="fn">padding</span>(horizontal = <span class="num">18</span>.dp, vertical = <span class="num">8</span>.dp)
+                ) {
+                    <span class="fn">Text</span>(allCategories[i], color = <span class="kw">if</span> (selected) <span class="ty">Color</span>.White <span class="kw">else</span> TextMuted)
+                }
+            }
+        }
+    }
+    <span class="fn">items</span>(displayed.size) { i ->
+        <span class="fn">EventFeedCard</span>(event = displayed[i], onClick = { onEventClick(displayed[i]) })
+    }
+}</code></pre>
+
+<p>Events are loaded from SQLite via <code>db.getAllPublicEvents()</code> inside a <code>remember { }</code> block so the query only runs once per composition, not on every recomposition:</p>
+
+<pre><code><span class="kw">val</span> db     = <span class="fn">remember</span> { <span class="ty">DatabaseHelper</span>(context) }
+<span class="kw">val</span> events = <span class="fn">remember</span> { db.<span class="fn">getAllPublicEvents</span>() }</code></pre>
+
+<h3>5.5 Event Detail Screen</h3>
+<p>The detail screen is split into a hero banner (fixed height) and a scrollable info section, with a bottom booking bar that stays fixed at the bottom regardless of scroll position:</p>
+
+<pre><code><span class="ty">Column</span>(modifier = <span class="ty">Modifier</span>.<span class="fn">fillMaxSize</span>()) {
+
+    <span class="cm">// 1. Fixed hero banner</span>
+    <span class="ty">Box</span>(modifier = <span class="ty">Modifier</span>.<span class="fn">fillMaxWidth</span>().<span class="fn">height</span>(<span class="num">220</span>.dp).<span class="fn">background</span>(cardBg)) {
+        <span class="fn">Text</span>(event.title, ..., modifier = <span class="ty">Modifier</span>.<span class="fn">align</span>(<span class="ty">Alignment</span>.BottomStart))
+    }
+
+    <span class="cm">// 2. Scrollable content takes remaining weight</span>
+    <span class="ty">Column</span>(modifier = <span class="ty">Modifier</span>.<span class="fn">weight</span>(<span class="num">1</span>f).<span class="fn">verticalScroll</span>(<span class="fn">rememberScrollState</span>())) {
+        <span class="fn">InfoCard</span>(icon = <span class="str">"📅"</span>, label = <span class="str">"Date"</span>,  value = event.date)
+        <span class="fn">InfoCard</span>(icon = <span class="str">"🕐"</span>, label = <span class="str">"Time"</span>,  value = event.time)
+        <span class="fn">InfoCard</span>(icon = <span class="str">"🎟"</span>, label = <span class="str">"Slots"</span>, value = <span class="str">"${event.slotsLeft} remaining"</span>)
+        <span class="fn">Text</span>(event.description)
+    }
+
+    <span class="cm">// 3. Fixed bottom booking bar</span>
+    <span class="ty">Box</span>(modifier = <span class="ty">Modifier</span>.<span class="fn">fillMaxWidth</span>().<span class="fn">background</span>(SurfaceDark)) {
+        <span class="ty">Button</span>(onClick = { showConfirmDialog = <span class="kw">true</span> }) { <span class="fn">Text</span>(<span class="str">"Book ticket →"</span>) }
+    }
+}</code></pre>
+
+<h3>5.6 Ticket Card — Dashed Divider</h3>
+<p>The dashed tear-off line on ticket cards is drawn using the <code>drawBehind</code> modifier and Compose's <code>Canvas</code>-like drawing API:</p>
+
+<pre><code><span class="ty">Box</span>(
+    modifier = <span class="ty">Modifier</span>
+        .<span class="fn">fillMaxWidth</span>()
+        .<span class="fn">height</span>(<span class="num">1</span>.dp)
+        .<span class="fn">drawBehind</span> {
+            <span class="fn">drawLine</span>(
+                color   = <span class="ty">Color</span>.White.<span class="fn">copy</span>(alpha = <span class="num">0.2</span>f),
+                start   = <span class="ty">Offset</span>(<span class="num">0</span>f, <span class="num">0</span>f),
+                end     = <span class="ty">Offset</span>(size.width, <span class="num">0</span>f),
+                strokeWidth = <span class="num">2</span>f,
+                pathEffect  = <span class="ty">PathEffect</span>.<span class="fn">dashPathEffect</span>(<span class="fn">floatArrayOf</span>(<span class="num">12</span>f, <span class="num">8</span>f))
+            )
+        }
+)</code></pre>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     6. REGISTRATION LOGIC
+═══════════════════════════════════════════════════════════ -->
+<h2>6. Registration Logic</h2>
+
+<p>The Register screen collects: <strong>Full Name</strong>, <strong>Email</strong>, <strong>Password</strong>, and <strong>Phone Number</strong>. Before hitting the database, client-side validation is run. If the user already exists, the database constraint catches it.</p>
+
+<h3>6.1 Validation</h3>
+<pre><code><span class="ty">Button</span>(onClick = {
+    <span class="kw">when</span> {
+        fullName.<span class="fn">isBlank</span>()                -> errorMessage = <span class="str">"Please enter your full name"</span>
+        email.<span class="fn">isBlank</span>() || !email.<span class="fn">contains</span>(<span class="str">"@"</span>) -> errorMessage = <span class="str">"Please enter a valid email"</span>
+        password.<span class="fn">length</span> < <span class="num">6</span>            -> errorMessage = <span class="str">"Password must be at least 6 characters"</span>
+        phone.<span class="fn">isBlank</span>()                 -> errorMessage = <span class="str">"Please enter your phone number"</span>
+        <span class="kw">else</span> -> {
+            <span class="kw">val</span> success = db.<span class="fn">registerUser</span>(fullName.<span class="fn">trim</span>(), email.<span class="fn">trim</span>(), password, <span class="str">"+255${phone.trim()}"</span>)
+            <span class="kw">if</span> (success) {
+                <span class="kw">val</span> user = db.<span class="fn">loginUser</span>(email.<span class="fn">trim</span>(), password)
+                <span class="kw">if</span> (user != <span class="kw">null</span>) onRegisterSuccess(user)
+            } <span class="kw">else</span> {
+                errorMessage = <span class="str">"Email already registered. Try logging in."</span>
+            }
+        }
+    }
+}) { <span class="fn">Text</span>(<span class="str">"Create account →"</span>) }</code></pre>
+
+<h3>6.2 Database Insert</h3>
+<pre><code><span class="kw">fun</span> <span class="fn">registerUser</span>(fullName: <span class="ty">String</span>, email: <span class="ty">String</span>, password: <span class="ty">String</span>, phone: <span class="ty">String</span>): <span class="ty">Boolean</span> {
+    <span class="kw">return try</span> {
+        <span class="kw">val</span> cv = <span class="ty">ContentValues</span>().<span class="fn">apply</span> {
+            <span class="fn">put</span>(<span class="str">"fullName"</span>, fullName)
+            <span class="fn">put</span>(<span class="str">"email"</span>, email)
+            <span class="fn">put</span>(<span class="str">"password"</span>, password)
+            <span class="fn">put</span>(<span class="str">"phone"</span>, phone)
+        }
+        <span class="cm">// insert() returns -1 if the UNIQUE constraint on email is violated</span>
+        writableDatabase.<span class="fn">insert</span>(<span class="str">"users"</span>, <span class="kw">null</span>, cv) != -<span class="num">1</span>L
+    } <span class="kw">catch</span> (e: <span class="ty">Exception</span>) {
+        <span class="kw">false</span>
+    }
+}</code></pre>
+
+<div class="infobox amber">
+  <strong>Note:</strong> Passwords are currently stored as plain text. In a production app, use <strong>bcrypt</strong> or Android's <code>KeyStore</code> + hashing before storing any credentials.
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     7. LOGIN LOGIC
+═══════════════════════════════════════════════════════════ -->
+<h2>7. Login Logic</h2>
+
+<p>Login is a straightforward email + password query against the <code>users</code> table. If a matching row is found, the <code>User</code> object is returned and stored in the <code>currentUser</code> state variable at the top of <code>BookifyApp()</code>, making it available to all screens.</p>
+
+<h3>7.1 UI Validation and State</h3>
+<pre><code><span class="kw">var</span> email           <span class="kw">by</span> <span class="fn">remember</span> { <span class="fn">mutableStateOf</span>(<span class="str">""</span>) }
+<span class="kw">var</span> password        <span class="kw">by</span> <span class="fn">remember</span> { <span class="fn">mutableStateOf</span>(<span class="str">""</span>) }
+<span class="kw">var</span> passwordVisible <span class="kw">by</span> <span class="fn">remember</span> { <span class="fn">mutableStateOf</span>(<span class="kw">false</span>) }
+<span class="kw">var</span> errorMessage    <span class="kw">by</span> <span class="fn">remember</span> { <span class="fn">mutableStateOf</span>(<span class="str">""</span>) }
+
+<span class="ty">Button</span>(onClick = {
+    <span class="kw">when</span> {
+        email.<span class="fn">isBlank</span>()    -> errorMessage = <span class="str">"Please enter your email"</span>
+        password.<span class="fn">isBlank</span>() -> errorMessage = <span class="str">"Please enter your password"</span>
+        <span class="kw">else</span> -> {
+            <span class="kw">val</span> user = db.<span class="fn">loginUser</span>(email.<span class="fn">trim</span>(), password)
+            <span class="kw">if</span> (user != <span class="kw">null</span>) <span class="fn">onLoginSuccess</span>(user)
+            <span class="kw">else</span> errorMessage = <span class="str">"Invalid email or password"</span>
+        }
+    }
+}) { <span class="fn">Text</span>(<span class="str">"Log in"</span>) }</code></pre>
+
+<h3>7.2 Password Visibility Toggle</h3>
+<p>The eye icon in the password field toggles between masked (<code>PasswordVisualTransformation</code>) and plain text:</p>
+
+<pre><code><span class="fn">BookifyTextField</span>(
+    value               = password,
+    visualTransformation = <span class="kw">if</span> (passwordVisible) <span class="ty">VisualTransformation</span>.None
+                          <span class="kw">else</span> <span class="ty">PasswordVisualTransformation</span>(),
+    trailingIcon = {
+        <span class="ty">IconButton</span>(onClick = { passwordVisible = !passwordVisible }) {
+            <span class="ty">Icon</span>(<span class="kw">if</span> (passwordVisible) <span class="ty">Icons</span>.Default.VisibilityOff
+                 <span class="kw">else</span> <span class="ty">Icons</span>.Default.Visibility, ...)
+        }
+    }
+)</code></pre>
+
+<h3>7.3 Database Query</h3>
+<pre><code><span class="kw">fun</span> <span class="fn">loginUser</span>(email: <span class="ty">String</span>, password: <span class="ty">String</span>): <span class="ty">User</span>? {
+    <span class="kw">val</span> cursor = readableDatabase.<span class="fn">rawQuery</span>(
+        <span class="str">"SELECT * FROM users WHERE email=? AND password=?"</span>,
+        <span class="fn">arrayOf</span>(email, password)
+    )
+    <span class="kw">return if</span> (cursor.<span class="fn">moveToFirst</span>()) {
+        <span class="kw">val</span> user = <span class="ty">User</span>(
+            id       = cursor.<span class="fn">getInt</span>(cursor.<span class="fn">getColumnIndexOrThrow</span>(<span class="str">"id"</span>)),
+            fullName = cursor.<span class="fn">getString</span>(cursor.<span class="fn">getColumnIndexOrThrow</span>(<span class="str">"fullName"</span>)),
+            email    = cursor.<span class="fn">getString</span>(cursor.<span class="fn">getColumnIndexOrThrow</span>(<span class="str">"email"</span>)),
+            phone    = cursor.<span class="fn">getString</span>(cursor.<span class="fn">getColumnIndexOrThrow</span>(<span class="str">"phone"</span>))
+        )
+        cursor.<span class="fn">close</span>()
+        user
+    } <span class="kw">else</span> {
+        cursor.<span class="fn">close</span>()
+        <span class="kw">null</span>       <span class="cm">// null signals login failure to the UI</span>
+    }
+}</code></pre>
+
+<div class="infobox">
+  <strong>Parameterised queries</strong> (<code>?</code> placeholders with a separate argument array) are used to prevent <strong>SQL injection attacks</strong>. Never concatenate user input directly into a query string.
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     8. BOOKING LOGIC
+═══════════════════════════════════════════════════════════ -->
+<h2>8. Event Booking Logic</h2>
+
+<p>Booking is the core transaction of the app. When a user taps <em>Book ticket</em>, the system must: verify the user is logged in, check for duplicate bookings, decrement available slots, insert a booking row, and generate a unique ticket number — all atomically.</p>
+
+<h3>8.1 UI Flow</h3>
+<p>Three dialog states control the booking experience on the Event Detail screen:</p>
+
+<pre><code><span class="kw">var</span> showConfirmDialog <span class="kw">by</span> <span class="fn">remember</span> { <span class="fn">mutableStateOf</span>(<span class="kw">false</span>) }
+<span class="kw">var</span> showSuccessDialog <span class="kw">by</span> <span class="fn">remember</span> { <span class="fn">mutableStateOf</span>(<span class="kw">false</span>) }
+<span class="kw">var</span> showLoginPrompt   <span class="kw">by</span> <span class="fn">remember</span> { <span class="fn">mutableStateOf</span>(<span class="kw">false</span>) }
+<span class="kw">var</span> bookedTicketNo    <span class="kw">by</span> <span class="fn">remember</span> { <span class="fn">mutableStateOf</span>(<span class="str">""</span>) }
+<span class="kw">var</span> alreadyBooked     <span class="kw">by</span> <span class="fn">remember</span> {
+    <span class="fn">mutableStateOf</span>(currentUser?.<span class="fn">let</span> { db.<span class="fn">isAlreadyBooked</span>(it.id, event.id) } ?: <span class="kw">false</span>)
+}
+
+<span class="cm">// Book button click handler</span>
+onClick = {
+    <span class="kw">when</span> {
+        currentUser == <span class="kw">null</span>  -> showLoginPrompt   = <span class="kw">true</span>
+        alreadyBooked        -> { <span class="cm">/* do nothing */</span> }
+        <span class="kw">else</span>                 -> showConfirmDialog = <span class="kw">true</span>
+    }
+}</code></pre>
+
+<h3>8.2 Confirm Dialog → Book</h3>
+<pre><code><span class="ty">AlertDialog</span>(
+    title = { <span class="fn">Text</span>(<span class="str">"Confirm booking"</span>) },
+    text  = { <span class="fn">Text</span>(<span class="str">"Book 1 ticket for ${event.title}?\nPrice: ${event.price}"</span>) },
+    confirmButton = {
+        <span class="ty">Button</span>(onClick = {
+            showConfirmDialog = <span class="kw">false</span>
+            <span class="kw">val</span> ticketNo = db.<span class="fn">bookEvent</span>(currentUser!!.id, event.id)
+            <span class="kw">if</span> (ticketNo != <span class="kw">null</span>) {
+                bookedTicketNo = ticketNo
+                alreadyBooked  = <span class="kw">true</span>
+                showSuccessDialog = <span class="kw">true</span>
+            }
+        }) { <span class="fn">Text</span>(<span class="str">"Confirm"</span>) }
+    }
+)</code></pre>
+
+<h3>8.3 bookEvent() — The Database Transaction</h3>
+<pre><code><span class="kw">fun</span> <span class="fn">bookEvent</span>(userId: <span class="ty">Int</span>, eventId: <span class="ty">Int</span>): <span class="ty">String</span>? {
+    <span class="cm">// Generate a ticket number like BKF-2025-4817</span>
+    <span class="kw">val</span> ticketNo = <span class="str">"BKF-2025-${(1000..9999).random()}"</span>
+
+    <span class="kw">val</span> cv = <span class="ty">ContentValues</span>().<span class="fn">apply</span> {
+        <span class="fn">put</span>(<span class="str">"userId"</span>,   userId)
+        <span class="fn">put</span>(<span class="str">"eventId"</span>,  eventId)
+        <span class="fn">put</span>(<span class="str">"ticketNo"</span>, ticketNo)
+        <span class="fn">put</span>(<span class="str">"status"</span>,   <span class="str">"upcoming"</span>)
+    }
+
+    <span class="kw">val</span> insertedId = writableDatabase.<span class="fn">insert</span>(<span class="str">"bookings"</span>, <span class="kw">null</span>, cv)
+
+    <span class="kw">if</span> (insertedId != -<span class="num">1</span>L) {
+        <span class="cm">// Decrement the available slots for this event</span>
+        writableDatabase.<span class="fn">execSQL</span>(
+            <span class="str">"UPDATE events SET slotsLeft = slotsLeft - 1 WHERE id=?"</span>,
+            <span class="fn">arrayOf</span>(eventId)
+        )
+    }
+
+    <span class="kw">return if</span> (insertedId != -<span class="num">1</span>L) ticketNo <span class="kw">else null</span>
+}</code></pre>
+
+<h3>8.4 Duplicate Booking Prevention</h3>
+<pre><code><span class="kw">fun</span> <span class="fn">isAlreadyBooked</span>(userId: <span class="ty">Int</span>, eventId: <span class="ty">Int</span>): <span class="ty">Boolean</span> {
+    <span class="kw">val</span> cursor = readableDatabase.<span class="fn">rawQuery</span>(
+        <span class="str">"SELECT id FROM bookings WHERE userId=? AND eventId=?"</span>,
+        <span class="fn">arrayOf</span>(userId.toString(), eventId.toString())
+    )
+    <span class="kw">val</span> result = cursor.<span class="fn">moveToFirst</span>()
+    cursor.<span class="fn">close</span>()
+    <span class="kw">return</span> result   <span class="cm">// true = row exists = already booked</span>
+}</code></pre>
+
+<p>This result is checked when the Event Detail screen opens. If true, the <em>Book ticket</em> button renders in green with the text <strong>"✓ Already booked"</strong> and is disabled.</p>
+
+<h3>8.5 Success Modal</h3>
+<p>After a successful booking, a modal dialog displays the generated ticket number:</p>
+
+<pre><code><span class="kw">if</span> (showSuccessDialog) {
+    <span class="ty">Dialog</span>(onDismissRequest = {}) {
+        <span class="ty">Column</span>(horizontalAlignment = <span class="ty">Alignment</span>.CenterHorizontally) {
+            <span class="ty">Icon</span>(<span class="ty">Icons</span>.Default.Check, ..., tint = <span class="ty">Color</span>(<span class="num">0xFF4CAF50</span>))
+            <span class="fn">Text</span>(<span class="str">"Booked!"</span>)
+            <span class="fn">Text</span>(<span class="str">"Your ticket has been confirmed."</span>)
+            <span class="fn">Text</span>(bookedTicketNo, color = Amber, fontWeight = <span class="ty">FontWeight</span>.Bold)
+            <span class="ty">Button</span>(onClick = { showSuccessDialog = <span class="kw">false</span>; <span class="fn">onBookingSuccess</span>() }) {
+                <span class="fn">Text</span>(<span class="str">"View my tickets"</span>)
+            }
+        }
+    }
+}</code></pre>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     9. PRIVATE EVENTS
+═══════════════════════════════════════════════════════════ -->
+<h2>9. Private Event Access</h2>
+
+<p>Events marked <code>isPrivate = 1</code> in the database do not appear on the public Home feed. They are accessible only via an invite code or an invite link (e.g. <code>bookify.app/invite/DIT2025</code>).</p>
+
+<h3>9.1 Lookup by Invite Code</h3>
+<pre><code><span class="kw">fun</span> <span class="fn">getEventByInviteCode</span>(code: <span class="ty">String</span>): <span class="ty">Event</span>? {
+    <span class="kw">val</span> cursor = readableDatabase.<span class="fn">rawQuery</span>(
+        <span class="str">"SELECT * FROM events WHERE inviteCode=?"</span>,
+        <span class="fn">arrayOf</span>(code)
+    )
+    <span class="kw">val</span> event = <span class="kw">if</span> (cursor.<span class="fn">moveToFirst</span>()) <span class="fn">cursorToEvent</span>(cursor) <span class="kw">else null</span>
+    cursor.<span class="fn">close</span>()
+    <span class="kw">return</span> event
+}</code></pre>
+
+<h3>9.2 Paste-Link Parsing</h3>
+<p>If the user pastes a full link instead of just the code, the code is extracted from the end of the URL path:</p>
+
+<pre><code><span class="ty">Button</span>(onClick = {
+    <span class="kw">val</span> code = <span class="kw">when</span> {
+        accessCode.<span class="fn">isNotBlank</span>() -> accessCode.<span class="fn">trim</span>()
+        pasteLink.<span class="fn">isNotBlank</span>()  -> pasteLink.<span class="fn">substringAfterLast</span>(<span class="str">"/"</span>).<span class="fn">trim</span>()
+        <span class="kw">else</span>                    -> <span class="str">""</span>
+    }
+    <span class="kw">if</span> (code.<span class="fn">isEmpty</span>()) {
+        errorMessage = <span class="str">"Enter an access code or paste an invite link"</span>
+    } <span class="kw">else</span> {
+        <span class="kw">val</span> event = db.<span class="fn">getEventByInviteCode</span>(code)
+        <span class="kw">if</span> (event != <span class="kw">null</span>) <span class="fn">onEventFound</span>(event)
+        <span class="kw">else</span> errorMessage = <span class="str">"Invalid code. Please check and try again."</span>
+    }
+})</code></pre>
+
+<p>Once found, <code>onEventFound(event)</code> navigates to the Event Detail screen where the user can book the private event the same way as a public one.</p>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     10. MY TICKETS
+═══════════════════════════════════════════════════════════ -->
+<h2>10. My Tickets</h2>
+
+<p>The My Tickets screen fetches all bookings for the current user using a SQL <code>JOIN</code> between the <code>bookings</code> and <code>events</code> tables. This avoids making two separate queries and returns all display data in one call:</p>
+
+<pre><code><span class="kw">fun</span> <span class="fn">getUserBookings</span>(userId: <span class="ty">Int</span>): <span class="ty">List</span>&lt;<span class="ty">Booking</span>&gt; {
+    <span class="kw">val</span> list   = <span class="fn">mutableListOf</span>&lt;<span class="ty">Booking</span>&gt;()
+    <span class="kw">val</span> cursor = readableDatabase.<span class="fn">rawQuery</span>(<span class="str">"""
+        SELECT b.id, b.ticketNo, b.status,
+               e.title, e.date, e.time, e.category, e.cardColorHex
+        FROM   bookings b
+        JOIN   events   e ON b.eventId = e.id
+        WHERE  b.userId = ?
+        ORDER  BY b.id DESC
+    """</span>, <span class="fn">arrayOf</span>(userId.toString()))
+
+    <span class="kw">while</span> (cursor.<span class="fn">moveToNext</span>()) {
+        list.<span class="fn">add</span>(<span class="ty">Booking</span>(
+            id            = cursor.<span class="fn">getInt</span>(<span class="num">0</span>),
+            ticketNo      = cursor.<span class="fn">getString</span>(<span class="num">1</span>),
+            status        = cursor.<span class="fn">getString</span>(<span class="num">2</span>),
+            eventTitle    = cursor.<span class="fn">getString</span>(<span class="num">3</span>),
+            eventDate     = cursor.<span class="fn">getString</span>(<span class="num">4</span>),
+            eventTime     = cursor.<span class="fn">getString</span>(<span class="num">5</span>),
+            eventCategory = cursor.<span class="fn">getString</span>(<span class="num">6</span>),
+            cardColorHex  = cursor.<span class="fn">getString</span>(<span class="num">7</span>)
+        ))
+    }
+    cursor.<span class="fn">close</span>()
+    <span class="kw">return</span> list
+}</code></pre>
+
+<p>On the UI side, bookings are split into <em>Upcoming</em> and <em>Past</em> lists using a simple Kotlin <code>filter</code>, and the active tab controls which list is shown:</p>
+
+<pre><code><span class="kw">val</span> upcoming  = bookings.<span class="fn">filter</span> { it.status == <span class="str">"upcoming"</span> }
+<span class="kw">val</span> past      = bookings.<span class="fn">filter</span> { it.status == <span class="str">"past"</span>     }
+<span class="kw">val</span> displayed = <span class="kw">if</span> (selectedTab == <span class="num">0</span>) upcoming <span class="kw">else</span> past</code></pre>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     11. KEY COMPOSE CONCEPTS USED
+═══════════════════════════════════════════════════════════ -->
+<h2>11. Key Jetpack Compose Concepts Used</h2>
+
+<table>
+  <tr><th>Concept</th><th>Where Used</th><th>What It Does</th></tr>
+  <tr>
+    <td><code>remember { }</code></td>
+    <td>All screens</td>
+    <td>Stores state across recompositions without re-initialising</td>
+  </tr>
+  <tr>
+    <td><code>mutableStateOf</code></td>
+    <td>All screens</td>
+    <td>Reactive variable — any change triggers UI update</td>
+  </tr>
+  <tr>
+    <td><code>mutableIntStateOf</code></td>
+    <td>Nav, tabs</td>
+    <td>Memory-efficient reactive integer (avoids boxing)</td>
+  </tr>
+  <tr>
+    <td><code>Scaffold</code></td>
+    <td>Home, Tickets</td>
+    <td>Provides slots for topBar, bottomBar, content with correct padding</td>
+  </tr>
+  <tr>
+    <td><code>LazyColumn</code></td>
+    <td>Home feed, Tickets</td>
+    <td>Efficiently renders only visible list items</td>
+  </tr>
+  <tr>
+    <td><code>LazyRow</code></td>
+    <td>Category chips</td>
+    <td>Horizontal scrolling list</td>
+  </tr>
+  <tr>
+    <td><code>Modifier.weight()</code></td>
+    <td>Event Detail</td>
+    <td>Makes scrollable area fill remaining space between fixed hero and bottom bar</td>
+  </tr>
+  <tr>
+    <td><code>verticalScroll</code></td>
+    <td>Register, Event Detail</td>
+    <td>Makes a Column scrollable (for long-form content)</td>
+  </tr>
+  <tr>
+    <td><code>BackHandler</code></td>
+    <td>MainActivity</td>
+    <td>Intercepts Android's physical/gesture back button</td>
+  </tr>
+  <tr>
+    <td><code>statusBarsPadding()</code></td>
+    <td>All screens</td>
+    <td>Adds padding equal to status bar height for edge-to-edge layouts</td>
+  </tr>
+  <tr>
+    <td><code>drawBehind</code></td>
+    <td>Ticket card</td>
+    <td>Low-level Canvas drawing API for the dashed divider line</td>
+  </tr>
+  <tr>
+    <td><code>Dialog</code></td>
+    <td>Event Detail</td>
+    <td>Floating overlay for booking confirmation and success</td>
+  </tr>
+  <tr>
+    <td><code>AlertDialog</code></td>
+    <td>Event Detail</td>
+    <td>Material 3 confirm/cancel dialog</td>
+  </tr>
+</table>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     12. SUMMARY
+═══════════════════════════════════════════════════════════ -->
+<h2>12. Summary</h2>
+
+<div class="infobox green">
+  <strong>Bookify implements a complete CRUD lifecycle:</strong><br><br>
+  <strong>Create</strong> — Register user, book event, generate ticket<br>
+  <strong>Read</strong> — Load public events, load user bookings, look up private events<br>
+  <strong>Update</strong> — Decrement event slots on booking<br>
+  <strong>Delete</strong> — (Logout clears session state in memory — no DB delete needed)
+</div>
+
+<p>All data lives in a <strong>single SQLite file</strong> on the device (<code>bookify.db</code>) with three relational tables: <code>users</code>, <code>events</code>, and <code>bookings</code>. The app is fully offline-capable with no network dependency.</p>
+
+<p>The UI is 100% declarative Jetpack Compose — no XML, no <code>ViewBinding</code>, no <code>RecyclerView</code>. State flows down from <code>BookifyApp()</code> through callbacks, keeping screens loosely coupled and testable.</p>
+
+<hr>
+
+<p style="text-align:center; color:#aaa; font-size:10pt; margin-top:32px;">
+  Bookify &nbsp;·&nbsp; Group No. 8 &nbsp;·&nbsp; DIT OD23IT &nbsp;·&nbsp; June 2026<br>
+  Built with Kotlin · Jetpack Compose · Material 3 · SQLite
+</p>
+
+</body>
+</html>
