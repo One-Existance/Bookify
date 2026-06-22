@@ -11,48 +11,40 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.bookify.ui.theme.BookifyTheme
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.bookify.data.DatabaseHelper
 import com.example.bookify.data.Event
 import com.example.bookify.data.User
 import com.example.bookify.ui.theme.*
 
-private data class NavItem(val label: String, val icon: ImageVector)
+private fun parseHexColor(hex: String): Color {
+    return try {
+        val value = hex.trimStart('#').toLong(16) or 0xFF000000.toLong()
+        Color(value)
+    } catch (e: Exception) {
+        Color(0xFF251F5C)
+    }
+}
 
 @Composable
 fun HomeFeedScreen(
-    db: DatabaseHelper,
-    currentUser: User? = null,
-    selectedNav: Int = 0,
-    onNavSelected: (Int) -> Unit = {},
-    onEventClick: (Event) -> Unit = {}
+    events: List<Event>,
+    currentUser: User? = null
 ) {
-    val events = remember { db.getAllPublicEvents() }
-
     val allCategories = listOf("All") + events.map { it.category }.distinct()
     var selectedCategory by remember { mutableStateOf("All") }
 
     val displayed = if (selectedCategory == "All") events
     else events.filter { it.category == selectedCategory }
 
-    val navItems = listOf(
-        NavItem("Home", Icons.Default.Home),
-        NavItem("Explore", Icons.Default.Search),
-        NavItem("Tickets", Icons.Default.ConfirmationNumber),
-        NavItem("Profile", Icons.Default.Person)
-    )
-
-    val greeting = when (java.util.Calendar.getInstance().get(java.util.Calendar.HOUR_OF_DAY)) {
+    val hour = java.util.Calendar.getInstance().get(java.util.Calendar.HOUR_OF_DAY)
+    val greeting = when (hour) {
         in 0..11 -> "Good morning,"
         in 12..16 -> "Good afternoon,"
         else -> "Good evening,"
@@ -60,38 +52,7 @@ fun HomeFeedScreen(
     val displayName = currentUser?.fullName?.split(" ")?.firstOrNull() ?: "Guest"
 
     Scaffold(
-        containerColor = BackgroundDark,
-        bottomBar = {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(SurfaceDark)
-                    .navigationBarsPadding()
-                    .padding(vertical = 12.dp)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceAround
-                ) {
-                    navItems.forEachIndexed { index, item ->
-                        val active = index == selectedNav
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.clickable { onNavSelected(index) }
-                        ) {
-                            Icon(
-                                imageVector = item.icon,
-                                contentDescription = item.label,
-                                tint = if (active) PrimaryPurple else TextMuted,
-                                modifier = Modifier.size(22.dp)
-                            )
-                            Spacer(Modifier.height(4.dp))
-                            Text(item.label, color = if (active) PrimaryPurple else TextMuted, fontSize = 11.sp)
-                        }
-                    }
-                }
-            }
-        }
+        containerColor = BackgroundDark
     ) { innerPadding ->
         LazyColumn(
             modifier = Modifier
@@ -196,7 +157,7 @@ fun HomeFeedScreen(
                 }
             } else {
                 items(displayed.size) { i ->
-                    EventFeedCard(event = displayed[i], onClick = { onEventClick(displayed[i]) })
+                    EventFeedCard(event = displayed[i])
                     Spacer(Modifier.height(14.dp))
                 }
             }
@@ -205,7 +166,7 @@ fun HomeFeedScreen(
 }
 
 @Composable
-private fun EventFeedCard(event: Event, onClick: () -> Unit) {
+private fun EventFeedCard(event: Event) {
     val cardBg = parseHexColor(event.cardColorHex)
     Box(
         modifier = Modifier
@@ -213,7 +174,6 @@ private fun EventFeedCard(event: Event, onClick: () -> Unit) {
             .padding(horizontal = 20.dp)
             .clip(RoundedCornerShape(18.dp))
             .background(cardBg)
-            .clickable { onClick() }
             .padding(20.dp)
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -256,5 +216,21 @@ private fun EventFeedCard(event: Event, onClick: () -> Unit) {
                 }
             }
         }
+    }
+}
+
+private val previewEvents = listOf(
+    Event(1, "Sauti Sol Live in DSM", "Mlimani City Ground", "Jun 20, 2025", "7:00 PM", "Concert", "Tsh 15,000", 48, "", false, null, "251F5C"),
+    Event(2, "DSM Tech Conference 2025", "Julius Nyerere CC", "Jun 25, 2025", "9:00 AM", "Conference", "Tsh 30,000", 120, "", false, null, "1A3D2B")
+)
+
+@Preview(showBackground = true, backgroundColor = 0xFF0F0C1F, widthDp = 393, heightDp = 851)
+@Composable
+fun HomeFeedScreenPreview() {
+    BookifyTheme {
+        HomeFeedScreen(
+            events = previewEvents,
+            currentUser = User(1, "Sarah Mahwera", "sarah@example.com", "+255700000000")
+        )
     }
 }

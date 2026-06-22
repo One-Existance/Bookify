@@ -143,9 +143,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "bookify.db",
 
     fun getAllPublicEvents(): List<Event> {
         val list = mutableListOf<Event>()
-        val cursor = readableDatabase.rawQuery(
-            "SELECT * FROM events WHERE isPrivate=0", null
-        )
+        val cursor = readableDatabase.rawQuery("SELECT * FROM events WHERE isPrivate=0", null)
         while (cursor.moveToNext()) list.add(cursorToEvent(cursor))
         cursor.close()
         return list
@@ -166,9 +164,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "bookify.db",
     }
 
     fun bookEvent(userId: Int, eventId: Int): String? {
-        val ticketNo = "BKF-${System.currentTimeMillis() % 10000000}".let {
-            "BKF-2025-${(1000..9999).random()}"
-        }
+        val ticketNo = "BKF-2025-${(1000..9999).random()}"
         val cv = ContentValues().apply {
             put("userId", userId)
             put("eventId", eventId)

@@ -20,6 +20,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.bookify.data.DatabaseHelper
@@ -27,12 +28,43 @@ import com.example.bookify.data.User
 import com.example.bookify.ui.theme.*
 
 @Composable
+fun BookifyTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    leadingIcon: @Composable (() -> Unit)? = null,
+    trailingIcon: @Composable (() -> Unit)? = null,
+    keyboardType: KeyboardType = KeyboardType.Text,
+    visualTransformation: VisualTransformation = VisualTransformation.None
+) {
+    OutlinedTextField(
+        value = value,
+        onValueChange = onValueChange,
+        label = { Text(label, color = TextMuted, fontSize = 13.sp) },
+        leadingIcon = leadingIcon,
+        trailingIcon = trailingIcon,
+        visualTransformation = visualTransformation,
+        keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+        modifier = Modifier.fillMaxWidth(),
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedBorderColor = PrimaryPurple,
+            unfocusedBorderColor = SurfaceDark,
+            focusedTextColor = Color.White,
+            unfocusedTextColor = Color.White,
+            cursorColor = PrimaryPurple,
+            focusedContainerColor = SurfaceDark,
+            unfocusedContainerColor = SurfaceDark
+        ),
+        shape = RoundedCornerShape(12.dp)
+    )
+}
+
+@Composable
 fun LoginScreen(
-    db: DatabaseHelper,
+    db: DatabaseHelper?,
     onLoginSuccess: (User) -> Unit,
     onNavigateToRegister: () -> Unit
 ) {
-
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
@@ -70,8 +102,8 @@ fun LoginScreen(
 
             Spacer(Modifier.height(24.dp))
 
-            Text("Welcome back", color = Color.White, fontSize = 26.sp, fontWeight = FontWeight.Bold)
-            Text("Log in to your Bookify account", color = TextMuted, fontSize = 14.sp, textAlign = TextAlign.Center)
+            Text("BOOKIFY", color = Color.White, fontSize = 26.sp, fontWeight = FontWeight.Bold)
+            Text("Book Events Anywhere In Tanzania", color = TextMuted, fontSize = 14.sp, textAlign = TextAlign.Center)
 
             Spacer(Modifier.height(36.dp))
 
@@ -116,7 +148,7 @@ fun LoginScreen(
                         password.isBlank() -> errorMessage = "Please enter your password"
                         else -> {
                             isLoading = true
-                            val user = db.loginUser(email.trim(), password)
+                            val user = db?.loginUser(email.trim(), password)
                             isLoading = false
                             if (user != null) onLoginSuccess(user)
                             else errorMessage = "Invalid email or password"
@@ -141,5 +173,17 @@ fun LoginScreen(
                 }
             }
         }
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF0F0C1F, widthDp = 393, heightDp = 851)
+@Composable
+fun LoginScreenPreview() {
+    BookifyTheme {
+        LoginScreen(
+            db = null,
+            onLoginSuccess = {},
+            onNavigateToRegister = {}
+        )
     }
 }
