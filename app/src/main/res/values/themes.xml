@@ -1,5 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <style name="Theme.Bookify" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/primary_purple</item>
+        <item name="colorPrimaryContainer">@color/surface_dark</item>
+        <item name="colorSecondary">@color/amber</item>
+        <item name="android:windowBackground">@color/background_dark</item>
+        <item name="android:statusBarColor">@color/background_dark</item>
+        <item name="android:navigationBarColor">@color/background_dark</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
 
-    <style name="Theme.Bookify" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="BookifyButton" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">@color/primary_purple</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="cornerRadius">14dp</item>
+    </style>
+
+    <style name="BookifyTextField" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/primary_purple</item>
+        <item name="hintTextColor">@color/text_muted</item>
+        <item name="boxBackgroundColor">@color/surface_dark</item>
+        <item name="android:textColorHint">@color/text_muted</item>
+    </style>
 </resources>

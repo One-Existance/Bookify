@@ -1,3 +1,38 @@
 <resources>
     <string name="app_name">Bookify</string>
+
+    <string name="login_title">BOOKIFY</string>
+    <string name="login_subtitle">Book Events Anywhere In Tanzania</string>
+    <string name="hint_email">Email address</string>
+    <string name="hint_password">Password</string>
+    <string name="btn_login">Log in</string>
+    <string name="login_no_account">Don\'t have an account? </string>
+    <string name="login_sign_up">Sign up</string>
+
+    <string name="register_title">Create Account</string>
+    <string name="register_subtitle">Join Bookify and start booking events</string>
+    <string name="hint_full_name">Full name</string>
+    <string name="hint_phone">Phone number</string>
+    <string name="btn_register">Create account</string>
+    <string name="register_have_account">Already have an account? </string>
+
+    <string name="greeting_morning">Good morning,</string>
+    <string name="greeting_afternoon">Good afternoon,</string>
+    <string name="greeting_evening">Good evening,</string>
+    <string name="default_guest">Guest ✨</string>
+    <string name="default_avatar">GU</string>
+    <string name="search_icon">🔍</string>
+    <string name="search_hint">Search events near you...</string>
+    <string name="nearby_events">Nearby events</string>
+    <string name="see_all">See all →</string>
+    <string name="event_icon">🎵</string>
+    <string name="location_icon">📍</string>
+
+    <string name="error_enter_full_name">Please enter your full name</string>
+    <string name="error_enter_email">Please enter your email</string>
+    <string name="error_enter_phone">Please enter your phone number</string>
+    <string name="error_enter_password">Please enter a password</string>
+    <string name="error_enter_login_password">Please enter your password</string>
+    <string name="error_invalid_credentials">Invalid email or password</string>
+    <string name="error_email_registered">Email already registered</string>
 </resources>
