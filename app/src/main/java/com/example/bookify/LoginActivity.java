@@ -5,16 +5,15 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.bookify.data.DatabaseHelper;
 import com.example.bookify.data.User;
-import com.google.android.material.textfield.TextInputEditText;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private TextInputEditText etEmail, etPassword;
+    private EditText etEmail, etPassword;
     private TextView tvError;
     private DatabaseHelper db;
 
@@ -28,9 +27,9 @@ public class LoginActivity extends AppCompatActivity {
         etPassword= findViewById(R.id.et_password);
         tvError   = findViewById(R.id.tv_error);
 
-        ((Button) findViewById(R.id.btn_login)).setOnClickListener(v -> attemptLogin());
+        findViewById(R.id.btn_login).setOnClickListener(v -> attemptLogin());
 
-        ((TextView) findViewById(R.id.tv_signup_link)).setOnClickListener(v -> {
+        findViewById(R.id.tv_signup_link).setOnClickListener(v -> {
             startActivity(new Intent(this, RegisterActivity.class));
             finish();
         });
@@ -45,9 +44,16 @@ public class LoginActivity extends AppCompatActivity {
 
         User user = db.loginUser(email, password);
         if (user != null) {
-            saveSession(user.getId(), user.getFullName(), user.getEmail());
-            Intent intent = new Intent(this, HomeFeedActivity.class);
-            intent.putExtra("user_name", user.getFullName());
+            saveSession(user.getId(), user.getFullName(), user.getEmail(), user.isAdmin());
+            
+            Intent intent;
+            if (user.isAdmin()) {
+                intent = new Intent(this, AdminActivity.class);
+            } else {
+                intent = new Intent(this, HomeFeedActivity.class);
+                intent.putExtra("user_name", user.getFullName());
+            }
+
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
         } else {
@@ -55,11 +61,12 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    private void saveSession(int userId, String name, String email) {
+    private void saveSession(int userId, String name, String email, boolean isAdmin) {
         getSharedPreferences("bookify_session", MODE_PRIVATE).edit()
                 .putInt("user_id", userId)
                 .putString("user_name", name)
                 .putString("user_email", email)
+                .putBoolean("is_admin", isAdmin)
                 .apply();
     }
 

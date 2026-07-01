@@ -74,6 +74,23 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         holder.tvCategory.setText(event.getCategory());
         holder.tvPrice.setText(event.getPrice());
 
+        // Handle image visibility
+        if (event.getImageUrl() != null && !event.getImageUrl().isEmpty()) {
+            holder.ivImage.setVisibility(View.VISIBLE);
+            holder.tvIcon.setVisibility(View.GONE);
+            try {
+                holder.ivImage.setImageURI(android.net.Uri.parse(event.getImageUrl()));
+            } catch (Exception e) {
+                holder.ivImage.setVisibility(View.GONE);
+                holder.tvIcon.setVisibility(View.VISIBLE);
+            }
+        } else {
+            holder.ivImage.setVisibility(View.GONE);
+            holder.tvIcon.setVisibility(View.VISIBLE);
+            holder.tvIcon.setText(event.getCategory().equalsIgnoreCase("Concert") ? "🎵" : 
+                                 event.getCategory().equalsIgnoreCase("Sports") ? "⚽" : "🏛️");
+        }
+
         int bgRes = event.getCategory().equalsIgnoreCase("Concert")
                 ? R.drawable.bg_card_purple : R.drawable.bg_card_green;
         holder.itemView.setBackgroundResource(bgRes);
@@ -87,7 +104,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     public int getItemCount() { return filteredEvents.size(); }
 
     static class EventViewHolder extends RecyclerView.ViewHolder {
-        TextView tvTitle, tvLocationDate, tvCategory, tvPrice;
+        TextView tvTitle, tvLocationDate, tvCategory, tvPrice, tvIcon;
+        android.widget.ImageView ivImage;
 
         EventViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -95,6 +113,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
             tvLocationDate = itemView.findViewById(R.id.tv_event_location_date);
             tvCategory     = itemView.findViewById(R.id.tv_event_category);
             tvPrice        = itemView.findViewById(R.id.tv_event_price);
+            tvIcon         = itemView.findViewById(R.id.tv_icon_placeholder);
+            ivImage        = itemView.findViewById(R.id.iv_event_image);
         }
     }
 }

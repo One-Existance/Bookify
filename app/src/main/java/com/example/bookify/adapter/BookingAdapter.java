@@ -1,5 +1,6 @@
 package com.example.bookify.adapter;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,6 +8,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.bookify.R;
+import com.example.bookify.TicketDetailActivity;
 import com.example.bookify.data.Booking;
 import java.util.List;
 
@@ -35,9 +37,20 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
         holder.tvTicketNumber.setText(b.getTicketNumber());
         holder.tvPrice.setText(b.getEventPrice());
 
+        // For QR code, we can use a placeholder or a dynamic URL if using Glide/Picasso
+        // Here we just ensure the view exists as it was updated in the layout
+
         int bgRes = b.getEventCategory().equalsIgnoreCase("Concert")
                 ? R.drawable.bg_card_purple : R.drawable.bg_card_green;
         holder.itemView.setBackgroundResource(bgRes);
+
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(v.getContext(), TicketDetailActivity.class);
+            intent.putExtra("event_title", b.getEventTitle());
+            intent.putExtra("event_info", b.getEventCategory() + " | " + b.getEventDate());
+            intent.putExtra("ticket_number", b.getTicketNumber());
+            v.getContext().startActivity(intent);
+        });
     }
 
     @Override

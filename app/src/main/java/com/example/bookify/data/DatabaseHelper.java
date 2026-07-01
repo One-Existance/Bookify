@@ -12,7 +12,7 @@ import java.util.Random;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DB_NAME    = "bookify.db";
-    private static final int    DB_VERSION = 1;
+    private static final int    DB_VERSION = 5;
 
     public DatabaseHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -25,7 +25,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "full_name TEXT NOT NULL," +
                 "email TEXT NOT NULL UNIQUE," +
                 "password TEXT NOT NULL," +
-                "phone TEXT)");
+                "phone TEXT," +
+                "is_admin INTEGER DEFAULT 0)");
 
         db.execSQL("CREATE TABLE events (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -34,17 +35,33 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "date TEXT NOT NULL," +
                 "category TEXT NOT NULL," +
                 "price TEXT NOT NULL," +
-                "is_private INTEGER DEFAULT 0)");
+                "is_private INTEGER DEFAULT 0," +
+                "image_url TEXT," +
+                "time TEXT," +
+                "slots TEXT," +
+                "description TEXT)");
 
         db.execSQL("CREATE TABLE bookings (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "user_id INTEGER NOT NULL," +
                 "event_id INTEGER NOT NULL," +
                 "ticket_number TEXT NOT NULL," +
+                "status TEXT DEFAULT 'PENDING'," +
                 "FOREIGN KEY(user_id) REFERENCES users(id)," +
                 "FOREIGN KEY(event_id) REFERENCES events(id))");
 
         seedEvents(db);
+        seedAdmin(db);
+    }
+
+    private void seedAdmin(SQLiteDatabase db) {
+        ContentValues cv = new ContentValues();
+        cv.put("full_name", "Admin User");
+        cv.put("email", "admin@gmail.com");
+        cv.put("password", "123456");
+        cv.put("phone", "0700000000");
+        cv.put("is_admin", 1);
+        db.insert("users", null, cv);
     }
 
     @Override
@@ -71,6 +88,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put("category", category);
         cv.put("price", price);
         cv.put("is_private", isPrivate ? 1 : 0);
+        cv.put("image_url", ""); // Default empty
         db.insert("events", null, cv);
     }
 
@@ -87,10 +105,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public User loginUser(String email, String password) {
         Cursor c = getReadableDatabase().rawQuery(
-                "SELECT id, full_name, email, phone FROM users WHERE email=? AND password=?",
+                "SELECT id, full_name, email, phone, is_admin FROM users WHERE email=? AND password=?",
                 new String[]{email, password});
         if (c.moveToFirst()) {
-            User user = new User(c.getInt(0), c.getString(1), c.getString(2), c.getString(3));
+            User user = new User(c.getInt(0), c.getString(1), c.getString(2), c.getString(3), c.getInt(4) == 1);
             c.close();
             return user;
         }
@@ -109,22 +127,46 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // ── Event methods ─────────────────────────────────────────────────────────
 
     public List<Event> getAllEvents() {
-        return queryEvents("SELECT id, title, location, date, category, price, is_private FROM events WHERE is_private=0", null);
+        return queryEvents("SELECT id, title, location, date, category, price, is_private, image_url, time, slots, description FROM events WHERE is_private=0", null);
     }
 
     public List<Event> searchEvents(String query) {
         String like = "%" + query + "%";
         return queryEvents(
-                "SELECT id, title, location, date, category, price, is_private FROM events WHERE is_private=0 AND (title LIKE ? OR location LIKE ? OR category LIKE ?)",
+                "SELECT id, title, location, date, category, price, is_private, image_url, time, slots, description FROM events WHERE is_private=0 AND (title LIKE ? OR location LIKE ? OR category LIKE ?)",
                 new String[]{like, like, like});
+    }
+
+    public long addEvent(String title, String location, String date, String category,
+                         String price, boolean isPrivate, String imageUrl,
+                         String time, String slots, String description) {
+        ContentValues cv = new ContentValues();
+        cv.put("title", title);
+        cv.put("location", location);
+        cv.put("date", date);
+        cv.put("category", category);
+        cv.put("price", price);
+        cv.put("is_private", isPrivate ? 1 : 0);
+        cv.put("image_url", imageUrl);
+        cv.put("time", time);
+        cv.put("slots", slots);
+        cv.put("description", description);
+        return getWritableDatabase().insert("events", null, cv);
+    }
+
+    public void deleteEvent(int eventId) {
+        getWritableDatabase().delete("events", "id=?", new String[]{String.valueOf(eventId)});
     }
 
     private List<Event> queryEvents(String sql, String[] args) {
         List<Event> list = new ArrayList<>();
         Cursor c = getReadableDatabase().rawQuery(sql, args);
         while (c.moveToNext()) {
-            list.add(new Event(c.getInt(0), c.getString(1), c.getString(2),
-                    c.getString(3), c.getString(4), c.getString(5), c.getInt(6) == 1));
+            list.add(new Event(
+                    c.getInt(0), c.getString(1), c.getString(2),
+                    c.getString(3), c.getString(4), c.getString(5),
+                    c.getInt(6) == 1, c.getString(7),
+                    c.getString(8), c.getString(9), c.getString(10)));
         }
         c.close();
         return list;
@@ -149,12 +191,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put("user_id", userId);
         cv.put("event_id", eventId);
         cv.put("ticket_number", ticket);
+        cv.put("status", "PENDING");
         return getWritableDatabase().insert("bookings", null, cv);
+    }
+
+    public void completePayment(int userId, int eventId) {
+        ContentValues cv = new ContentValues();
+        cv.put("status", "COMPLETED");
+        getWritableDatabase().update("bookings", cv, "user_id=? AND event_id=?",
+                new String[]{String.valueOf(userId), String.valueOf(eventId)});
     }
 
     public String getTicketNumber(int userId, int eventId) {
         Cursor c = getReadableDatabase().rawQuery(
-                "SELECT ticket_number FROM bookings WHERE user_id=? AND event_id=?",
+                "SELECT ticket_number FROM bookings WHERE user_id=? AND event_id=? AND status='COMPLETED'",
                 new String[]{String.valueOf(userId), String.valueOf(eventId)});
         String ticket = null;
         if (c.moveToFirst()) ticket = c.getString(0);
@@ -165,12 +215,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public List<Booking> getUserBookings(int userId) {
         List<Booking> list = new ArrayList<>();
         Cursor c = getReadableDatabase().rawQuery(
-                "SELECT b.ticket_number, e.title, e.date, e.category, e.price " +
-                "FROM bookings b JOIN events e ON b.event_id = e.id WHERE b.user_id=?",
+                "SELECT b.ticket_number, e.title, e.date, e.category, e.price, b.status " +
+                "FROM bookings b JOIN events e ON b.event_id = e.id WHERE b.user_id=? AND b.status='COMPLETED'",
                 new String[]{String.valueOf(userId)});
         while (c.moveToNext()) {
             list.add(new Booking(c.getString(0), c.getString(1), c.getString(2),
-                    c.getString(3), c.getString(4)));
+                    c.getString(3), c.getString(4), c.getString(5)));
         }
         c.close();
         return list;

@@ -3,17 +3,15 @@ package com.example.bookify;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.View;
-import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.bookify.data.DatabaseHelper;
-import com.google.android.material.textfield.TextInputEditText;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    private TextInputEditText etFullName, etEmail, etPassword, etPhone;
-    private TextView tvError;
+    private EditText etFullName, etEmail, etPassword, etConfirmPassword, etPhone;
     private DatabaseHelper db;
 
     @Override
@@ -25,29 +23,43 @@ public class RegisterActivity extends AppCompatActivity {
         etFullName  = findViewById(R.id.et_full_name);
         etEmail     = findViewById(R.id.et_email);
         etPassword  = findViewById(R.id.et_password);
+        etConfirmPassword = findViewById(R.id.et_confirm_password);
         etPhone     = findViewById(R.id.et_phone);
-        tvError     = findViewById(R.id.tv_error);
 
-        ((Button) findViewById(R.id.btn_register)).setOnClickListener(v -> attemptRegister());
+        findViewById(R.id.btn_register).setOnClickListener(v -> attemptRegister());
 
-        ((TextView) findViewById(R.id.tv_login_link)).setOnClickListener(v -> {
+        findViewById(R.id.tv_login_link).setOnClickListener(v -> {
             startActivity(new Intent(this, LoginActivity.class));
             finish();
         });
     }
 
     private void attemptRegister() {
-        String fullName = etFullName.getText() != null ? etFullName.getText().toString().trim() : "";
-        String email    = etEmail.getText()    != null ? etEmail.getText().toString().trim()    : "";
-        String password = etPassword.getText() != null ? etPassword.getText().toString().trim() : "";
-        String phone    = etPhone.getText()    != null ? etPhone.getText().toString().trim()    : "";
+        String fullName = etFullName.getText().toString().trim();
+        String email    = etEmail.getText().toString().trim();
+        String password = etPassword.getText().toString().trim();
+        String confirm  = etConfirmPassword.getText().toString().trim();
+        String phone    = etPhone.getText().toString().trim();
 
-        if (TextUtils.isEmpty(fullName)) { showError("Please enter your full name."); return; }
-        if (TextUtils.isEmpty(email))    { showError("Please enter your email.");     return; }
-        if (TextUtils.isEmpty(password)) { showError("Please enter a password.");     return; }
-        if (password.length() < 6)       { showError("Password must be at least 6 characters."); return; }
+        if (TextUtils.isEmpty(fullName) || TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
+            Toast.makeText(this, "Please fill all required fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-        if (db.emailExists(email)) { showError("An account with this email already exists."); return; }
+        if (!password.equals(confirm)) {
+            Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (password.length() < 6) {
+            Toast.makeText(this, "Password must be at least 6 characters", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (db.emailExists(email)) {
+            Toast.makeText(this, "Email already exists", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         long userId = db.registerUser(fullName, email, password, phone);
         if (userId > 0) {
@@ -62,12 +74,7 @@ public class RegisterActivity extends AppCompatActivity {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
         } else {
-            showError("Registration failed. Please try again.");
+            Toast.makeText(this, "Registration failed. Please try again.", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    private void showError(String message) {
-        tvError.setText(message);
-        tvError.setVisibility(View.VISIBLE);
     }
 }

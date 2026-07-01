@@ -55,12 +55,22 @@ public class HomeFeedActivity extends AppCompatActivity {
             intent.putExtra("event_location", event.getLocation());
             intent.putExtra("event_date",     event.getDate());
             intent.putExtra("event_price",    event.getPrice());
+            intent.putExtra("event_time",     event.getTime());
+            intent.putExtra("event_slots",    event.getSlots());
+            intent.putExtra("event_about",    event.getDescription());
+            intent.putExtra("event_image",    event.getImageUrl());
             startActivity(intent);
         });
         rvEvents.setAdapter(eventAdapter);
 
         setupCategoryChips();
         setupBottomNav();
+
+        if (prefs.getBoolean("is_admin", false)) {
+            findViewById(R.id.fab_admin).setVisibility(android.view.View.VISIBLE);
+            findViewById(R.id.fab_admin).setOnClickListener(v ->
+                    startActivity(new Intent(this, AdminActivity.class)));
+        }
     }
 
     private void setupCategoryChips() {

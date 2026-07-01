@@ -8,8 +8,19 @@
     android:orientation="vertical"
     android:padding="20dp">
 
-    <!-- Icon placeholder -->
+    <!-- Event Image -->
+    <ImageView
+        android:id="@+id/iv_event_image"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:scaleType="centerCrop"
+        android:background="@color/surface_dark"
+        android:layout_marginBottom="10dp"
+        android:visibility="gone"/>
+
+    <!-- Icon placeholder (fallback) -->
     <TextView
+        android:id="@+id/tv_icon_placeholder"
         android:layout_width="44dp"
         android:layout_height="44dp"
         android:gravity="center"

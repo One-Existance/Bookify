@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="@color/background_dark"
+    android:gravity="center_horizontal">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Mongike Checkout"
+        android:textColor="@color/white"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:layout_marginTop="40dp"
+        android:layout_marginBottom="8dp"/>
+
+    <TextView
+        android:id="@+id/tv_payment_amount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tsh 15,000"
+        android:textColor="@color/primary_purple"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="32dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Select Mobile Money Provider"
+        android:textColor="@color/text_muted"
+        android:textSize="14sp"
+        android:layout_marginBottom="12dp"/>
+
+    <RadioGroup
+        android:id="@+id/rg_network"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginBottom="24dp">
+        <RadioButton android:id="@+id/rb_mpesa" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Vodacom M-Pesa" android:textColor="@color/white" android:buttonTint="@color/primary_purple" android:checked="true"/>
+        <RadioButton android:id="@+id/rb_tigo" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Tigo Pesa" android:textColor="@color/white" android:buttonTint="@color/primary_purple"/>
+        <RadioButton android:id="@+id/rb_airtel" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Airtel Money" android:textColor="@color/white" android:buttonTint="@color/primary_purple"/>
+        <RadioButton android:id="@+id/rb_halo" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="HaloPesa" android:textColor="@color/white" android:buttonTint="@color/primary_purple"/>
+    </RadioGroup>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColorHint="@color/text_muted"
+        android:layout_marginBottom="32dp">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_phone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Phone Number (e.g. 255...)"
+            android:textColor="@color/white"
+            android:inputType="phone"
+            android:background="@color/surface_dark"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/btn_pay_now"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:text="Pay Now"
+        android:backgroundTint="@color/primary_purple"
+        android:textColor="@color/white"
+        android:textStyle="bold"/>
+
+    <ProgressBar
+        android:id="@+id/pb_loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:visibility="gone"/>
+
+</LinearLayout>

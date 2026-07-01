@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0A0A1A">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/btn_save"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Admin Dashboard"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/tv_logout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:text="Logout"
+                    android:textColor="@color/primary_purple"
+                    android:textSize="14sp" />
+            </RelativeLayout>
+
+            <!-- Image Picker -->
+            <RelativeLayout
+                android:id="@+id/layout_select_image"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:background="@drawable/bg_admin_input"
+                android:layout_marginBottom="24dp">
+                <ImageView
+                    android:id="@+id/iv_event_preview"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:alpha="0.4"
+                    android:src="@drawable/bg_qr_placeholder" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="SELECT EVENT PICTURE"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.1"/>
+            </RelativeLayout>
+
+            <EditText
+                android:id="@+id/et_title"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:background="@drawable/bg_admin_input"
+                android:hint="Event Title"
+                android:paddingHorizontal="20dp"
+                android:textColor="@color/white"
+                android:textColorHint="@color/text_muted"
+                android:textSize="15sp"
+                android:layout_marginBottom="16dp"/>
+
+            <EditText
+                android:id="@+id/et_category"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:background="@drawable/bg_admin_input"
+                android:hint="Category (e.g. Concert, Gala)"
+                android:paddingHorizontal="20dp"
+                android:textColor="@color/white"
+                android:textColorHint="@color/text_muted"
+                android:textSize="15sp"
+                android:layout_marginBottom="16dp"/>
+
+            <EditText
+                android:id="@+id/et_location"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:background="@drawable/bg_admin_input"
+                android:hint="Location"
+                android:paddingHorizontal="20dp"
+                android:textColor="@color/white"
+                android:textColorHint="@color/text_muted"
+                android:textSize="15sp"
+                android:layout_marginBottom="16dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="16dp">
+                <EditText
+                    android:id="@+id/et_date"
+                    android:layout_width="0dp"
+                    android:layout_height="54dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_admin_input"
+                    android:hint="Date (e.g. Jun 20)"
+                    android:paddingHorizontal="20dp"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/text_muted"
+                    android:textSize="15sp"
+                    android:layout_marginEnd="8dp"/>
+                <EditText
+                    android:id="@+id/et_time"
+                    android:layout_width="0dp"
+                    android:layout_height="54dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_admin_input"
+                    android:hint="Time (e.g. 7:00 P...)"
+                    android:paddingHorizontal="20dp"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/text_muted"
+                    android:textSize="15sp"
+                    android:layout_marginStart="8dp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="16dp">
+                <EditText
+                    android:id="@+id/et_price"
+                    android:layout_width="0dp"
+                    android:layout_height="54dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_admin_input"
+                    android:hint="Price (e.g. Tsh 15k)"
+                    android:paddingHorizontal="20dp"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/text_muted"
+                    android:textSize="15sp"
+                    android:layout_marginEnd="8dp"/>
+                <EditText
+                    android:id="@+id/et_slots"
+                    android:layout_width="0dp"
+                    android:layout_height="54dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_admin_input"
+                    android:hint="Slots (Number)"
+                    android:paddingHorizontal="20dp"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/text_muted"
+                    android:textSize="15sp"
+                    android:inputType="number"
+                    android:layout_marginStart="8dp"/>
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/et_description"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:background="@drawable/bg_admin_input"
+                android:hint="Description"
+                android:gravity="top"
+                android:padding="20dp"
+                android:textColor="@color/white"
+                android:textColorHint="@color/text_muted"
+                android:textSize="15sp"
+                android:layout_marginBottom="24dp"/>
+
+            <TextView
+                android:id="@+id/tv_user_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="View as Regular User"
+                android:textColor="@color/text_muted"
+                android:textSize="14sp"
+                android:padding="12dp"
+                android:layout_marginBottom="20dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Manage Events"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_admin_events"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"/>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <Button
+        android:id="@+id/btn_save"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_margin="20dp"
+        android:backgroundTint="@color/primary_purple"
+        android:text="POST EVENT NOW"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        app:cornerRadius="12dp"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
