@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_dark">
+
+    <!-- Bottom nav -->
+    <LinearLayout
+        android:id="@+id/bottom_nav"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:background="@color/surface_dark"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout android:id="@+id/nav_home" android:layout_width="0dp" android:layout_height="match_parent"
+            android:layout_weight="1" android:gravity="center" android:orientation="vertical">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="⌂" android:textColor="@color/text_muted" android:textSize="20sp" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="Home" android:textColor="@color/text_muted" android:textSize="11sp" />
+        </LinearLayout>
+
+        <LinearLayout android:id="@+id/nav_explore" android:layout_width="0dp" android:layout_height="match_parent"
+            android:layout_weight="1" android:gravity="center" android:orientation="vertical">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="⊕" android:textColor="@color/text_muted" android:textSize="20sp" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="Explore" android:textColor="@color/text_muted" android:textSize="11sp" />
+        </LinearLayout>
+
+        <LinearLayout android:id="@+id/nav_tickets" android:layout_width="0dp" android:layout_height="match_parent"
+            android:layout_weight="1" android:gravity="center" android:orientation="vertical">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="✉" android:textColor="@color/primary_purple" android:textSize="20sp" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="Tickets" android:textColor="@color/primary_purple" android:textSize="11sp" />
+        </LinearLayout>
+
+        <LinearLayout android:id="@+id/nav_profile" android:layout_width="0dp" android:layout_height="match_parent"
+            android:layout_weight="1" android:gravity="center" android:orientation="vertical">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="◎" android:textColor="@color/text_muted" android:textSize="20sp" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="Profile" android:textColor="@color/text_muted" android:textSize="11sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Scrollable content -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bottom_nav">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="20dp"
+            android:paddingTop="52dp"
+            android:paddingBottom="16dp">
+
+            <!-- Title row -->
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="horizontal" android:gravity="center_vertical"
+                android:layout_marginBottom="20dp">
+                <TextView
+                    android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                    android:text="My tickets"
+                    android:textColor="@color/white" android:textSize="24sp" android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/btn_private"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="🔒 Private"
+                    android:textColor="@color/primary_purple" android:textSize="13sp" />
+            </LinearLayout>
+
+            <!-- Tabs -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:background="@drawable/bg_chip_default"
+                android:orientation="horizontal"
+                android:padding="4dp"
+                android:layout_marginBottom="20dp">
+
+                <TextView
+                    android:id="@+id/tab_upcoming"
+                    android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
+                    android:background="@drawable/bg_tab_selected"
+                    android:gravity="center"
+                    android:text="Upcoming"
+                    android:textColor="@color/white" android:textSize="14sp" android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tab_past"
+                    android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="Past"
+                    android:textColor="@color/text_muted" android:textSize="14sp" />
+            </LinearLayout>
+
+            <!-- Ticket card 1 (Concert – purple) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_card_purple"
+                android:orientation="vertical"
+                android:padding="20dp"
+                android:layout_marginBottom="14dp">
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:gravity="center_vertical">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="CONCERT" android:textColor="@color/text_muted" android:textSize="11sp" android:letterSpacing="0.1" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:background="@drawable/bg_active_badge"
+                        android:paddingHorizontal="12dp" android:paddingVertical="4dp"
+                        android:text="Active" android:textColor="@color/white" android:textSize="12sp" />
+                </LinearLayout>
+
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="Sauti Sol Live in DSM"
+                    android:textColor="@color/white" android:textSize="18sp" android:textStyle="bold" />
+
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Jun 20 · 7:00 PM"
+                    android:textColor="@color/text_muted" android:textSize="13sp" />
+
+                <View android:layout_width="match_parent" android:layout_height="1dp"
+                    android:layout_marginVertical="16dp"
+                    android:background="@drawable/bg_dashed_divider" />
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:gravity="center_vertical">
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="1" android:orientation="vertical">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="Ticket No." android:textColor="@color/text_muted" android:textSize="11sp" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="BKF-2025-0481" android:textColor="@color/white"
+                            android:textSize="15sp" android:textStyle="bold" android:layout_marginTop="4dp" />
+                    </LinearLayout>
+                    <View android:layout_width="60dp" android:layout_height="60dp"
+                        android:background="@drawable/bg_qr_placeholder" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Ticket card 2 (Conference – green) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_card_green"
+                android:orientation="vertical"
+                android:padding="20dp"
+                android:layout_marginBottom="14dp">
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:gravity="center_vertical">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="CONFERENCE" android:textColor="@color/text_muted" android:textSize="11sp" android:letterSpacing="0.1" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:background="@drawable/bg_active_badge"
+                        android:paddingHorizontal="12dp" android:paddingVertical="4dp"
+                        android:text="Active" android:textColor="@color/white" android:textSize="12sp" />
+                </LinearLayout>
+
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="DSM Tech Conference"
+                    android:textColor="@color/white" android:textSize="18sp" android:textStyle="bold" />
+
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Jun 25 · 9:00 AM"
+                    android:textColor="@color/text_muted" android:textSize="13sp" />
+
+                <View android:layout_width="match_parent" android:layout_height="1dp"
+                    android:layout_marginVertical="16dp"
+                    android:background="@drawable/bg_dashed_divider" />
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:gravity="center_vertical">
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="1" android:orientation="vertical">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="Ticket No." android:textColor="@color/text_muted" android:textSize="11sp" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="BKF-2025-0512" android:textColor="@color/white"
+                            android:textSize="15sp" android:textStyle="bold" android:layout_marginTop="4dp" />
+                    </LinearLayout>
+                    <View android:layout_width="60dp" android:layout_height="60dp"
+                        android:background="@drawable/bg_qr_placeholder" />
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
