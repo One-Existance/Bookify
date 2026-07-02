@@ -11,6 +11,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import com.example.bookify.BuildConfig;
 import com.example.bookify.data.DatabaseHelper;
 import com.google.android.material.textfield.TextInputEditText;
 import org.json.JSONObject;
@@ -21,7 +22,7 @@ import java.nio.charset.StandardCharsets;
 
 public class PaymentActivity extends AppCompatActivity {
 
-    private String apiKey = "mk_4453527f06bfddbdde8ebf0f61b7727491b9536ca39206ba";
+    private String apiKey = BuildConfig.MONGIKE_API_KEY;
     private String eventPrice, eventTitle;
     private int eventId, userId;
     private DatabaseHelper db;
