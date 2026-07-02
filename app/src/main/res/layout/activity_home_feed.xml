@@ -194,6 +194,30 @@
                         android:text="Conference"
                         android:textColor="@color/text_muted"
                         android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/chip_gala"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/bg_chip_default"
+                        android:paddingHorizontal="18dp"
+                        android:paddingVertical="8dp"
+                        android:text="Gala"
+                        android:textColor="@color/text_muted"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/chip_party"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/bg_chip_default"
+                        android:paddingHorizontal="18dp"
+                        android:paddingVertical="8dp"
+                        android:text="Party"
+                        android:textColor="@color/text_muted"
+                        android:textSize="13sp" />
                 </LinearLayout>
             </HorizontalScrollView>
 

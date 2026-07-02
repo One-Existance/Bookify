@@ -12,10 +12,11 @@ public class Event {
     private String time;
     private String slots;
     private String description;
+    private int promoterId;
 
     public Event(int id, String title, String location, String date,
                  String category, String price, boolean isPrivate, String imageUrl,
-                 String time, String slots, String description) {
+                 String time, String slots, String description, int promoterId) {
         this.id = id;
         this.title = title;
         this.location = location;
@@ -27,6 +28,7 @@ public class Event {
         this.time = time;
         this.slots = slots;
         this.description = description;
+        this.promoterId = promoterId;
     }
 
     public int getId()          { return id; }
@@ -40,5 +42,5 @@ public class Event {
     public String getTime()     { return time; }
     public String getSlots()    { return slots; }
     public String getDescription() { return description; }
+    public int getPromoterId()  { return promoterId; }
 }
-

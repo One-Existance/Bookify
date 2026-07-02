@@ -65,16 +65,41 @@
             android:paddingBottom="24dp">
 
             <!-- Avatar -->
-            <TextView
-                android:id="@+id/tv_avatar"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:background="@drawable/bg_avatar"
-                android:gravity="center"
-                android:text="SJ"
-                android:textColor="@color/white"
-                android:textSize="28sp"
-                android:textStyle="bold" />
+            <RelativeLayout
+                android:id="@+id/layout_profile_image"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginBottom="16dp">
+
+                <ImageView
+                    android:id="@+id/iv_profile_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_avatar"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/bg_avatar"
+                    android:clipToOutline="true"/>
+
+                <TextView
+                    android:id="@+id/tv_avatar_initials"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="SJ"
+                    android:textColor="@color/white"
+                    android:textSize="28sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentBottom="true"
+                    android:src="@android:drawable/ic_menu_camera"
+                    app:tint="@color/primary_purple"
+                    android:background="@drawable/bg_logo_outer"
+                    android:padding="2dp"/>
+            </RelativeLayout>
 
             <TextView
                 android:id="@+id/tv_name"

@@ -2,8 +2,10 @@ package com.example.bookify;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,6 +14,9 @@ import com.example.bookify.data.DatabaseHelper;
 public class RegisterActivity extends AppCompatActivity {
 
     private EditText etFullName, etEmail, etPassword, etConfirmPassword, etPhone;
+    private ImageView ivPasswordToggle, ivConfirmPasswordToggle;
+    private boolean isPasswordVisible = false;
+    private boolean isConfirmPasswordVisible = false;
     private DatabaseHelper db;
 
     @Override
@@ -25,6 +30,11 @@ public class RegisterActivity extends AppCompatActivity {
         etPassword  = findViewById(R.id.et_password);
         etConfirmPassword = findViewById(R.id.et_confirm_password);
         etPhone     = findViewById(R.id.et_phone);
+        ivPasswordToggle = findViewById(R.id.iv_password_toggle);
+        ivConfirmPasswordToggle = findViewById(R.id.iv_confirm_password_toggle);
+
+        ivPasswordToggle.setOnClickListener(v -> togglePasswordVisibility());
+        ivConfirmPasswordToggle.setOnClickListener(v -> toggleConfirmPasswordVisibility());
 
         findViewById(R.id.btn_register).setOnClickListener(v -> attemptRegister());
 
@@ -32,6 +42,30 @@ public class RegisterActivity extends AppCompatActivity {
             startActivity(new Intent(this, LoginActivity.class));
             finish();
         });
+    }
+
+    private void togglePasswordVisibility() {
+        if (isPasswordVisible) {
+            etPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            ivPasswordToggle.setImageResource(android.R.drawable.ic_menu_view);
+        } else {
+            etPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+            ivPasswordToggle.setImageResource(android.R.drawable.ic_menu_view);
+        }
+        isPasswordVisible = !isPasswordVisible;
+        etPassword.setSelection(etPassword.getText().length());
+    }
+
+    private void toggleConfirmPasswordVisibility() {
+        if (isConfirmPasswordVisible) {
+            etConfirmPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            ivConfirmPasswordToggle.setImageResource(android.R.drawable.ic_menu_view);
+        } else {
+            etConfirmPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+            ivConfirmPasswordToggle.setImageResource(android.R.drawable.ic_menu_view);
+        }
+        isConfirmPasswordVisible = !isConfirmPasswordVisible;
+        etConfirmPassword.setSelection(etConfirmPassword.getText().length());
     }
 
     private void attemptRegister() {
@@ -67,6 +101,7 @@ public class RegisterActivity extends AppCompatActivity {
                     .putInt("user_id", (int) userId)
                     .putString("user_name", fullName)
                     .putString("user_email", email)
+                    .putInt("user_role", 0) // Default role is User
                     .apply();
 
             Intent intent = new Intent(this, HomeFeedActivity.class);

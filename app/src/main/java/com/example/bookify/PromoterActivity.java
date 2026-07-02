@@ -4,46 +4,42 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.bookify.adapter.AdminEventAdapter;
-import com.example.bookify.adapter.UserAdapter;
 import com.example.bookify.data.DatabaseHelper;
 import com.example.bookify.data.Event;
-import com.example.bookify.data.User;
 import java.util.List;
 
-public class AdminActivity extends AppCompatActivity {
+public class PromoterActivity extends AppCompatActivity {
 
     private EditText etTitle, etLocation, etDate, etPrice, etTime, etSlots, etDescription;
     private Spinner spCategory;
     private ImageView ivPreview;
-    private TextView tvTotalUsers, tvTotalEvents, tvTotalRevenue;
+    private TextView tvWelcome, tvTotalEvents, tvTotalRevenue;
     private DatabaseHelper db;
-    private RecyclerView rvEvents, rvUsers;
-    private AdminEventAdapter eventAdapter;
-    private UserAdapter userAdapter;
+    private RecyclerView rvEvents;
+    private AdminEventAdapter adapter;
     private String selectedImageUrl = "";
+    private int promoterId;
 
     private final String[] categories = {"Concert", "Gala", "Sports", "Conference", "Party", "Others"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_admin);
+        setContentView(R.layout.activity_promoter);
 
         db = new DatabaseHelper(this);
+        promoterId = getSharedPreferences("bookify_session", MODE_PRIVATE).getInt("user_id", 0);
+        String name = getSharedPreferences("bookify_session", MODE_PRIVATE).getString("user_name", "Promoter");
 
         etTitle       = findViewById(R.id.et_title);
         etLocation    = findViewById(R.id.et_location);
@@ -54,29 +50,25 @@ public class AdminActivity extends AppCompatActivity {
         etSlots       = findViewById(R.id.et_slots);
         etDescription = findViewById(R.id.et_description);
         ivPreview     = findViewById(R.id.iv_event_preview);
-        rvEvents      = findViewById(R.id.rv_admin_events);
-        rvUsers       = findViewById(R.id.rv_users);
+        rvEvents      = findViewById(R.id.rv_promoter_events);
         
-        tvTotalUsers   = findViewById(R.id.tv_total_users);
+        tvWelcome      = findViewById(R.id.tv_welcome);
         tvTotalEvents  = findViewById(R.id.tv_total_events);
         tvTotalRevenue = findViewById(R.id.tv_total_revenue);
 
+        tvWelcome.setText("Hello, " + name);
+
         setupCategorySpinner();
-        setupRecyclerViews();
+        setupRecyclerView();
         updateStats();
 
         findViewById(R.id.layout_select_image).setOnClickListener(v -> selectImage());
         findViewById(R.id.btn_save).setOnClickListener(v -> saveEvent());
-        findViewById(R.id.btn_add_promoter).setOnClickListener(v -> showAddPromoterDialog());
 
         findViewById(R.id.tv_logout).setOnClickListener(v -> {
             getSharedPreferences("bookify_session", MODE_PRIVATE).edit().clear().apply();
             startActivity(new Intent(this, LoginActivity.class));
             finish();
-        });
-
-        findViewById(R.id.tv_user_view).setOnClickListener(v -> {
-            startActivity(new Intent(this, HomeFeedActivity.class));
         });
     }
 
@@ -87,31 +79,28 @@ public class AdminActivity extends AppCompatActivity {
     }
 
     private void updateStats() {
-        List<User> users = db.getAllUsers();
-        List<Event> events = db.getAllEvents();
+        List<Event> events = db.getEventsByPromoter(promoterId);
         double revenue = 0;
         for (Event e : events) {
             revenue += db.getRevenue(e.getId());
         }
 
-        tvTotalUsers.setText(String.valueOf(users.size()));
         tvTotalEvents.setText(String.valueOf(events.size()));
-        tvTotalRevenue.setText(String.format("%.1fk", revenue / 1000));
+        tvTotalRevenue.setText(String.format("Tsh %.1fk", revenue / 1000));
     }
 
-    private void setupRecyclerViews() {
-        // Events
-        List<Event> events = db.getAllEvents();
-        eventAdapter = new AdminEventAdapter(events, db, new AdminEventAdapter.OnEventActionListener() {
+    private void setupRecyclerView() {
+        List<Event> events = db.getEventsByPromoter(promoterId);
+        adapter = new AdminEventAdapter(events, db, new AdminEventAdapter.OnEventActionListener() {
             @Override
             public void onDeleteClick(Event event) {
                 db.deleteEvent(event.getId());
-                refreshLists();
+                refreshList();
             }
 
             @Override
             public void onViewClick(Event event) {
-                Intent intent = new Intent(AdminActivity.this, EventDetailActivity.class);
+                Intent intent = new Intent(PromoterActivity.this, EventDetailActivity.class);
                 intent.putExtra("event_id",       event.getId());
                 intent.putExtra("event_title",    event.getTitle());
                 intent.putExtra("event_location", event.getLocation());
@@ -125,31 +114,21 @@ public class AdminActivity extends AppCompatActivity {
             }
         });
         rvEvents.setLayoutManager(new LinearLayoutManager(this));
-        rvEvents.setAdapter(eventAdapter);
-
-        // Users
-        List<User> users = db.getAllUsers();
-        userAdapter = new UserAdapter(users, user -> {
-            db.verifyPromoter(user.getId());
-            refreshLists();
-            Toast.makeText(this, user.getFullName() + " verified!", Toast.LENGTH_SHORT).show();
-        });
-        rvUsers.setLayoutManager(new LinearLayoutManager(this));
-        rvUsers.setAdapter(userAdapter);
+        rvEvents.setAdapter(adapter);
     }
 
-    private void refreshLists() {
-        List<Event> events = db.getAllEvents();
-        eventAdapter = new AdminEventAdapter(events, db, new AdminEventAdapter.OnEventActionListener() {
+    private void refreshList() {
+        List<Event> events = db.getEventsByPromoter(promoterId);
+        adapter = new AdminEventAdapter(events, db, new AdminEventAdapter.OnEventActionListener() {
             @Override
             public void onDeleteClick(Event event) {
                 db.deleteEvent(event.getId());
-                refreshLists();
+                refreshList();
             }
 
             @Override
             public void onViewClick(Event event) {
-                Intent intent = new Intent(AdminActivity.this, EventDetailActivity.class);
+                Intent intent = new Intent(PromoterActivity.this, EventDetailActivity.class);
                 intent.putExtra("event_id",       event.getId());
                 intent.putExtra("event_title",    event.getTitle());
                 intent.putExtra("event_location", event.getLocation());
@@ -162,44 +141,8 @@ public class AdminActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        rvEvents.setAdapter(eventAdapter);
-
-        List<User> users = db.getAllUsers();
-        userAdapter = new UserAdapter(users, user -> {
-            db.verifyPromoter(user.getId());
-            refreshLists();
-        });
-        rvUsers.setAdapter(userAdapter);
-        
+        rvEvents.setAdapter(adapter);
         updateStats();
-    }
-
-    private void showAddPromoterDialog() {
-        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_promoter, null);
-        EditText etName = dialogView.findViewById(R.id.et_promoter_name);
-        EditText etEmail = dialogView.findViewById(R.id.et_promoter_email);
-        EditText etPass = dialogView.findViewById(R.id.et_promoter_password);
-
-        new AlertDialog.Builder(this)
-                .setTitle("Register New Promoter")
-                .setView(dialogView)
-                .setPositiveButton("Register", (dialog, which) -> {
-                    String name = etName.getText().toString().trim();
-                    String email = etEmail.getText().toString().trim();
-                    String pass = etPass.getText().toString().trim();
-
-                    if (!name.isEmpty() && !email.isEmpty() && !pass.isEmpty()) {
-                        long id = db.registerUserWithRole(name, email, pass, "", 2, 1); // Auto-verified for admin registration
-                        if (id > 0) {
-                            Toast.makeText(this, "Promoter registered!", Toast.LENGTH_SHORT).show();
-                            refreshLists();
-                        } else {
-                            Toast.makeText(this, "Registration failed", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                })
-                .setNegativeButton("Cancel", null)
-                .show();
     }
 
     private void selectImage() {
@@ -219,7 +162,6 @@ public class AdminActivity extends AppCompatActivity {
                 selectedImageUrl = imageUri.toString();
                 ivPreview.setImageURI(imageUri);
                 ivPreview.setAlpha(1.0f);
-                Toast.makeText(this, "Image Selected!", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -239,13 +181,13 @@ public class AdminActivity extends AppCompatActivity {
             return;
         }
 
-        long id = db.addEvent(title, location, date, category, "Tsh " + price, false, selectedImageUrl, time, slots, desc);
+        long id = db.addEventWithPromoter(title, location, date, category, "Tsh " + price, false, selectedImageUrl, time, slots, desc, promoterId);
         if (id > 0) {
-            Toast.makeText(this, "Event posted successfully! 🚀", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Event added successfully!", Toast.LENGTH_SHORT).show();
             clearFields();
-            refreshLists();
+            refreshList();
         } else {
-            Toast.makeText(this, "Failed to post event", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Failed to add event", Toast.LENGTH_SHORT).show();
         }
     }
 

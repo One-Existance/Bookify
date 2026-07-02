@@ -34,7 +34,13 @@ public class EventDetailActivity extends AppCompatActivity {
         if (price    != null) ((TextView) findViewById(R.id.tv_price)).setText(price);
         if (date     != null) ((TextView) findViewById(R.id.tv_date)).setText(date);
         if (time     != null) ((TextView) findViewById(R.id.tv_time)).setText(time);
-        if (slots    != null) ((TextView) findViewById(R.id.tv_slots)).setText(slots + " remaining");
+        
+        int taken = db.getTicketCount(eventId, true);
+        int totalSlots = 0;
+        try { totalSlots = Integer.parseInt(slots); } catch (Exception ignored) {}
+        int remaining = Math.max(0, totalSlots - taken);
+        ((TextView) findViewById(R.id.tv_slots)).setText(remaining + " seats remaining");
+
         if (about    != null) ((TextView) findViewById(R.id.tv_about)).setText(about);
 
         if (image != null && !image.isEmpty()) {

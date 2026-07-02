@@ -17,26 +17,40 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         void onEventClick(Event event);
     }
 
-    private final List<Event> allEvents;
-    private List<Event> filteredEvents;
+    private final List<Event> allEvents = new ArrayList<>();
+    private final List<Event> filteredEvents = new ArrayList<>();
     private OnEventClickListener listener;
+    private String currentCategory = null;
 
     public EventAdapter(List<Event> events) {
-        this.allEvents      = new ArrayList<>(events);
-        this.filteredEvents = new ArrayList<>(events);
+        updateData(events);
     }
 
     public void setOnEventClickListener(OnEventClickListener listener) {
         this.listener = listener;
     }
 
+    public void updateData(List<Event> events) {
+        this.allEvents.clear();
+        this.allEvents.addAll(events);
+        applyFilter(currentCategory);
+    }
+
     public void filter(String category) {
+        this.currentCategory = category;
+        applyFilter(category);
+    }
+
+    private void applyFilter(String category) {
         filteredEvents.clear();
-        if (category == null) {
+        if (category == null || category.equalsIgnoreCase("All")) {
             filteredEvents.addAll(allEvents);
         } else {
-            for (Event e : allEvents)
-                if (e.getCategory().equalsIgnoreCase(category)) filteredEvents.add(e);
+            for (Event e : allEvents) {
+                if (e.getCategory().equalsIgnoreCase(category)) {
+                    filteredEvents.add(e);
+                }
+            }
         }
         notifyDataSetChanged();
     }
@@ -44,7 +58,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     public void search(String query) {
         filteredEvents.clear();
         if (query == null || query.isEmpty()) {
-            filteredEvents.addAll(allEvents);
+            applyFilter(currentCategory);
         } else {
             String lower = query.toLowerCase();
             for (Event e : allEvents) {
@@ -54,8 +68,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                     filteredEvents.add(e);
                 }
             }
+            notifyDataSetChanged();
         }
-        notifyDataSetChanged();
     }
 
     @NonNull
@@ -87,12 +101,21 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         } else {
             holder.ivImage.setVisibility(View.GONE);
             holder.tvIcon.setVisibility(View.VISIBLE);
-            holder.tvIcon.setText(event.getCategory().equalsIgnoreCase("Concert") ? "🎵" : 
-                                 event.getCategory().equalsIgnoreCase("Sports") ? "⚽" : "🏛️");
+            
+            String cat = event.getCategory().toLowerCase();
+            if (cat.contains("concert")) holder.tvIcon.setText("🎵");
+            else if (cat.contains("sports")) holder.tvIcon.setText("⚽");
+            else if (cat.contains("conference")) holder.tvIcon.setText("🎤");
+            else if (cat.contains("gala")) holder.tvIcon.setText("🍷");
+            else if (cat.contains("party")) holder.tvIcon.setText("🎉");
+            else holder.tvIcon.setText("🏛️");
         }
 
-        int bgRes = event.getCategory().equalsIgnoreCase("Concert")
-                ? R.drawable.bg_card_purple : R.drawable.bg_card_green;
+        String cat = event.getCategory().toLowerCase();
+        int bgRes = R.drawable.bg_card_purple; // Default
+        if (cat.contains("sports")) bgRes = R.drawable.bg_card_green;
+        else if (cat.contains("conference")) bgRes = R.drawable.bg_card_purple; // Reuse or find new
+
         holder.itemView.setBackgroundResource(bgRes);
 
         holder.itemView.setOnClickListener(v -> {

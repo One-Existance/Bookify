@@ -22,9 +22,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp">
                 <TextView
+                    android:id="@+id/tv_welcome"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Admin Dashboard"
+                    android:text="Promoter Dashboard"
                     android:textColor="@color/white"
                     android:textSize="24sp"
                     android:textStyle="bold" />
@@ -40,13 +41,13 @@
                     android:textStyle="bold"/>
             </RelativeLayout>
 
-            <!-- Quick Stats Summary -->
+            <!-- Stats Summary -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginBottom="24dp"
-                android:weightSum="3"
+                android:weightSum="2"
                 android:baselineAligned="false">
                 <LinearLayout
                     android:layout_width="0dp"
@@ -56,46 +57,21 @@
                     android:background="@drawable/bg_admin_input"
                     android:padding="12dp"
                     android:gravity="center"
-                    android:layout_marginEnd="4dp">
-                    <TextView
-                        android:id="@+id/tv_total_users"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="0"
-                        android:textColor="@color/white"
-                        android:textSize="18sp"
-                        android:textStyle="bold"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Users"
-                        android:textColor="@color/text_muted"
-                        android:textSize="10sp"
-                        android:textAllCaps="true"/>
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:background="@drawable/bg_admin_input"
-                    android:padding="12dp"
-                    android:gravity="center"
-                    android:layout_marginHorizontal="4dp">
+                    android:layout_marginEnd="6dp">
                     <TextView
                         android:id="@+id/tv_total_events"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="0"
                         android:textColor="@color/white"
-                        android:textSize="18sp"
+                        android:textSize="20sp"
                         android:textStyle="bold"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Events"
+                        android:text="Your Events"
                         android:textColor="@color/text_muted"
-                        android:textSize="10sp"
+                        android:textSize="11sp"
                         android:textAllCaps="true"/>
                 </LinearLayout>
                 <LinearLayout
@@ -106,26 +82,25 @@
                     android:background="@drawable/bg_admin_input"
                     android:padding="12dp"
                     android:gravity="center"
-                    android:layout_marginStart="4dp">
+                    android:layout_marginStart="6dp">
                     <TextView
                         android:id="@+id/tv_total_revenue"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="0k"
+                        android:text="0"
                         android:textColor="@color/white"
-                        android:textSize="18sp"
+                        android:textSize="20sp"
                         android:textStyle="bold"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Revenue"
+                        android:text="Revenue Made"
                         android:textColor="@color/text_muted"
-                        android:textSize="10sp"
+                        android:textSize="11sp"
                         android:textAllCaps="true"/>
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- Add Event Header -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -153,11 +128,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:text="TAP TO UPLOAD COVER IMAGE"
+                    android:text="UPLOAD EVENT PHOTO"
                     android:textColor="@color/white"
                     android:textSize="12sp"
-                    android:textStyle="bold"
-                    android:letterSpacing="0.1"/>
+                    android:textStyle="bold"/>
             </RelativeLayout>
 
             <EditText
@@ -179,7 +153,6 @@
                 android:background="@drawable/bg_admin_input"
                 android:paddingHorizontal="16dp"
                 android:layout_marginBottom="12dp"
-                android:overlapAnchor="false"
                 android:spinnerMode="dropdown"/>
 
             <EditText
@@ -187,7 +160,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="54dp"
                 android:background="@drawable/bg_admin_input"
-                android:hint="Venue Location"
+                android:hint="Venue"
                 android:paddingHorizontal="20dp"
                 android:textColor="@color/white"
                 android:textColorHint="@color/text_muted"
@@ -205,7 +178,7 @@
                     android:layout_height="54dp"
                     android:layout_weight="1"
                     android:background="@drawable/bg_admin_input"
-                    android:hint="Date (Jun 20)"
+                    android:hint="Date"
                     android:paddingHorizontal="20dp"
                     android:textColor="@color/white"
                     android:textColorHint="@color/text_muted"
@@ -217,7 +190,7 @@
                     android:layout_height="54dp"
                     android:layout_weight="1"
                     android:background="@drawable/bg_admin_input"
-                    android:hint="Time (7:00 PM)"
+                    android:hint="Time"
                     android:paddingHorizontal="20dp"
                     android:textColor="@color/white"
                     android:textColorHint="@color/text_muted"
@@ -249,7 +222,7 @@
                     android:layout_height="54dp"
                     android:layout_weight="1"
                     android:background="@drawable/bg_admin_input"
-                    android:hint="Available Slots"
+                    android:hint="Slots"
                     android:paddingHorizontal="20dp"
                     android:textColor="@color/white"
                     android:textColorHint="@color/text_muted"
@@ -263,91 +236,29 @@
                 android:layout_width="match_parent"
                 android:layout_height="80dp"
                 android:background="@drawable/bg_admin_input"
-                android:hint="Event Description"
+                android:hint="Description"
                 android:gravity="top"
                 android:padding="16dp"
                 android:textColor="@color/white"
                 android:textColorHint="@color/text_muted"
                 android:textSize="15sp"
-                android:layout_marginBottom="24dp"/>
-
-            <!-- Manage Promoters Section -->
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_admin_input"
-                android:padding="16dp"
-                android:layout_marginBottom="16dp">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_centerVertical="true">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Promoter Management"
-                        android:textColor="@color/white"
-                        android:textSize="18sp"
-                        android:textStyle="bold"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Verify or add new promoters"
-                        android:textColor="@color/text_muted"
-                        android:textSize="12sp"/>
-                </LinearLayout>
-
-                <Button
-                    android:id="@+id/btn_add_promoter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:text="ADD NEW"
-                    android:backgroundTint="@color/primary_purple"
-                    android:textColor="@color/white"
-                    android:textSize="11sp"
-                    android:textStyle="bold"
-                    app:cornerRadius="8dp"/>
-            </RelativeLayout>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_users"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false"
                 android:layout_marginBottom="32dp"/>
 
-            <!-- Existing Events Header -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Active Events"
+                android:text="Manage My Events"
                 android:textColor="@color/white"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="16dp"/>
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_admin_events"
+                android:id="@+id/rv_promoter_events"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:nestedScrollingEnabled="false"
-                android:layout_marginBottom="20dp"/>
-
-            <TextView
-                android:id="@+id/tv_user_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="Switch to User View"
-                android:textColor="@color/text_muted"
-                android:textSize="14sp"
-                android:padding="12dp"
-                android:layout_marginBottom="20dp"
-                android:background="?attr/selectableItemBackground"/>
+                android:layout_marginBottom="40dp"/>
 
         </LinearLayout>
     </ScrollView>
@@ -358,7 +269,7 @@
         android:layout_height="56dp"
         android:layout_margin="20dp"
         android:backgroundTint="@color/primary_purple"
-        android:text="POST EVENT NOW"
+        android:text="ADD EVENT"
         android:textColor="@color/white"
         android:textStyle="bold"
         app:cornerRadius="12dp"

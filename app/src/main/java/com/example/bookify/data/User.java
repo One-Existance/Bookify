@@ -5,19 +5,24 @@ public class User {
     private String fullName;
     private String email;
     private String phone;
-    private boolean isAdmin;
+    private int role; // 0: User, 1: Admin, 2: Promoter
+    private boolean isVerified; // For promoters
 
-    public User(int id, String fullName, String email, String phone, boolean isAdmin) {
+    public User(int id, String fullName, String email, String phone, int role, boolean isVerified) {
         this.id = id;
         this.fullName = fullName;
         this.email = email;
         this.phone = phone;
-        this.isAdmin = isAdmin;
+        this.role = role;
+        this.isVerified = isVerified;
     }
 
     public int getId()         { return id; }
     public String getFullName(){ return fullName; }
     public String getEmail()   { return email; }
     public String getPhone()   { return phone; }
-    public boolean isAdmin()   { return isAdmin; }
+    public int getRole()       { return role; }
+    public boolean isAdmin()   { return role == 1; }
+    public boolean isPromoter(){ return role == 2; }
+    public boolean isVerified(){ return isVerified; }
 }
