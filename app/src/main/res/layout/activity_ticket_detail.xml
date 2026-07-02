@@ -37,6 +37,15 @@
         android:orientation="vertical"
         android:padding="24dp">
 
+        <ImageView
+            android:id="@+id/iv_event_image"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:scaleType="centerCrop"
+            android:layout_marginBottom="16dp"
+            android:background="@color/surface_dark"
+            android:visibility="gone"/>
+
         <TextView
             android:id="@+id/tv_detail_title"
             android:layout_width="wrap_content"

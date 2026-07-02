@@ -6,15 +6,17 @@ public class Booking {
     private final String eventDate;
     private final String eventCategory;
     private final String eventPrice;
+    private final String imageUrl;
     private final String status;
 
     public Booking(String ticketNumber, String eventTitle, String eventDate,
-                   String eventCategory, String eventPrice, String status) {
+                   String eventCategory, String eventPrice, String imageUrl, String status) {
         this.ticketNumber  = ticketNumber;
         this.eventTitle    = eventTitle;
         this.eventDate     = eventDate;
         this.eventCategory = eventCategory;
         this.eventPrice    = eventPrice;
+        this.imageUrl      = imageUrl;
         this.status        = status;
     }
 
@@ -23,5 +25,6 @@ public class Booking {
     public String getEventDate()     { return eventDate; }
     public String getEventCategory() { return eventCategory; }
     public String getEventPrice()    { return eventPrice; }
+    public String getImageUrl()      { return imageUrl; }
     public String getStatus()        { return status; }
 }

@@ -215,12 +215,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public List<Booking> getUserBookings(int userId) {
         List<Booking> list = new ArrayList<>();
         Cursor c = getReadableDatabase().rawQuery(
-                "SELECT b.ticket_number, e.title, e.date, e.category, e.price, b.status " +
+                "SELECT b.ticket_number, e.title, e.date, e.category, e.price, e.image_url, b.status " +
                 "FROM bookings b JOIN events e ON b.event_id = e.id WHERE b.user_id=? AND b.status='COMPLETED'",
                 new String[]{String.valueOf(userId)});
         while (c.moveToNext()) {
             list.add(new Booking(c.getString(0), c.getString(1), c.getString(2),
-                    c.getString(3), c.getString(4), c.getString(5)));
+                    c.getString(3), c.getString(4), c.getString(5), c.getString(6)));
         }
         c.close();
         return list;

@@ -21,10 +21,19 @@ public class TicketDetailActivity extends AppCompatActivity {
         String title = getIntent().getStringExtra("event_title");
         String info  = getIntent().getStringExtra("event_info");
         String ticket = getIntent().getStringExtra("ticket_number");
+        String image  = getIntent().getStringExtra("event_image");
 
         ((TextView) findViewById(R.id.tv_detail_title)).setText(title);
         ((TextView) findViewById(R.id.tv_detail_info)).setText(info);
         ((TextView) findViewById(R.id.tv_detail_ticket_no)).setText(ticket);
+
+        if (image != null && !image.isEmpty()) {
+            android.widget.ImageView ivEvent = findViewById(R.id.iv_event_image);
+            if (ivEvent != null) {
+                ivEvent.setVisibility(android.view.View.VISIBLE);
+                ivEvent.setImageURI(android.net.Uri.parse(image));
+            }
+        }
 
         ImageView ivQr = findViewById(R.id.iv_detail_qr);
         if (ticket != null) {

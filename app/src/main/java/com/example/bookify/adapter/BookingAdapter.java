@@ -37,8 +37,17 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
         holder.tvTicketNumber.setText(b.getTicketNumber());
         holder.tvPrice.setText(b.getEventPrice());
 
-        // For QR code, we can use a placeholder or a dynamic URL if using Glide/Picasso
-        // Here we just ensure the view exists as it was updated in the layout
+        // Load event image
+        if (b.getImageUrl() != null && !b.getImageUrl().isEmpty()) {
+            holder.ivEventImage.setVisibility(View.VISIBLE);
+            try {
+                holder.ivEventImage.setImageURI(android.net.Uri.parse(b.getImageUrl()));
+            } catch (Exception e) {
+                holder.ivEventImage.setVisibility(View.GONE);
+            }
+        } else {
+            holder.ivEventImage.setVisibility(View.GONE);
+        }
 
         int bgRes = b.getEventCategory().equalsIgnoreCase("Concert")
                 ? R.drawable.bg_card_purple : R.drawable.bg_card_green;
@@ -49,6 +58,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
             intent.putExtra("event_title", b.getEventTitle());
             intent.putExtra("event_info", b.getEventCategory() + " | " + b.getEventDate());
             intent.putExtra("ticket_number", b.getTicketNumber());
+            intent.putExtra("event_image", b.getImageUrl());
             v.getContext().startActivity(intent);
         });
     }
@@ -58,6 +68,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
 
     static class BookingViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitle, tvDate, tvCategory, tvTicketNumber, tvPrice;
+        android.widget.ImageView ivEventImage;
 
         BookingViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -66,6 +77,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
             tvCategory     = itemView.findViewById(R.id.tv_booking_category);
             tvTicketNumber = itemView.findViewById(R.id.tv_booking_ticket);
             tvPrice        = itemView.findViewById(R.id.tv_booking_price);
+            ivEventImage   = itemView.findViewById(R.id.iv_booking_image);
         }
     }
 }

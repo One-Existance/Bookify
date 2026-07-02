@@ -38,6 +38,17 @@ public class AdminEventAdapter extends RecyclerView.Adapter<AdminEventAdapter.Ad
         Event event = events.get(position);
         holder.tvTitle.setText(event.getTitle());
         holder.tvInfo.setText(event.getLocation() + " | " + event.getDate());
+        
+        if (event.getImageUrl() != null && !event.getImageUrl().isEmpty()) {
+            try {
+                holder.ivImage.setImageURI(android.net.Uri.parse(event.getImageUrl()));
+            } catch (Exception e) {
+                holder.ivImage.setImageResource(R.drawable.ic_launcher_background);
+            }
+        } else {
+            holder.ivImage.setImageResource(R.drawable.ic_launcher_background);
+        }
+
         holder.btnDelete.setOnClickListener(v -> listener.onDeleteClick(event));
     }
 
@@ -46,12 +57,14 @@ public class AdminEventAdapter extends RecyclerView.Adapter<AdminEventAdapter.Ad
 
     static class AdminViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitle, tvInfo;
+        android.widget.ImageView ivImage;
         Button btnDelete;
 
         AdminViewHolder(@NonNull View itemView) {
             super(itemView);
             tvTitle = itemView.findViewById(R.id.tv_admin_event_title);
             tvInfo  = itemView.findViewById(R.id.tv_admin_event_info);
+            ivImage = itemView.findViewById(R.id.iv_admin_event_image);
             btnDelete = itemView.findViewById(R.id.btn_delete_event);
         }
     }
