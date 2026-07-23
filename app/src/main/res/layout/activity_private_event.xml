@@ -96,7 +96,7 @@
                 android:gravity="center"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="32dp"
-                android:text="Enter your access code or paste an\ninvite link to join this private event."
+                android:text="Enter the access code your organizer shared with you\nto join this private event."
                 android:textColor="@color/text_muted"
                 android:textSize="14sp" />
 
@@ -121,30 +121,6 @@
                     android:textColor="@color/white" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Divider -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:layout_marginVertical="16dp"
-                android:text="or paste link"
-                android:textColor="@color/text_muted"
-                android:textSize="13sp" />
-
-            <!-- Paste link input -->
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="bookify.app/invite/…"
-                style="@style/BookifyInputLayout">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_invite_link"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textUri"
-                    android:textColor="@color/white" />
-            </com.google.android.material.textfield.TextInputLayout>
-
             <!-- Access button -->
             <Button
                 android:id="@+id/btn_access"
@@ -157,45 +133,16 @@
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
-            <!-- My private bookings -->
             <TextView
+                android:id="@+id/tv_error"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:layout_marginBottom="12dp"
-                android:text="🔒  My private bookings"
-                android:textColor="@color/white"
-                android:textSize="15sp"
-                android:textStyle="bold" />
-
-            <!-- Booking item 1 -->
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:background="@drawable/bg_info_cell"
-                android:orientation="vertical"
-                android:padding="16dp"
-                android:layout_marginBottom="10dp">
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="DIT Alumni Gala 2025"
-                    android:textColor="@color/white" android:textSize="15sp" android:textStyle="bold" />
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="✅ Confirmed · Jul 5"
-                    android:textColor="@color/text_muted" android:textSize="13sp" />
-            </LinearLayout>
-
-            <!-- Booking item 2 -->
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:background="@drawable/bg_info_cell"
-                android:orientation="vertical"
-                android:padding="16dp">
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="Startup Mixer DSM"
-                    android:textColor="@color/white" android:textSize="15sp" android:textStyle="bold" />
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="✅ Confirmed · Jun 28"
-                    android:textColor="@color/text_muted" android:textSize="13sp" />
-            </LinearLayout>
+                android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:text=""
+                android:textColor="@color/error_red"
+                android:textSize="13sp"
+                android:visibility="gone" />
 
         </LinearLayout>
     </ScrollView>

@@ -8,11 +8,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.bookify.data.DatabaseHelper;
+import com.example.bookify.data.User;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 
 public class RegisterActivity extends AppCompatActivity {
 
     private EditText etFullName, etEmail, etPassword, etConfirmPassword, etPhone;
     private DatabaseHelper db;
+    private FirebaseAuth auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,6 +27,7 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         db          = new DatabaseHelper(this);
+        auth        = FirebaseAuth.getInstance();
         etFullName  = findViewById(R.id.et_full_name);
         etEmail     = findViewById(R.id.et_email);
         etPassword  = findViewById(R.id.et_password);
@@ -56,25 +64,51 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
-        if (db.emailExists(email)) {
-            Toast.makeText(this, "Email already exists", Toast.LENGTH_SHORT).show();
-            return;
-        }
+        setLoading(true);
+        auth.createUserWithEmailAndPassword(email, password)
+                .addOnSuccessListener(result -> {
+                    FirebaseUser firebaseUser = result.getUser();
+                    firebaseUser.updateProfile(
+                            new UserProfileChangeRequest.Builder().setDisplayName(fullName).build());
 
-        long userId = db.registerUser(fullName, email, password, phone);
-        if (userId > 0) {
-            getSharedPreferences("bookify_session", MODE_PRIVATE).edit()
-                    .putInt("user_id", (int) userId)
-                    .putString("user_name", fullName)
-                    .putString("user_email", email)
-                    .apply();
+                    long localId = db.registerLocalProfile(fullName, email, firebaseUser.getUid(), phone);
+                    if (localId <= 0) {
+                        setLoading(false);
+                        Toast.makeText(this, "Registration failed. Please try again.", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
 
-            Intent intent = new Intent(this, HomeFeedActivity.class);
-            intent.putExtra("user_name", fullName);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-        } else {
-            Toast.makeText(this, "Registration failed. Please try again.", Toast.LENGTH_SHORT).show();
-        }
+                    saveSession((int) localId, fullName, email);
+
+                    Intent intent = new Intent(this, HomeFeedActivity.class);
+                    intent.putExtra("user_name", fullName);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                })
+                .addOnFailureListener(e -> {
+                    setLoading(false);
+                    String message;
+                    if (e instanceof FirebaseAuthUserCollisionException) {
+                        message = "Email already exists";
+                    } else if (e instanceof FirebaseAuthWeakPasswordException) {
+                        message = "Password is too weak";
+                    } else {
+                        message = "Registration failed: " + e.getMessage();
+                    }
+                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private void saveSession(int userId, String name, String email) {
+        getSharedPreferences("bookify_session", MODE_PRIVATE).edit()
+                .putInt("user_id", userId)
+                .putString("user_name", name)
+                .putString("user_email", email)
+                .putString("role", User.ROLE_USER)
+                .apply();
+    }
+
+    private void setLoading(boolean loading) {
+        findViewById(R.id.btn_register).setEnabled(!loading);
     }
 }

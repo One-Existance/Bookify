@@ -114,6 +114,38 @@
                     android:text="›" android:textColor="@color/text_muted" android:textSize="20sp" />
             </LinearLayout>
 
+            <!-- My Organized Events -->
+            <LinearLayout
+                android:id="@+id/row_my_events"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_info_cell"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="16dp"
+                android:layout_marginBottom="12dp">
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                    android:text="🎪  My Organized Events" android:textColor="@color/white" android:textSize="15sp" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="›" android:textColor="@color/text_muted" android:textSize="20sp" />
+            </LinearLayout>
+
+            <!-- Promoter status/entry point -->
+            <LinearLayout
+                android:id="@+id/row_promoter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_info_cell"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="16dp"
+                android:layout_marginBottom="12dp">
+                <TextView android:id="@+id/tv_promoter_row_label" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                    android:text="🏟  Become a Promoter" android:textColor="@color/white" android:textSize="15sp" />
+                <TextView android:id="@+id/tv_promoter_row_arrow" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="›" android:textColor="@color/text_muted" android:textSize="20sp" />
+            </LinearLayout>
+
             <!-- Settings -->
             <LinearLayout
                 android:id="@+id/row_settings"
