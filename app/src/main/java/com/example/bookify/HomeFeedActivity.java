@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.bookify.adapter.EventAdapter;
 import com.example.bookify.data.DatabaseHelper;
 import com.example.bookify.data.Event;
+import com.example.bookify.data.User;
 import java.util.Calendar;
 import java.util.List;
 
@@ -65,11 +66,20 @@ public class HomeFeedActivity extends AppCompatActivity {
 
         setupCategoryChips();
         setupBottomNav();
+        setupRoleFab(prefs.getString("role", User.ROLE_USER));
+    }
 
-        if (prefs.getBoolean("is_admin", false)) {
-            findViewById(R.id.fab_admin).setVisibility(android.view.View.VISIBLE);
-            findViewById(R.id.fab_admin).setOnClickListener(v ->
-                    startActivity(new Intent(this, AdminActivity.class)));
+    private void setupRoleFab(String role) {
+        com.google.android.material.floatingactionbutton.FloatingActionButton fab = findViewById(R.id.fab_action);
+        if (User.ROLE_ADMIN.equals(role)) {
+            fab.setVisibility(android.view.View.VISIBLE);
+            fab.setOnClickListener(v -> startActivity(new Intent(this, AdminActivity.class)));
+        } else if (User.ROLE_PROMOTER.equals(role)) {
+            fab.setVisibility(android.view.View.VISIBLE);
+            fab.setOnClickListener(v -> startActivity(new Intent(this, PromoterDashboardActivity.class)));
+        } else {
+            fab.setVisibility(android.view.View.VISIBLE);
+            fab.setOnClickListener(v -> startActivity(new Intent(this, OrganizeEventActivity.class)));
         }
     }
 
