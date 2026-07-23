@@ -2,21 +2,17 @@ package com.example.bookify;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.bookify.data.DatabaseHelper;
+import com.example.bookify.data.PromoterApplication;
+import com.example.bookify.data.User;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class ProfileActivity extends AppCompatActivity {
 
-    private ImageView ivProfile;
-    private TextView tvInitials;
     private DatabaseHelper db;
-    private int userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,26 +20,27 @@ public class ProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
 
         db = new DatabaseHelper(this);
+
         SharedPreferences prefs = getSharedPreferences("bookify_session", MODE_PRIVATE);
-        userId = prefs.getInt("user_id", -1);
         String name  = prefs.getString("user_name",  getIntent().getStringExtra("user_name"));
         String email = prefs.getString("user_email", "");
+        String role  = prefs.getString("role", User.ROLE_USER);
+        int userId   = prefs.getInt("user_id", -1);
         if (name == null) name = "Guest";
 
-        ivProfile = findViewById(R.id.iv_profile_image);
-        tvInitials = findViewById(R.id.tv_avatar_initials);
-        
         ((TextView) findViewById(R.id.tv_name)).setText(name);
         ((TextView) findViewById(R.id.tv_email)).setText(email);
-        tvInitials.setText(getInitials(name));
-
-        loadProfileImage();
-
-        findViewById(R.id.layout_profile_image).setOnClickListener(v -> selectImage());
+        ((TextView) findViewById(R.id.tv_avatar_initials)).setText(getInitials(name));
 
         // My Bookings
         findViewById(R.id.row_my_bookings).setOnClickListener(v ->
                 startActivity(new Intent(this, MyBookingsActivity.class)));
+
+        // My Organized Events
+        findViewById(R.id.row_my_events).setOnClickListener(v ->
+                startActivity(new Intent(this, MyEventRequestsActivity.class)));
+
+        setupPromoterRow(role, userId);
 
         // Settings
         findViewById(R.id.row_settings).setOnClickListener(v ->
@@ -51,6 +48,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         // Logout
         findViewById(R.id.btn_logout).setOnClickListener(v -> {
+            FirebaseAuth.getInstance().signOut();
             prefs.edit().clear().apply();
             Intent intent = new Intent(this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -66,39 +64,33 @@ public class ProfileActivity extends AppCompatActivity {
                 startActivity(new Intent(this, MyTicketsActivity.class)));
     }
 
-    private void loadProfileImage() {
-        String img = db.getProfileImage(userId);
-        if (img != null && !img.isEmpty()) {
-            try {
-                ivProfile.setImageURI(Uri.parse(img));
-                tvInitials.setVisibility(View.GONE);
-            } catch (Exception e) {
-                tvInitials.setVisibility(View.VISIBLE);
-            }
-        } else {
-            tvInitials.setVisibility(View.VISIBLE);
+    private void setupPromoterRow(String role, int userId) {
+        TextView label = findViewById(R.id.tv_promoter_row_label);
+        TextView arrow = findViewById(R.id.tv_promoter_row_arrow);
+
+        if (User.ROLE_ADMIN.equals(role)) {
+            findViewById(R.id.row_promoter).setVisibility(android.view.View.GONE);
+            return;
         }
-    }
 
-    private void selectImage() {
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType("image/*");
-        startActivityForResult(intent, 300);
-    }
+        if (User.ROLE_PROMOTER.equals(role)) {
+            label.setText("🏟  Promoter Dashboard");
+            arrow.setText("›");
+            findViewById(R.id.row_promoter).setOnClickListener(v ->
+                    startActivity(new Intent(this, PromoterDashboardActivity.class)));
+            return;
+        }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 300 && resultCode == RESULT_OK && data != null) {
-            Uri imageUri = data.getData();
-            if (imageUri != null) {
-                getContentResolver().takePersistableUriPermission(imageUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                db.updateProfileImage(userId, imageUri.toString());
-                ivProfile.setImageURI(imageUri);
-                tvInitials.setVisibility(View.GONE);
-                Toast.makeText(this, "Profile picture updated!", Toast.LENGTH_SHORT).show();
-            }
+        PromoterApplication application = db.getLatestPromoterApplication(userId);
+        if (application != null && PromoterApplication.STATUS_PENDING.equals(application.getStatus())) {
+            label.setText("🏟  Promoter application pending review");
+            arrow.setText("");
+            findViewById(R.id.row_promoter).setOnClickListener(null);
+        } else {
+            label.setText("🏟  Become a Promoter");
+            arrow.setText("›");
+            findViewById(R.id.row_promoter).setOnClickListener(v ->
+                    startActivity(new Intent(this, BecomePromoterActivity.class)));
         }
     }
 
