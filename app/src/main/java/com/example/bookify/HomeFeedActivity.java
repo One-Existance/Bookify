@@ -10,6 +10,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.bookify.adapter.EventAdapter;
 import com.example.bookify.data.DatabaseHelper;
 import com.example.bookify.data.Event;
+import com.example.bookify.data.User;
+import java.util.Calendar;
 import java.util.List;
 
 public class HomeFeedActivity extends AppCompatActivity {
@@ -64,22 +66,20 @@ public class HomeFeedActivity extends AppCompatActivity {
 
         setupCategoryChips();
         setupBottomNav();
-
-        int userRole = prefs.getInt("user_role", 0);
-        if (userRole == 1 || userRole == 2) { // Admin or Promoter
-            findViewById(R.id.fab_admin).setVisibility(android.view.View.VISIBLE);
-            findViewById(R.id.fab_admin).setOnClickListener(v -> {
-                if (userRole == 1) startActivity(new Intent(this, AdminActivity.class));
-                else startActivity(new Intent(this, PromoterActivity.class));
-            });
-        }
+        setupRoleFab(prefs.getString("role", User.ROLE_USER));
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (eventAdapter != null) {
-            eventAdapter.updateData(db.getAllEvents());
+    private void setupRoleFab(String role) {
+        com.google.android.material.floatingactionbutton.FloatingActionButton fab = findViewById(R.id.fab_action);
+        if (User.ROLE_ADMIN.equals(role)) {
+            fab.setVisibility(android.view.View.VISIBLE);
+            fab.setOnClickListener(v -> startActivity(new Intent(this, AdminActivity.class)));
+        } else if (User.ROLE_PROMOTER.equals(role)) {
+            fab.setVisibility(android.view.View.VISIBLE);
+            fab.setOnClickListener(v -> startActivity(new Intent(this, PromoterDashboardActivity.class)));
+        } else {
+            fab.setVisibility(android.view.View.VISIBLE);
+            fab.setOnClickListener(v -> startActivity(new Intent(this, OrganizeEventActivity.class)));
         }
     }
 
@@ -88,34 +88,22 @@ public class HomeFeedActivity extends AppCompatActivity {
         TextView chipConcerts   = findViewById(R.id.chip_concerts);
         TextView chipSports     = findViewById(R.id.chip_sports);
         TextView chipConference = findViewById(R.id.chip_conference);
-        TextView chipGala       = findViewById(R.id.chip_gala);
-        TextView chipParty      = findViewById(R.id.chip_party);
-
-        TextView[] allChips = {chipAll, chipConcerts, chipSports, chipConference, chipGala, chipParty};
 
         chipAll.setOnClickListener(v -> {
             eventAdapter.filter(null);
-            setChipSelected(chipAll, allChips);
+            setChipSelected(chipAll, chipConcerts, chipSports, chipConference);
         });
         chipConcerts.setOnClickListener(v -> {
             eventAdapter.filter("Concert");
-            setChipSelected(chipConcerts, allChips);
+            setChipSelected(chipConcerts, chipAll, chipSports, chipConference);
         });
         chipSports.setOnClickListener(v -> {
             eventAdapter.filter("Sports");
-            setChipSelected(chipSports, allChips);
+            setChipSelected(chipSports, chipAll, chipConcerts, chipConference);
         });
         chipConference.setOnClickListener(v -> {
             eventAdapter.filter("Conference");
-            setChipSelected(chipConference, allChips);
-        });
-        chipGala.setOnClickListener(v -> {
-            eventAdapter.filter("Gala");
-            setChipSelected(chipGala, allChips);
-        });
-        chipParty.setOnClickListener(v -> {
-            eventAdapter.filter("Party");
-            setChipSelected(chipParty, allChips);
+            setChipSelected(chipConference, chipAll, chipConcerts, chipSports);
         });
     }
 
@@ -133,15 +121,12 @@ public class HomeFeedActivity extends AppCompatActivity {
         });
     }
 
-    private void setChipSelected(TextView selected, TextView[] allChips) {
-        for (TextView chip : allChips) {
-            if (chip == selected) {
-                chip.setBackgroundResource(R.drawable.bg_chip_selected);
-                chip.setTextColor(getResources().getColor(R.color.white, getTheme()));
-            } else {
-                chip.setBackgroundResource(R.drawable.bg_chip_default);
-                chip.setTextColor(getResources().getColor(R.color.text_muted, getTheme()));
-            }
+    private void setChipSelected(TextView selected, TextView... others) {
+        selected.setBackgroundResource(R.drawable.bg_chip_selected);
+        selected.setTextColor(getResources().getColor(R.color.white, getTheme()));
+        for (TextView chip : others) {
+            chip.setBackgroundResource(R.drawable.bg_chip_default);
+            chip.setTextColor(getResources().getColor(R.color.text_muted, getTheme()));
         }
     }
 
