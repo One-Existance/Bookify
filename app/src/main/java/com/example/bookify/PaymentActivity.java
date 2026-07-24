@@ -59,51 +59,77 @@ public class PaymentActivity extends AppCompatActivity {
             return;
         }
 
-        // Clean amount string
         String amountStr = eventPrice.replace("Tsh", "").replace(",", "").replace(" ", "").trim();
         
         btnPay.setEnabled(false);
         progressBar.setVisibility(View.VISIBLE);
 
         new Thread(() -> {
-            boolean success = callMongikeAPI(phone, amountStr);
+            String transactionId = callMongikeInitiate(phone, amountStr);
             
-            if (success) {
-                // Mock: Wait for payment to be processed and verified in Mongike account
-                // In production, you'd use a webhook or poll a "check-status" endpoint
-                try { Thread.sleep(3000); } catch (InterruptedException e) {}
+            if (transactionId != null) {
+                // Poll for status until payment is confirmed
+                boolean isVerified = false;
+                int attempts = 0;
+                while (attempts < 20) { // Poll for ~60 seconds (3s * 20)
+                    try { Thread.sleep(3000); } catch (InterruptedException e) {}
+                    
+                    String status = checkMongikeStatus(transactionId);
+                    if ("SUCCESS".equalsIgnoreCase(status) || "COMPLETED".equalsIgnoreCase(status)) {
+                        isVerified = true;
+                        break;
+                    } else if ("FAILED".equalsIgnoreCase(status) || "CANCELLED".equalsIgnoreCase(status)) {
+                        break;
+                    }
+                    attempts++;
+                }
                 
-                boolean isVerified = checkMongikeAccountStatus("BOOKIFY-" + System.currentTimeMillis());
-                
+                final boolean success = isVerified;
                 new Handler(Looper.getMainLooper()).post(() -> {
                     progressBar.setVisibility(View.GONE);
                     btnPay.setEnabled(true);
-                    if (isVerified) {
+                    if (success) {
                         db.completePayment(userId, eventId);
-                        Toast.makeText(this, "Payment Received! Ticket is now available.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, "Payment Successful! Your ticket is ready.", Toast.LENGTH_LONG).show();
                         setResult(RESULT_OK);
                         finish();
                     } else {
-                        Toast.makeText(this, "Payment not yet received. Please try again or check your account.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, "Payment verification failed. If you paid, please contact support.", Toast.LENGTH_LONG).show();
                     }
                 });
             } else {
                 new Handler(Looper.getMainLooper()).post(() -> {
                     progressBar.setVisibility(View.GONE);
                     btnPay.setEnabled(true);
-                    Toast.makeText(this, "Payment initiation failed.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Could not initiate payment. Check your network.", Toast.LENGTH_SHORT).show();
                 });
             }
         }).start();
     }
 
-    private boolean checkMongikeAccountStatus(String orderId) {
-        // Mocking a check against Mongike to ensure money is in the merchant account
-        // Return true if verified
-        return true;
+    private String checkMongikeStatus(String transactionId) {
+        try {
+            URL url = new URL("https://mongike.com/api/v1/payments/" + transactionId);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("x-api-key", apiKey);
+
+            int code = conn.getResponseCode();
+            if (code == 200) {
+                java.util.Scanner s = new java.util.Scanner(conn.getInputStream()).useDelimiter("\\A");
+                String response = s.hasNext() ? s.next() : "";
+                JSONObject respJson = new JSONObject(response);
+                if (respJson.has("data")) {
+                    return respJson.getJSONObject("data").optString("status");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "ERROR";
     }
 
-    private boolean callMongikeAPI(String phone, String amount) {
+    private String callMongikeInitiate(String phone, String amount) {
         try {
             URL url = new URL("https://mongike.com/api/v1/payments/mobile-money/tanzania");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -114,7 +140,7 @@ public class PaymentActivity extends AppCompatActivity {
 
             JSONObject json = new JSONObject();
             json.put("order_id", "BOOKIFY-" + System.currentTimeMillis());
-            json.put("amount", Integer.parseInt(amount)); // User doc shows integer amount
+            json.put("amount", Integer.parseInt(amount));
             json.put("buyer_phone", phone);
             json.put("fee_payer", "MERCHANT");
 
@@ -125,13 +151,16 @@ public class PaymentActivity extends AppCompatActivity {
 
             int code = conn.getResponseCode();
             if (code >= 200 && code < 300) {
-                // You would typically parse the response JSON here to check "status": "success"
-                return true; 
+                java.util.Scanner s = new java.util.Scanner(conn.getInputStream()).useDelimiter("\\A");
+                String response = s.hasNext() ? s.next() : "";
+                JSONObject respJson = new JSONObject(response);
+                if ("success".equalsIgnoreCase(respJson.optString("status"))) {
+                    return respJson.getJSONObject("data").optString("id");
+                }
             }
-            return false;
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
         }
+        return null;
     }
 }
