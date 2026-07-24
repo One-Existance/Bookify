@@ -56,6 +56,11 @@ public class EventDetailActivity extends AppCompatActivity {
 
         findViewById(R.id.btn_back).setOnClickListener(v -> finish());
         findViewById(R.id.btn_book).setOnClickListener(v -> bookTicket());
+        findViewById(R.id.btn_view_map).setOnClickListener(v -> {
+            Intent intent = new Intent(this, MapActivity.class);
+            intent.putExtra("location_name", location);
+            startActivity(intent);
+        });
     }
 
     private void bookTicket() {
