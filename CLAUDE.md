@@ -10,8 +10,10 @@ Bookify is an Android event booking app for Tanzania.
 ## Language & Tech Stack
 - **Language: Java only — NOT Kotlin.** Never add `.kt` files.
 - **UI: XML Views** — no Jetpack Compose
-- **Database: SQLite** via `DatabaseHelper.java` (schema version 5)
-- **Session: SharedPreferences** — key `"bookify_session"`, stores `user_id` (int), `user_name`, `user_email`, `is_admin` (boolean). Saved on login/register, cleared on logout.
+- **Database: SQLite** via `DatabaseHelper.java` (schema version 8) — local profile data only; credentials now live in Firebase Auth (see below)
+- **Auth: Firebase Authentication** (email/password) via `google-services` plugin + `firebase-auth`/`firebase-analytics` (BOM `34.16.0`). `LoginActivity`/`RegisterActivity` call `FirebaseAuth` directly; the local `users` table stores only the profile (name, phone, `role`), linked by a `firebase_uid` column. Requires `app/google-services.json` (gitignored, not committed — see Important Notes)
+- **Roles: three-tier (`USER` / `PROMOTER` / `ADMIN`)** stored in `users.role` — see "Roles & Event-Organizing Flow" below
+- **Session: SharedPreferences** — key `"bookify_session"`, stores `user_id` (int), `user_name`, `user_email`, `role` (String: `USER`/`PROMOTER`/`ADMIN`). Saved on login/register, cleared on logout (also signs out of Firebase Auth).
 - **UI Libraries:** AppCompat, Material Components, RecyclerView, CardView, ConstraintLayout
 - **QR Codes:** ZXing (`com.google.zxing:core:3.5.3`) — generates QR bitmaps from ticket numbers, drawn in-app (no camera/scanning yet)
 - **Payments:** Mongike mobile money gateway (Tanzania: M-Pesa, Tigo, Airtel, Halopesa) — called directly from `PaymentActivity` via `HttpURLConnection`
@@ -25,34 +27,44 @@ Bookify is an Android event booking app for Tanzania.
 | File | Purpose |
 |------|---------|
 | `MainActivity.java` | Splash screen — logo, tagline, "Get started" → Register, "Log in" → Login |
-| `LoginActivity.java` | Email + password login; validates via DB; saves session (incl. `is_admin`); routes admins → AdminActivity, regular users → HomeFeedActivity |
-| `RegisterActivity.java` | Full name, email, password (min 6 chars, confirm match), phone; uniqueness check; saves session |
-| `HomeFeedActivity.java` | Home feed — dynamic greeting, avatar (tappable → Profile), category chips, events RecyclerView, bottom nav; shows a FAB → AdminActivity if `is_admin` |
+| `LoginActivity.java` | Email + password login via Firebase Auth (`signInWithEmailAndPassword`); links/creates the local profile row by `firebase_uid`; saves session (incl. `role`); routes `ADMIN` → AdminActivity, `PROMOTER` → PromoterDashboardActivity, `USER` → HomeFeedActivity |
+| `RegisterActivity.java` | Full name, email, password (min 6 chars, confirm match), phone; creates the account via Firebase Auth (`createUserWithEmailAndPassword`), then a local profile row (always `role=USER`); saves session |
+| `HomeFeedActivity.java` | Home feed — dynamic greeting, avatar (tappable → Profile), category chips, events RecyclerView, bottom nav; single role-aware FAB (`fab_action`) → AdminActivity/PromoterDashboardActivity/OrganizeEventActivity depending on session `role` |
 | `ExploreActivity.java` | Browse + live search all events (filters as user types); bottom nav Explore active |
 | `EventDetailActivity.java` | Event detail — hero card (with image if set), 4-cell info grid, About text; Book Ticket → creates a `PENDING` booking → launches `PaymentActivity` → on success routes to `TicketDetailActivity` to show the QR code |
 | `MyTicketsActivity.java` | My tickets — now DB-backed (`db.getUserBookings`) via `BookingAdapter`; only shows `COMPLETED` (paid) bookings; empty state if none; "🔒 Private" link; bottom nav Tickets active |
-| `PrivateEventActivity.java` | Private event — access code + paste-link inputs, hardcoded private bookings list; bottom nav Tickets active |
+| `PrivateEventActivity.java` | Private event — access code entry, real DB lookup (`db.getEventByAccessCode`); on match launches `EventDetailActivity` with that event's extras, reusing the normal booking/payment pipeline; bottom nav Tickets active |
 | `MyBookingsActivity.java` | My bookings — DB-backed list of current user's bookings via BookingAdapter; shows empty state if none |
-| `ProfileActivity.java` | Profile — loads name/email/initials from SharedPreferences; My Bookings + Settings rows; logout clears session |
+| `ProfileActivity.java` | Profile — loads name/email/initials from SharedPreferences; My Bookings, **My Organized Events**, role-aware **Promoter row** (Become a Promoter / pending / Promoter Dashboard, hidden for Admin), Settings rows; logout signs out of Firebase Auth and clears session |
 | `SettingsActivity.java` | Settings — push notification + email reminder toggles (persisted in `"bookify_settings"` prefs); About section |
-| `AdminActivity.java` | Admin dashboard (admin users only) — form to post new events (title, location, date, category, price, time, slots, description, gallery image picker via `ACTION_OPEN_DOCUMENT`); RecyclerView of existing events with delete button (`AdminEventAdapter`); "Logout" and "View as User" links |
+| `AdminActivity.java` | Admin dashboard (`role=ADMIN` only, guarded in `onCreate()`) — form to post new events (status defaults `PUBLISHED`, no approval loop); RecyclerView of **all** events regardless of status/visibility (`getAllEventsForAdmin`) with delete button; **new: Pending Promoter Applications list** with Approve/Reject (`PromoterApplicationAdapter`); "Logout" and "View as User" links |
 | `PaymentActivity.java` | Mongike mobile-money checkout — collects phone number, POSTs to the Mongike API, mock-verifies the payment, then calls `db.completePayment()` to flip the booking to `COMPLETED` and returns `RESULT_OK` |
 | `TicketDetailActivity.java` | Shows a booked ticket — title, info, ticket number, event image (if any), and a ZXing-generated QR code encoding the ticket number |
+| `BecomePromoterActivity.java` | Form (hall/venue name, location, description) → `db.submitPromoterApplication()`, status `PENDING` until Admin reviews it |
+| `PromoterDashboardActivity.java` | `role=PROMOTER` only (guarded) — shows the promoter's approved hall info, and pending event requests (`getPendingEventRequestsForPromoter`) with Accept (dialog to adjust price/date/time before confirming) / Reject actions; "Logout" and "View as User" links |
+| `OrganizeEventActivity.java` | Any logged-in user — Spinner of approved promoters (`getApprovedPromoters`) + the event form (same field set/image-picker pattern as AdminActivity) + a public/private switch; submits via `db.requestEvent()` with `status=PENDING`, not yet visible anywhere |
+| `MyEventRequestsActivity.java` | Lists events the current user organized (`getEventsByOrganizer`, any status) with a status badge; for `PUBLISHED` **private** events, a "Share Invite Code" button opens the Android share sheet with a formatted invite message + access code |
 
 ### Data Layer
 | File | Purpose |
 |------|---------|
-| `data/DatabaseHelper.java` | SQLite (schema v5) — users, events, bookings tables; seeds 4 events + 1 admin user; CRUD/search/login/register/payment methods |
-| `data/User.java` | POJO: id, fullName, email, phone, `isAdmin` |
-| `data/Event.java` | POJO: id, title, location, date, category, price, isPrivate, `imageUrl`, `time`, `slots`, `description` |
+| `data/DatabaseHelper.java` | SQLite (schema v8) — users (local profile only, linked by `firebase_uid`), events, bookings, **promoter_applications** tables; seeds 4 events + 1 admin profile row + 1 test user row; CRUD/search/payment/promoter/organize-request methods |
+| `data/User.java` | POJO: id, fullName, email, phone, `role` (String: `USER`/`PROMOTER`/`ADMIN` — constants `ROLE_USER`/`ROLE_PROMOTER`/`ROLE_ADMIN`); helper methods `isAdmin()`/`isPromoter()`/`isUser()` |
+| `data/Event.java` | POJO: id, title, location, date, category, price, isPrivate, `imageUrl`, `time`, `slots`, `description`, **`organizerId`, `promoterId`, `status`** (`PENDING`/`PUBLISHED`/`REJECTED`), **`accessCode`** |
 | `data/Booking.java` | POJO: ticketNumber, eventTitle, eventDate, eventCategory, eventPrice, `imageUrl`, `status` (`PENDING`/`COMPLETED`) |
+| `data/PromoterProfile.java` | POJO: userId, fullName, email, hallName, location, description — an approved promoter's venue info, used in the "choose a promoter" picker |
+| `data/PromoterApplication.java` | POJO: id, userId, applicantName, applicantEmail, hallName, location, description, status (`PENDING`/`APPROVED`/`REJECTED`) |
+| `data/EventRequest.java` | Small wrapper: `Event` + `organizerName`, used to render the promoter's pending-requests list without a second query per row |
 
 ### Adapters
 | File | Purpose |
 |------|---------|
 | `adapter/EventAdapter.java` | Event cards RecyclerView — supports `filter(category)`, `search(query)`, `setOnEventClickListener`; shows event image if `imageUrl` set, else emoji icon |
 | `adapter/BookingAdapter.java` | Booking cards RecyclerView — used in MyTicketsActivity/MyBookingsActivity; shows event image if set; tapping a card opens `TicketDetailActivity` (QR code) |
-| `adapter/AdminEventAdapter.java` | Admin event-list RecyclerView — shows title/location/date/image per event with a delete button (`OnDeleteClickListener`) |
+| `adapter/AdminEventAdapter.java` | Admin event-list RecyclerView — shows title/location/date/image/**status badge** per event with a delete button (`OnDeleteClickListener`) |
+| `adapter/EventRequestAdapter.java` | Promoter dashboard's pending-request cards — organizer name, event info, Accept/Reject buttons (`OnRequestActionListener`) |
+| `adapter/MyEventRequestAdapter.java` | Organizer's "My Organized Events" cards — status badge, conditional "Share Invite Code" button for published private events (`OnShareClickListener`) |
+| `adapter/PromoterApplicationAdapter.java` | Admin's pending-promoter-application cards — applicant/hall info, Approve/Reject buttons (`OnApplicationActionListener`) |
 
 ---
 
@@ -66,16 +78,23 @@ Bookify is an Android event booking app for Tanzania.
 | `activity_explore.xml` | Explore — functional search EditText, all events RecyclerView, bottom nav |
 | `activity_event_detail.xml` | Event detail — hero card (image or emoji), 2×2 info grid, About section, Book Ticket button |
 | `activity_my_tickets.xml` | My tickets — Upcoming/Past tabs, RecyclerView (DB-backed) + empty-state view, bottom nav |
-| `activity_private_event.xml` | Private event — circle icon, access code + link inputs, hardcoded bookings, bottom nav |
+| `activity_private_event.xml` | Private event — circle icon, access code input (real), error label, bottom nav |
 | `activity_my_bookings.xml` | My bookings — back button, empty state TextView, RecyclerView |
-| `activity_profile.xml` | Profile — avatar, name/email, My Bookings row, Settings row, logout button, bottom nav |
+| `activity_profile.xml` | Profile — avatar, name/email, My Bookings row, **My Organized Events row**, **Promoter row**, Settings row, logout button, bottom nav |
 | `activity_settings.xml` | Settings — back button, notification toggles (SwitchCompat), About rows |
-| `activity_admin.xml` | Admin dashboard — event form fields (title, location, date, category, price, time, slots, description), image picker preview, Save button, RecyclerView of existing events, logout/view-as-user links |
+| `activity_admin.xml` | Admin dashboard — event form fields, image picker preview, Save button, **Pending Promoter Applications RecyclerView**, RecyclerView of all events (any status), logout/view-as-user links |
 | `activity_payment.xml` | Payment — amount display, phone number input, "Pay Now" button, progress bar |
 | `activity_ticket_detail.xml` | Ticket detail — title, info, ticket number, event image, QR code image, back button |
+| `activity_become_promoter.xml` | Hall/venue name, location, description fields, Submit button |
+| `activity_promoter_dashboard.xml` | Hall info header, "View as Regular User" link, logout, pending-requests RecyclerView + empty state |
+| `activity_organize_event.xml` | Promoter Spinner, public/private SwitchCompat, image picker, event form fields, submit button |
+| `activity_my_event_requests.xml` | Back button, empty state, RecyclerView of the organizer's requested events |
 | `item_event_card.xml` | Event card — image (or emoji fallback), title, location/date, category chip, price chip |
 | `item_booking_card.xml` | Booking card — event image, category, title, date+price, dashed divider, ticket number + QR placeholder |
-| `item_admin_event.xml` | Admin event row — thumbnail, title, location/date info, delete button |
+| `item_admin_event.xml` | Admin event row — thumbnail, title, location/date info, **status/visibility badge**, delete button |
+| `item_event_request.xml` | Promoter dashboard request card — title, organizer, event info, Reject/Accept buttons |
+| `item_my_event_request.xml` | Organizer's event card — title, status badge, info, conditional Share Invite button |
+| `item_promoter_application.xml` | Admin's application card — hall name, applicant, location, Reject/Approve buttons |
 
 ---
 
@@ -124,27 +143,62 @@ Theme: `Theme.MaterialComponents.DayNight.NoActionBar` (always dark)
 ---
 
 ## Database Schema
-(`DatabaseHelper` DB_VERSION = 5 — `onUpgrade` just drops and recreates all tables, no migration/data preservation)
+(`DatabaseHelper` DB_VERSION = 8 — `onUpgrade` just drops and recreates all tables, no migration/data preservation)
 
-**users** — id, full_name, email (UNIQUE), password, phone, `is_admin` (default 0)
-**events** — id, title, location, date, category, price, is_private, `image_url`, `time`, `slots`, `description`
+**users** — id, full_name, email (UNIQUE), `firebase_uid` (UNIQUE, nullable until first login/register), phone, **`role`** (`'USER'`/`'PROMOTER'`/`'ADMIN'`, default `'USER'` — replaced the old `is_admin` boolean). Passwords are no longer stored here — Firebase Auth owns credentials.
+**events** — id, title, location, date, category, price, is_private, `image_url`, `time`, `slots`, `description`, **`organizer_id`** (nullable — the `USER` who requested it), **`promoter_id`** (nullable — whose hall hosts it), **`status`** (`'PENDING'`/`'PUBLISHED'`/`'REJECTED'`, default `'PUBLISHED'`), **`access_code`** (set only when a private event's request is approved)
 **bookings** — id, user_id, event_id, ticket_number, `status` (default `PENDING`, becomes `COMPLETED` after payment)
+**promoter_applications** *(new)* — id, user_id, hall_name, location, description, `status` (`'PENDING'`/`'APPROVED'`/`'REJECTED'`)
+
+Admin-created events (via `AdminActivity`) and all seeded events get `status='PUBLISHED'` directly with `organizer_id`/`promoter_id` NULL — Admin bypasses the promoter-approval loop for its own posts. Events requested via `OrganizeEventActivity` start at `status='PENDING'` and are invisible to `getAllEvents()`/`searchEvents()` until a promoter approves them.
 
 Seeded on first launch:
 - 4 events (3 public + 1 private): Sauti Sol Live in DSM (Concert, Tsh 15,000), DSM Tech Conference 2025 (Conference, Tsh 30,000), Kariakoo Marathon 2025 (Sports, Tsh 5,000), Private Rooftop Party (Concert, Tsh 50,000, private — not shown in home feed)
-- 1 admin user: `admin@gmail.com` / `123456` (`is_admin = 1`)
+- 1 admin profile row: `admin@gmail.com` (`role='ADMIN'`, `firebase_uid` null until linked). **The Firebase Auth account itself (`admin@gmail.com` / `123456`) must be created manually in the Firebase Console** under Authentication → Users — it does not exist just because the SQLite row is seeded.
+- 1 local-only test user row: `normal@gmail.com` (`role='USER'`) — see the local-login bypass note under Important Notes.
 
 ### Key DB methods in DatabaseHelper
-- `registerUser()` / `loginUser()` (returns `is_admin`) / `emailExists()`
-- `getAllEvents()` — public events only
-- `searchEvents(query)` — LIKE search on title/location/category
-- `addEvent(title, location, date, category, price, isPrivate, imageUrl, time, slots, description)` — admin event creation
+- `registerLocalProfile(fullName, email, firebaseUid, phone)` — inserts the local profile row after Firebase Auth account creation (`role='USER'`)
+- `getUserByFirebaseUid(uid)` / `getUserByEmail(email)` / `getUserById(id)` / `linkFirebaseUid(localId, uid)` — used by `LoginActivity` to resolve/link the local profile to a Firebase account
+- `submitPromoterApplication(userId, hallName, location, description)` / `getLatestPromoterApplication(userId)` / `getPendingPromoterApplications()` / `approvePromoterApplication(applicationId, userId)` (also flips `users.role` to `PROMOTER`) / `rejectPromoterApplication(applicationId)`
+- `getApprovedPromoters()` — `List<PromoterProfile>` for the "choose a promoter" picker; `getPromoterProfile(promoterUserId)` — one promoter's approved hall info
+- `getAllEvents()` / `searchEvents(query)` — public events only, **and now `status='PUBLISHED'` only**
+- `getAllEventsForAdmin()` — no filters at all, for Admin's monitoring view
+- `addEvent(...)` — admin event creation, `status='PUBLISHED'` directly
+- `requestEvent(..., organizerId, promoterId)` — organizer's "organize event" submission, `status='PENDING'`
+- `getPendingEventRequestsForPromoter(promoterId)` — `List<EventRequest>` (event + organizer name) for the promoter dashboard
+- `approveEventRequest(eventId, finalPrice, finalDate, finalTime, isPrivate)` — promoter's Accept: updates price/date/time, `status='PUBLISHED'`, generates `access_code` if `isPrivate`
+- `rejectEventRequest(eventId)` — `status='REJECTED'`
+- `getEventsByOrganizer(organizerId)` — all statuses, for "My Organized Events"
+- `getEventByAccessCode(code)` — used by `PrivateEventActivity`; only matches `status='PUBLISHED'` + `is_private=1`
 - `deleteEvent(eventId)` — admin event deletion
 - `bookEvent(userId, eventId)` — generates BKF-XXXX-XXXX ticket, inserts booking with `status='PENDING'`
 - `completePayment(userId, eventId)` — flips a booking's status to `COMPLETED` after Mongike payment succeeds
 - `isAlreadyBooked(userId, eventId)` — duplicate check (any status)
 - `getTicketNumber(userId, eventId)` — retrieve ticket number, **only for `COMPLETED` bookings**
 - `getUserBookings(userId)` — JOIN bookings+events, **only `COMPLETED`** bookings, returns List<Booking>
+
+---
+
+## Roles & Event-Organizing Flow
+Three roles, `users.role`: `USER` (default), `PROMOTER`, `ADMIN`. Registration never assigns anything but `USER` — Promoter status is requested afterward and Admin-only accounts are seeded/manually granted, there's no self-service admin signup.
+
+**Becoming a Promoter:**
+1. From `ProfileActivity`, a `USER` taps "Become a Promoter" → `BecomePromoterActivity` → fills hall/venue name, location, description → `submitPromoterApplication()`, row status `PENDING`.
+2. Profile's promoter row now reads "Promoter application pending review" (no action) until Admin decides.
+3. Admin reviews pending applications in `AdminActivity` → Approve flips `users.role` to `PROMOTER` (and the application row to `APPROVED`) / Reject flips it to `REJECTED` (user can resubmit — old rejected rows are just left in place, not deleted).
+4. Next login, a `PROMOTER` routes straight to `PromoterDashboardActivity` instead of `HomeFeedActivity`.
+
+**Organizing an event (any `USER` or `PROMOTER`, via the Home FAB → `OrganizeEventActivity`):**
+1. Pick an approved promoter/hall from a Spinner (`getApprovedPromoters()`), fill the event form (title, category, date, time, proposed price, slots, description, image), toggle public/private.
+2. Submit → `requestEvent(...)` inserts an `events` row with `status='PENDING'`, `organizer_id`=me, `promoter_id`=chosen hall. **Not visible anywhere yet** — `getAllEvents()`/`searchEvents()` filter on `status='PUBLISHED'`.
+3. The target Promoter sees it in `PromoterDashboardActivity`'s pending-requests list (organizer name + event details) and can:
+   - **Accept** — a dialog lets them adjust price/date/time before confirming; `approveEventRequest()` sets `status='PUBLISHED'` (and generates an `access_code` if the event is private).
+   - **Reject** — `status='REJECTED'`; the organizer sees this in `MyEventRequestsActivity` and the event never appears publicly.
+4. **Public + approved** → shows up in the normal home feed/explore/search immediately, bookable through the existing `EventDetailActivity → PaymentActivity → TicketDetailActivity` pipeline, completely unchanged.
+5. **Private + approved** → still excluded from public listings (`is_private=1` is already filtered out of `getAllEvents()`), but the organizer's `MyEventRequestsActivity` now shows a "Share Invite Code" button that opens the Android share sheet (`ACTION_SEND`, `text/plain`) with a formatted invite message containing the `access_code` — meant to be sent manually via WhatsApp/SMS/etc., like a paper invitation. An invitee enters that code in `PrivateEventActivity` → `getEventByAccessCode()` looks it up → on match, launches `EventDetailActivity` with the same extras `HomeFeedActivity` builds for a normal event card, dropping them into the identical booking/payment flow for that one event.
+
+**Admin** approves/rejects Promoter applications and — via `getAllEventsForAdmin()` — sees every event regardless of status/visibility (PENDING/PUBLISHED/REJECTED, public or private) in one list with a status badge, i.e. "monitors everything." Admin-posted events still bypass the request/approval loop entirely (`addEvent()` → `status='PUBLISHED'` directly).
 
 ---
 
@@ -165,16 +219,35 @@ Seeded on first launch:
 MainActivity (Splash)
   ├── "Get started" → RegisterActivity
   └── "Log in"      → LoginActivity
-        ├── (success, regular user) → HomeFeedActivity [clears stack]
-        └── (success, is_admin)     → AdminActivity [clears stack]
+        ├── (success, role=USER)     → HomeFeedActivity [clears stack]
+        ├── (success, role=PROMOTER) → PromoterDashboardActivity [clears stack]
+        └── (success, role=ADMIN)    → AdminActivity [clears stack]
 
 HomeFeedActivity
   ├── Avatar circle (top right) → ProfileActivity
   ├── Event card tap            → EventDetailActivity
-  ├── FAB (admin only)          → AdminActivity
+  ├── FAB (fab_action, role-aware) → AdminActivity (ADMIN) / PromoterDashboardActivity (PROMOTER) / OrganizeEventActivity (USER)
   ├── Explore bottom nav        → ExploreActivity
   ├── Tickets bottom nav        → MyTicketsActivity
   └── Profile bottom nav        → ProfileActivity
+
+OrganizeEventActivity (any logged-in user, reached via the Home FAB)
+  ├── Submit request → MyEventRequestsActivity [finishes]
+  └── ← back         → previous screen (finish)
+
+MyEventRequestsActivity
+  ├── "Share Invite Code" (published private events) → Android share sheet
+  └── ← back → ProfileActivity
+
+BecomePromoterActivity (reached from ProfileActivity's promoter row)
+  ├── Submit → back to ProfileActivity [finish]
+  └── ← back → ProfileActivity
+
+PromoterDashboardActivity (role=PROMOTER only, reached via login or the Home FAB)
+  ├── Accept request (dialog: adjust price/date/time) → event published
+  ├── Reject request                                  → event rejected
+  ├── "Logout"        → LoginActivity [clears session]
+  └── "View as User"  → HomeFeedActivity
 
 ExploreActivity
   ├── Event card tap   → EventDetailActivity
@@ -205,11 +278,13 @@ PrivateEventActivity
   └── Profile nav     → ProfileActivity
 
 ProfileActivity
-  ├── "My Bookings"   → MyBookingsActivity
-  ├── "Settings"      → SettingsActivity
-  ├── Logout          → MainActivity [clears stack, clears SharedPreferences]
-  ├── Home nav        → HomeFeedActivity
-  └── Tickets nav     → MyTicketsActivity
+  ├── "My Bookings"          → MyBookingsActivity
+  ├── "My Organized Events"  → MyEventRequestsActivity
+  ├── Promoter row           → BecomePromoterActivity (USER, no pending app) / nothing (pending) / PromoterDashboardActivity (PROMOTER) / hidden (ADMIN)
+  ├── "Settings"             → SettingsActivity
+  ├── Logout                 → MainActivity [clears stack, clears SharedPreferences]
+  ├── Home nav               → HomeFeedActivity
+  └── Tickets nav            → MyTicketsActivity
 
 MyBookingsActivity
   └── ← back         → ProfileActivity
@@ -217,12 +292,13 @@ MyBookingsActivity
 SettingsActivity
   └── ← back         → ProfileActivity
 
-AdminActivity (admin users only, reached via login or the Home FAB)
-  ├── Image picker (gallery) → attaches image to new event
-  ├── "Save"                 → adds event to DB, refreshes list
-  ├── Delete button per row  → removes event from DB
-  ├── "Logout"               → MainActivity [clears session]
-  └── "View as User"         → HomeFeedActivity
+AdminActivity (role=ADMIN only, reached via login or the Home FAB)
+  ├── Image picker (gallery)         → attaches image to new event
+  ├── "Save"                         → adds event to DB (status=PUBLISHED), refreshes list
+  ├── Approve/Reject promoter app    → flips users.role / application status
+  ├── Delete button per row          → removes event from DB
+  ├── "Logout"                       → LoginActivity [clears session]
+  └── "View as User"                 → HomeFeedActivity
 ```
 
 ---
@@ -250,11 +326,18 @@ AdminActivity (admin users only, reached via login or the Home FAB)
 ## Pending / Next Steps
 - [ ] PaymentActivity — `checkMongikeAccountStatus()` is mocked (always returns `true`); needs a real webhook or status-polling integration against Mongike
 - [ ] **Rotate the Mongike API key** — it was committed in plaintext to `PaymentActivity.java` in commit `0532675` and is permanently exposed in git history even though it's now moved to `local.properties`/`BuildConfig` (see Important Notes)
-- [ ] PrivateEventActivity — real access code validation against DB
+- [x] ~~PrivateEventActivity — real access code validation against DB~~ Done — wired to `getEventByAccessCode()`, launches `EventDetailActivity` on match
 - [ ] activity_home_feed.xml — the static "Good morning," label above tv_greeting is hardcoded; make it dynamic
 - [ ] GPS integration for nearby event filtering
 - [ ] TicketDetailActivity — no actual QR *scanning*/entry-validation flow yet, despite being described as a scan/validation screen
-- [ ] `onUpgrade()` in DatabaseHelper drops all tables (users/events/bookings wiped on every schema bump) — fine for coursework, but note before shipping
+- [ ] `onUpgrade()` in DatabaseHelper drops all tables (users/events/bookings/promoter_applications wiped on every schema bump) — fine for coursework, but note before shipping. DB_VERSION is now 8; anyone with the app already installed loses local data (bookings, custom events, promoter applications) on next launch.
+- [ ] Create the `admin@gmail.com` / `123456` account in the Firebase Console (Authentication → Users) — admin login is broken without it, since credentials now live in Firebase Auth, not SQLite
+- [ ] Firebase Analytics dependency is included but not actually invoked anywhere in code yet (auto-init only)
+- [ ] **Real Firebase Auth login/registration is not working yet** — most likely cause: the "Email/Password" sign-in provider isn't enabled under Authentication → Sign-in method in the Firebase Console for project `bookify-461a7`. `RegisterActivity`'s failure Toast now surfaces `e.getMessage()`, so check that text in-app to confirm the exact error. Until it's fixed, use the `normal@gmail.com` local test login above.
+- [ ] A rejected Promoter application can be resubmitted, but there's no UI to show application *history* — `getLatestPromoterApplication()` only surfaces the most recent row, older ones are invisible in the app (still in the DB)
+- [ ] `OrganizeEventActivity`'s event `location` is auto-set to the chosen promoter's registered location (not separately editable) — intentional (you're booking *their* hall), but worth confirming that's the intended semantics if hall setups get more complex later
+- [ ] No in-app notification when a promoter accepts/rejects a request or an admin approves/rejects a promoter application — the organizer/applicant has to manually check `MyEventRequestsActivity`/`ProfileActivity` to find out
+- [ ] Promoters organize events only by approving other users' requests — there's no shortcut for a Promoter to self-publish an event on their own hall without going through their own request/approval loop
 
 ---
 
@@ -263,5 +346,7 @@ AdminActivity (admin users only, reached via login or the Home FAB)
 - `android:paddingHorizontal` same issue — use `paddingLeft` + `paddingRight`
 - Never use `.kt` files — Java only
 - **Security: Mongike API key.** Originally hardcoded in `PaymentActivity.java` and committed to the public GitHub repo (commit `0532675`). Moved to `local.properties` (gitignored) → exposed via `BuildConfig.MONGIKE_API_KEY`, set in `app/build.gradle.kts`. The key is still exposed in git history from the earlier commit — **rotate it in the Mongike dashboard.** Anyone cloning the repo now needs their own `MONGIKE_API_KEY=...` line in `local.properties` for `PaymentActivity` to work.
-- Seeded admin login for testing: `admin@gmail.com` / `123456`
+- **Firebase setup.** `app/google-services.json` is required for the app to build/run (the `google-services` Gradle plugin reads it) but is gitignored and **not committed** — it was never pushed to the repo, so there's no history-exposure issue like the Mongike key. Anyone cloning the repo (or setting up a new machine) needs to download their own `google-services.json` from the Firebase Console (project `bookify-461a7`, Android package `com.example.bookify`) and drop it in `app/`, otherwise the build fails at `processDebugGoogleServices`.
+- Seeded admin login for testing: `admin@gmail.com` / `123456` — the SQLite row is seeded automatically, but the matching Firebase Auth account must be created manually in the Firebase Console (Authentication → Users) before admin login will work.
+- **Local-only test login (bypasses Firebase entirely):** `normal@gmail.com` / any password, phone `0695880700`. `LoginActivity.attemptLogin()` special-cases `DatabaseHelper.TEST_USER_EMAIL` and logs straight into the seeded `Normal User` SQLite row without calling `FirebaseAuth` — added because real Firebase login/registration wasn't working end-to-end yet (see Pending). Seeded via `DatabaseHelper.seedTestUser()`, DB_VERSION bumped to 7 to force reseed on existing installs.
 - Always update this file and `D:\Bookify context\CHANGES.md` after changes

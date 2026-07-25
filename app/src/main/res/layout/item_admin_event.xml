@@ -40,13 +40,13 @@
             android:textSize="13sp"/>
 
         <TextView
-            android:id="@+id/tv_admin_event_stats"
+            android:id="@+id/tv_admin_event_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/primary_purple"
-            android:textSize="12sp"
             android:layout_marginTop="2dp"
-            android:text="Tickets: 0 taken | 0 left"/>
+            android:textColor="@color/primary_purple"
+            android:textSize="11sp"
+            android:textStyle="bold"/>
     </LinearLayout>
 
     <Button
