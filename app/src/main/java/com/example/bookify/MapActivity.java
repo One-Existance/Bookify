@@ -1,39 +1,55 @@
 package com.example.bookify;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentActivity;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
+import org.maplibre.android.MapLibre;
+import org.maplibre.android.annotations.MarkerOptions;
+import org.maplibre.android.camera.CameraUpdateFactory;
+import org.maplibre.android.geometry.LatLng;
+import org.maplibre.android.location.LocationComponent;
+import org.maplibre.android.location.LocationComponentActivationOptions;
+import org.maplibre.android.location.modes.CameraMode;
+import org.maplibre.android.location.modes.RenderMode;
+import org.maplibre.android.maps.MapView;
+import org.maplibre.android.maps.MapLibreMap;
+import org.maplibre.android.maps.OnMapReadyCallback;
+import org.maplibre.android.maps.Style;
+
 import java.util.List;
 import java.util.Locale;
 
-public class MapActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
 
-    private GoogleMap mMap;
+    private MapView mapView;
+    private MapLibreMap mMap;
     private String locationName;
-    private LatLng eventLatLng = new LatLng(-6.7924, 39.2083); // Default: Dar es Salaam
+    private LatLng eventLatLng = new LatLng(-6.7924, 39.2083);
+    private static final String MAPTILER_KEY = "JhccbJYsCtrTEkg1KAQt";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // Initialize MapLibre with context before setContentView
+        MapLibre.getInstance(this);
+
         setContentView(R.layout.activity_map);
 
         locationName = getIntent().getStringExtra("location_name");
         if (locationName == null) locationName = "Tanzania";
 
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        if (mapFragment != null) {
-            mapFragment.getMapAsync(this);
-        }
+        mapView = findViewById(R.id.mapView);
+        mapView.onCreate(savedInstanceState);
+        mapView.getMapAsync(this);
 
         findViewById(R.id.btn_back_map).setOnClickListener(v -> finish());
         
@@ -48,7 +64,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                 if (addresses != null && !addresses.isEmpty()) {
                     Address address = addresses.get(0);
                     eventLatLng = new LatLng(address.getLatitude(), address.getLongitude());
-                    
                     runOnUiThread(this::updateMapPosition);
                 }
             } catch (Exception e) {
@@ -58,15 +73,93 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
     }
 
     @Override
-    public void onMapReady(@NonNull GoogleMap googleMap) {
-        mMap = googleMap;
-        updateMapPosition();
+    public void onMapReady(@NonNull MapLibreMap mapLibreMap) {
+        mMap = mapLibreMap;
+        
+        String styleUrl = "https://api.maptiler.com/maps/streets/style.json?key=" + MAPTILER_KEY;
+        mMap.setStyle(new Style.Builder().fromUri(styleUrl), style -> {
+            enableLocationComponent(style);
+            updateMapPosition();
+        });
+    }
+
+    private void enableLocationComponent(@NonNull Style loadedMapStyle) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+            ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+            return;
+        }
+
+        LocationComponent locationComponent = mMap.getLocationComponent();
+        locationComponent.activateLocationComponent(
+                LocationComponentActivationOptions.builder(this, loadedMapStyle).build());
+        
+        locationComponent.setLocationComponentEnabled(true);
+        locationComponent.setCameraMode(CameraMode.NONE); // Don't snap camera to user automatically
+        locationComponent.setRenderMode(RenderMode.COMPASS);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 1 && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (mMap != null && mMap.getStyle() != null) {
+                enableLocationComponent(mMap.getStyle());
+            }
+        } else {
+            Toast.makeText(this, "Location permission denied", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void updateMapPosition() {
         if (mMap == null) return;
         mMap.clear();
         mMap.addMarker(new MarkerOptions().position(eventLatLng).title(locationName));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(eventLatLng, 15));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(eventLatLng, 12));
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mapView.onStart();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mapView.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mapView.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mapView.onStop();
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mapView.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        mapView.onLowMemory();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mapView != null) {
+            mapView.onDestroy();
+        }
     }
 }
