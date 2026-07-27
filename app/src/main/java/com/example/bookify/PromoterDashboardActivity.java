@@ -15,6 +15,7 @@ import com.example.bookify.data.DatabaseHelper;
 import com.example.bookify.data.EventRequest;
 import com.example.bookify.data.PromoterProfile;
 import com.example.bookify.data.User;
+import com.example.bookify.util.NotificationHelper;
 import java.util.List;
 
 public class PromoterDashboardActivity extends AppCompatActivity {
@@ -72,6 +73,10 @@ public class PromoterDashboardActivity extends AppCompatActivity {
             public void onReject(EventRequest request) {
                 db.rejectEventRequest(request.getEvent().getId());
                 Toast.makeText(PromoterDashboardActivity.this, "Request rejected", Toast.LENGTH_SHORT).show();
+                NotificationHelper.notify(PromoterDashboardActivity.this, request.getEvent().getId(),
+                        "Event Rejected",
+                        "You rejected \"" + request.getEvent().getTitle() + "\".",
+                        new Intent(PromoterDashboardActivity.this, PromoterDashboardActivity.class));
                 refreshRequests();
             }
         }));
@@ -109,6 +114,10 @@ public class PromoterDashboardActivity extends AppCompatActivity {
                             etTime.getText().toString().trim(),
                             request.getEvent().isPrivate());
                     Toast.makeText(this, "Event approved!", Toast.LENGTH_SHORT).show();
+                    NotificationHelper.notify(this, request.getEvent().getId(),
+                            "Event Approved",
+                            "You approved \"" + request.getEvent().getTitle() + "\" — it's now live.",
+                            new Intent(this, PromoterDashboardActivity.class));
                     refreshRequests();
                 })
                 .setNegativeButton("Cancel", null)

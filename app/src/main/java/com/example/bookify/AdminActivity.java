@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.bookify.adapter.AdminEventAdapter;
 import com.example.bookify.adapter.PromoterApplicationAdapter;
 import com.example.bookify.data.Event;
+import com.example.bookify.util.NotificationHelper;
 import java.util.List;
 
 import android.net.Uri;
@@ -133,6 +134,10 @@ public class AdminActivity extends AppCompatActivity {
             public void onApprove(PromoterApplication application) {
                 db.approvePromoterApplication(application.getId(), application.getUserId());
                 Toast.makeText(AdminActivity.this, application.getApplicantName() + " is now a Promoter", Toast.LENGTH_SHORT).show();
+                NotificationHelper.notify(AdminActivity.this, application.getId(),
+                        "Promoter Approved",
+                        application.getApplicantName() + " is now a promoter.",
+                        new Intent(AdminActivity.this, AdminActivity.class));
                 refreshApplications();
             }
 
@@ -140,6 +145,10 @@ public class AdminActivity extends AppCompatActivity {
             public void onReject(PromoterApplication application) {
                 db.rejectPromoterApplication(application.getId());
                 Toast.makeText(AdminActivity.this, "Application rejected", Toast.LENGTH_SHORT).show();
+                NotificationHelper.notify(AdminActivity.this, application.getId(),
+                        "Application Rejected",
+                        application.getApplicantName() + "'s promoter application was rejected.",
+                        new Intent(AdminActivity.this, AdminActivity.class));
                 refreshApplications();
             }
         }));

@@ -7,6 +7,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.bookify.data.DatabaseHelper;
+import com.example.bookify.util.NotificationHelper;
 
 public class EventDetailActivity extends AppCompatActivity {
 
@@ -108,10 +109,17 @@ public class EventDetailActivity extends AppCompatActivity {
             String ticketNumber = db.getTicketNumber(userId, eventId);
             
             // Go directly to ticket detail to show QR code
+            String eventTitle = ((TextView) findViewById(R.id.tv_event_title)).getText().toString();
             Intent intent = new Intent(this, TicketDetailActivity.class);
-            intent.putExtra("event_title", ((TextView) findViewById(R.id.tv_event_title)).getText().toString());
+            intent.putExtra("event_title", eventTitle);
             intent.putExtra("event_info", getIntent().getStringExtra("event_date"));
             intent.putExtra("ticket_number", ticketNumber);
+
+            NotificationHelper.notify(this, eventId,
+                    "Booking Confirmed",
+                    "Your ticket for " + eventTitle + " is ready. Tap to view your QR code.",
+                    new Intent(intent));
+
             startActivity(intent);
             finish();
         }
