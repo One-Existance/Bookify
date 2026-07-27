@@ -97,7 +97,9 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="16dp"
-                android:src="@android:drawable/ic_menu_view"
+                android:src="@drawable/ic_eye"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="4dp"
                 app:tint="@color/text_muted"
                 android:clickable="true"
                 android:focusable="true"/>
@@ -125,7 +127,9 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="16dp"
-                android:src="@android:drawable/ic_menu_view"
+                android:src="@drawable/ic_eye"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="4dp"
                 app:tint="@color/text_muted"
                 android:clickable="true"
                 android:focusable="true"/>

@@ -17,7 +17,9 @@ Bookify is an Android event booking app for Tanzania.
 - **UI Libraries:** AppCompat, Material Components, RecyclerView, CardView, ConstraintLayout
 - **QR Codes:** ZXing (`com.google.zxing:core:3.5.3`) — generates QR bitmaps from ticket numbers, drawn in-app (no camera/scanning yet)
 - **Payments:** Mongike mobile money gateway (Tanzania: M-Pesa, Tigo, Airtel, Halopesa) — called directly from `PaymentActivity` via `HttpURLConnection`
-- **Permissions:** `INTERNET` (added in `AndroidManifest.xml` for the payment API call)
+- **Maps:** Google Maps (`com.google.android.gms:play-services-maps:19.0.0`) via `MapActivity.java` — geocodes an event's location string to a `LatLng` and drops a marker; needs a `MAPS_API_KEY` entry in `local.properties` (currently unset, so the map won't render real tiles until one is added — see Important Notes)
+- **Notifications:** Real Android notifications via `util/NotificationHelper.java` — creates the `bookify_notifications` channel, requests `POST_NOTIFICATIONS` at runtime (required on API 33+), and posts notifications gated by both the OS permission and the Settings toggle (`bookify_settings` → `notifications`). Fired on booking confirmation (`EventDetailActivity`), promoter accept/reject (`PromoterDashboardActivity`), and admin promoter-application approve/reject (`AdminActivity`)
+- **Permissions:** `INTERNET`, `ACCESS_NETWORK_STATE`, `POST_NOTIFICATIONS` (all in `AndroidManifest.xml`)
 
 ---
 
@@ -27,16 +29,17 @@ Bookify is an Android event booking app for Tanzania.
 | File | Purpose |
 |------|---------|
 | `MainActivity.java` | Splash screen — logo, tagline, "Get started" → Register, "Log in" → Login |
-| `LoginActivity.java` | Email + password login via Firebase Auth (`signInWithEmailAndPassword`); links/creates the local profile row by `firebase_uid`; saves session (incl. `role`); routes `ADMIN` → AdminActivity, `PROMOTER` → PromoterDashboardActivity, `USER` → HomeFeedActivity |
-| `RegisterActivity.java` | Full name, email, password (min 6 chars, confirm match), phone; creates the account via Firebase Auth (`createUserWithEmailAndPassword`), then a local profile row (always `role=USER`); saves session |
-| `HomeFeedActivity.java` | Home feed — dynamic greeting, avatar (tappable → Profile), category chips, events RecyclerView, bottom nav; single role-aware FAB (`fab_action`) → AdminActivity/PromoterDashboardActivity/OrganizeEventActivity depending on session `role` |
+| `LoginActivity.java` | Email + password login via Firebase Auth (`signInWithEmailAndPassword`); links/creates the local profile row by `firebase_uid`; saves session (incl. `role`); routes `ADMIN` → AdminActivity, `PROMOTER` → PromoterDashboardActivity, `USER` → HomeFeedActivity; password field has a working show/hide eye toggle |
+| `RegisterActivity.java` | Full name, email, password (min 6 chars, confirm match), phone; creates the account via Firebase Auth (`createUserWithEmailAndPassword`), then a local profile row (always `role=USER`); saves session; both password + confirm-password fields have independent working show/hide eye toggles |
+| `HomeFeedActivity.java` | Home feed — dynamic greeting, avatar (tappable → Profile), category chips, events RecyclerView, bottom nav; single role-aware FAB (`fab_action`) → AdminActivity/PromoterDashboardActivity/OrganizeEventActivity depending on session `role`; requests the `POST_NOTIFICATIONS` runtime permission on first load |
+| `MapActivity.java` | Shows an event's location on a Google Map — geocodes the location string to a `LatLng`, drops a marker, centers the camera; needs `MAPS_API_KEY` set in `local.properties` to render actual map tiles |
 | `ExploreActivity.java` | Browse + live search all events (filters as user types); bottom nav Explore active |
 | `EventDetailActivity.java` | Event detail — hero card (with image if set), 4-cell info grid, About text; Book Ticket → creates a `PENDING` booking → launches `PaymentActivity` → on success routes to `TicketDetailActivity` to show the QR code |
 | `MyTicketsActivity.java` | My tickets — now DB-backed (`db.getUserBookings`) via `BookingAdapter`; only shows `COMPLETED` (paid) bookings; empty state if none; "🔒 Private" link; bottom nav Tickets active |
 | `PrivateEventActivity.java` | Private event — access code entry, real DB lookup (`db.getEventByAccessCode`); on match launches `EventDetailActivity` with that event's extras, reusing the normal booking/payment pipeline; bottom nav Tickets active |
 | `MyBookingsActivity.java` | My bookings — DB-backed list of current user's bookings via BookingAdapter; shows empty state if none |
 | `ProfileActivity.java` | Profile — loads name/email/initials from SharedPreferences; My Bookings, **My Organized Events**, role-aware **Promoter row** (Become a Promoter / pending / Promoter Dashboard, hidden for Admin), Settings rows; logout signs out of Firebase Auth and clears session |
-| `SettingsActivity.java` | Settings — push notification + email reminder toggles (persisted in `"bookify_settings"` prefs); About section |
+| `SettingsActivity.java` | Settings — push notification + email reminder toggles (persisted in `"bookify_settings"` prefs); turning the notification toggle on also requests `POST_NOTIFICATIONS` if not already granted; About section |
 | `AdminActivity.java` | Admin dashboard (`role=ADMIN` only, guarded in `onCreate()`) — form to post new events (status defaults `PUBLISHED`, no approval loop); RecyclerView of **all** events regardless of status/visibility (`getAllEventsForAdmin`) with delete button; **new: Pending Promoter Applications list** with Approve/Reject (`PromoterApplicationAdapter`); "Logout" and "View as User" links |
 | `PaymentActivity.java` | Mongike mobile-money checkout — collects phone number, POSTs to the Mongike API, mock-verifies the payment, then calls `db.completePayment()` to flip the booking to `COMPLETED` and returns `RESULT_OK` |
 | `TicketDetailActivity.java` | Shows a booked ticket — title, info, ticket number, event image (if any), and a ZXing-generated QR code encoding the ticket number |
@@ -65,6 +68,11 @@ Bookify is an Android event booking app for Tanzania.
 | `adapter/EventRequestAdapter.java` | Promoter dashboard's pending-request cards — organizer name, event info, Accept/Reject buttons (`OnRequestActionListener`) |
 | `adapter/MyEventRequestAdapter.java` | Organizer's "My Organized Events" cards — status badge, conditional "Share Invite Code" button for published private events (`OnShareClickListener`) |
 | `adapter/PromoterApplicationAdapter.java` | Admin's pending-promoter-application cards — applicant/hall info, Approve/Reject buttons (`OnApplicationActionListener`) |
+
+### Utilities
+| File | Purpose |
+|------|---------|
+| `util/NotificationHelper.java` | Creates the `bookify_notifications` channel, checks/requests `POST_NOTIFICATIONS` (`hasPermission`/`requestPermissionIfNeeded`), and posts notifications (`notify(...)`) gated by both the OS permission and the Settings toggle |
 
 ---
 
@@ -122,6 +130,10 @@ Bookify is an Android event booking app for Tanzania.
 | `bg_logo_inner.xml` | Solid purple logo inner box |
 | `bg_nav_bar.xml` | Bottom nav background |
 | `bg_admin_input.xml` | Rounded input field background on AdminActivity's event form |
+| `ic_eye.xml` / `ic_eye_off.xml` | Password show/hide toggle icons (Login/Register password fields) |
+| `ic_notification.xml` | Flat white ticket-silhouette icon used as the status-bar small icon for posted notifications |
+
+Launcher icon (`ic_launcher_background.xml` + `ic_launcher_foreground.xml`, adaptive icon): solid `primary_purple` (#7B5CF6) background with an amber (#F5A623) ticket mark (rounded shape, punched stub notches, dashed perforation line) — replaced the default Android Studio robot icon. Legacy pre-API26 raster fallbacks in `mipmap-*dpi/ic_launcher*.webp` still show the old robot (only matters on Android 7.x devices, which don't support adaptive icons).
 
 ---
 
@@ -336,8 +348,10 @@ AdminActivity (role=ADMIN only, reached via login or the Home FAB)
 - [ ] **Real Firebase Auth login/registration is not working yet** — most likely cause: the "Email/Password" sign-in provider isn't enabled under Authentication → Sign-in method in the Firebase Console for project `bookify-461a7`. `RegisterActivity`'s failure Toast now surfaces `e.getMessage()`, so check that text in-app to confirm the exact error. Until it's fixed, use the `normal@gmail.com` local test login above.
 - [ ] A rejected Promoter application can be resubmitted, but there's no UI to show application *history* — `getLatestPromoterApplication()` only surfaces the most recent row, older ones are invisible in the app (still in the DB)
 - [ ] `OrganizeEventActivity`'s event `location` is auto-set to the chosen promoter's registered location (not separately editable) — intentional (you're booking *their* hall), but worth confirming that's the intended semantics if hall setups get more complex later
-- [ ] No in-app notification when a promoter accepts/rejects a request or an admin approves/rejects a promoter application — the organizer/applicant has to manually check `MyEventRequestsActivity`/`ProfileActivity` to find out
+- [x] ~~No in-app notification when a promoter accepts/rejects a request or an admin approves/rejects a promoter application~~ Done — real Android notifications now fire from `PromoterDashboardActivity`/`AdminActivity` via `NotificationHelper` (see Tech Stack). Note these still only notify the device the action was taken on (single local SQLite DB, no backend push) — a cross-device notify-the-other-user flow would need Firebase Cloud Messaging
 - [ ] Promoters organize events only by approving other users' requests — there's no shortcut for a Promoter to self-publish an event on their own hall without going through their own request/approval loop
+- [ ] `MAPS_API_KEY` is not set in `local.properties` — `MapActivity` builds and launches fine but won't render real map tiles until a real Google Maps API key is added
+- [ ] Legacy pre-API26 launcher icon raster files (`mipmap-*dpi/ic_launcher*.webp`) still show the old default Android robot — only affects Android 7.x devices (no adaptive icon support)
 
 ---
 
@@ -346,7 +360,11 @@ AdminActivity (role=ADMIN only, reached via login or the Home FAB)
 - `android:paddingHorizontal` same issue — use `paddingLeft` + `paddingRight`
 - Never use `.kt` files — Java only
 - **Security: Mongike API key.** Originally hardcoded in `PaymentActivity.java` and committed to the public GitHub repo (commit `0532675`). Moved to `local.properties` (gitignored) → exposed via `BuildConfig.MONGIKE_API_KEY`, set in `app/build.gradle.kts`. The key is still exposed in git history from the earlier commit — **rotate it in the Mongike dashboard.** Anyone cloning the repo now needs their own `MONGIKE_API_KEY=...` line in `local.properties` for `PaymentActivity` to work.
+- **Git history was rewritten on `master` (2026-07-27).** The commit "Update CLAUDE.md for payments/admin/QR features; move Mongike API key out of source" (originally `ffe8b846`, now `c600654`) had accidentally picked up a `Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>` trailer, which made GitHub attribute Claude as a repo contributor. That trailer was stripped via `git filter-branch` and the rewritten history was force-pushed to `origin/master` — no file content changed, only that commit's message. **Anyone with an existing local clone from before this rewrite needs to run `git fetch origin && git reset --hard origin/master`** (after stashing/branching any local work) since their local `master` now diverges from the remote.
 - **Firebase setup.** `app/google-services.json` is required for the app to build/run (the `google-services` Gradle plugin reads it) but is gitignored and **not committed** — it was never pushed to the repo, so there's no history-exposure issue like the Mongike key. Anyone cloning the repo (or setting up a new machine) needs to download their own `google-services.json` from the Firebase Console (project `bookify-461a7`, Android package `com.example.bookify`) and drop it in `app/`, otherwise the build fails at `processDebugGoogleServices`.
 - Seeded admin login for testing: `admin@gmail.com` / `123456` — the SQLite row is seeded automatically, but the matching Firebase Auth account must be created manually in the Firebase Console (Authentication → Users) before admin login will work.
 - **Local-only test login (bypasses Firebase entirely):** `normal@gmail.com` / any password, phone `0695880700`. `LoginActivity.attemptLogin()` special-cases `DatabaseHelper.TEST_USER_EMAIL` and logs straight into the seeded `Normal User` SQLite row without calling `FirebaseAuth` — added because real Firebase login/registration wasn't working end-to-end yet (see Pending). Seeded via `DatabaseHelper.seedTestUser()`, DB_VERSION bumped to 7 to force reseed on existing installs.
+- **Maps API key.** Like `MONGIKE_API_KEY`, `MapActivity` reads `MAPS_API_KEY` from `local.properties` (gitignored) via `BuildConfig.MAPS_API_KEY` and a manifest placeholder (`com.google.android.geo.API_KEY`). Anyone cloning the repo needs their own `MAPS_API_KEY=...` line in `local.properties` for the map to actually render tiles — without it the app still builds/runs, the map view is just blank.
+- **Watch merge conflicts in `app/build.gradle.kts` and `AndroidManifest.xml` closely.** A prior merge (combining the Firebase-auth branch with the Map-feature branch) resolved conflicts in both files by silently dropping content from *both* sides instead of keeping it — this deleted the `google-services` plugin, the Firebase/Maps dependencies, the `ACCESS_NETWORK_STATE` permission, and four activity declarations, and broke the build entirely until caught and fixed. When resolving a conflict in either file, diff both parent versions explicitly rather than trusting the auto-merge.
+- Notifications require the app to actually be granted `POST_NOTIFICATIONS` (Android 13+ default is denied/blocked until the runtime permission dialog is accepted) — if notifications don't seem to be firing, check the app's system notification settings first (`Settings → Apps → Bookify → Notifications`), not just the in-app toggle.
 - Always update this file and `D:\Bookify context\CHANGES.md` after changes
