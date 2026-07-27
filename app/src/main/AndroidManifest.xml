@@ -3,8 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
+        android:name=".BookifyApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -32,9 +35,14 @@
         <activity android:name=".ProfileActivity"       android:exported="false" android:label="Profile" />
         <activity android:name=".SettingsActivity"      android:exported="false" android:label="Settings" />
         <activity android:name=".AdminActivity"         android:exported="false" android:label="Admin Dashboard" />
-        <activity android:name=".PromoterActivity"      android:exported="false" android:label="Promoter Dashboard" />
+        <activity android:name=".PromoterDashboardActivity" android:exported="false" android:label="Promoter Dashboard" />
         <activity android:name=".PaymentActivity"       android:exported="false" android:label="Payment" />
         <activity android:name=".TicketDetailActivity"  android:exported="false" android:label="Ticket Details" />
+        <activity android:name=".MapActivity"           android:exported="false" android:label="Event Map" />
+        <activity android:name=".OrganizeEventActivity" android:exported="false" android:label="Organize Event" />
+        <activity android:name=".BecomePromoterActivity" android:exported="false" android:label="Become a Promoter" />
+        <activity android:name=".MyEventRequestsActivity" android:exported="false" android:label="My Event Requests" />
+        <activity android:name=".LocationPickerActivity" android:exported="false" android:label="Pick Location" />
 
     </application>
 

@@ -30,6 +30,8 @@ public class EventDetailActivity extends AppCompatActivity {
         String slots    = getIntent().getStringExtra("event_slots");
         String about    = getIntent().getStringExtra("event_about");
         String image    = getIntent().getStringExtra("event_image");
+        double lat      = getIntent().getDoubleExtra("event_lat", 0);
+        double lng      = getIntent().getDoubleExtra("event_lng", 0);
 
         if (title    != null) ((TextView) findViewById(R.id.tv_event_title)).setText(title);
         if (price    != null) ((TextView) findViewById(R.id.tv_price)).setText(price);
@@ -60,6 +62,8 @@ public class EventDetailActivity extends AppCompatActivity {
         findViewById(R.id.btn_view_map).setOnClickListener(v -> {
             Intent intent = new Intent(this, MapActivity.class);
             intent.putExtra("location_name", location);
+            intent.putExtra("event_lat", lat);
+            intent.putExtra("event_lng", lng);
             startActivity(intent);
         });
     }

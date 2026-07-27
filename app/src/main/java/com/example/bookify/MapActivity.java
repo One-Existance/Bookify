@@ -47,13 +47,20 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         locationName = getIntent().getStringExtra("location_name");
         if (locationName == null) locationName = "Tanzania";
 
+        double lat = getIntent().getDoubleExtra("event_lat", 0);
+        double lng = getIntent().getDoubleExtra("event_lng", 0);
+
+        if (lat != 0 && lng != 0) {
+            eventLatLng = new LatLng(lat, lng);
+        } else {
+            geocodeLocation();
+        }
+
         mapView = findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
 
         findViewById(R.id.btn_back_map).setOnClickListener(v -> finish());
-        
-        geocodeLocation();
     }
 
     private void geocodeLocation() {

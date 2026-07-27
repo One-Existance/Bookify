@@ -87,17 +87,30 @@
                 android:textSize="15sp"
                 android:layout_marginBottom="16dp"/>
 
-            <EditText
-                android:id="@+id/et_location"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="54dp"
-                android:background="@drawable/bg_admin_input"
-                android:hint="Location"
-                android:paddingHorizontal="20dp"
-                android:textColor="@color/white"
-                android:textColorHint="@color/text_muted"
-                android:textSize="15sp"
-                android:layout_marginBottom="16dp"/>
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="16dp">
+                <EditText
+                    android:id="@+id/et_location"
+                    android:layout_width="0dp"
+                    android:layout_height="54dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_admin_input"
+                    android:hint="Location"
+                    android:paddingHorizontal="20dp"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/text_muted"
+                    android:textSize="15sp"/>
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_pick_location"
+                    android:layout_width="wrap_content"
+                    android:layout_height="54dp"
+                    android:layout_marginStart="8dp"
+                    android:text="PIN"
+                    app:backgroundTint="@color/surface_dark" />
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"

@@ -1,46 +1,50 @@
 package com.example.bookify;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.bookify.adapter.AdminEventAdapter;
-import com.example.bookify.adapter.UserAdapter;
+import com.example.bookify.adapter.PromoterApplicationAdapter;
 import com.example.bookify.data.DatabaseHelper;
 import com.example.bookify.data.Event;
+import com.example.bookify.data.PromoterApplication;
 import com.example.bookify.data.User;
+
 import java.util.List;
 
 public class AdminActivity extends AppCompatActivity {
 
-    private EditText etTitle, etLocation, etDate, etPrice, etTime, etSlots, etDescription;
-    private Spinner spCategory;
+    private EditText etTitle, etLocation, etDate, etCategory, etPrice, etTime, etSlots, etDescription;
     private ImageView ivPreview;
-    private TextView tvTotalUsers, tvTotalEvents, tvTotalRevenue;
     private DatabaseHelper db;
-    private RecyclerView rvEvents, rvUsers;
+    private RecyclerView rvEvents, rvApplications;
     private AdminEventAdapter eventAdapter;
-    private UserAdapter userAdapter;
+    private PromoterApplicationAdapter appAdapter;
     private String selectedImageUrl = "";
-
-    private final String[] categories = {"Concert", "Gala", "Sports", "Conference", "Party", "Others"};
+    private double pickedLat = 0, pickedLng = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        SharedPreferences sessionCheck = getSharedPreferences("bookify_session", MODE_PRIVATE);
+        if (!User.ROLE_ADMIN.equals(sessionCheck.getString("role", ""))) {
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+            return;
+        }
+
         setContentView(R.layout.activity_admin);
 
         db = new DatabaseHelper(this);
@@ -48,26 +52,20 @@ public class AdminActivity extends AppCompatActivity {
         etTitle       = findViewById(R.id.et_title);
         etLocation    = findViewById(R.id.et_location);
         etDate        = findViewById(R.id.et_date);
-        spCategory    = findViewById(R.id.sp_category);
+        etCategory    = findViewById(R.id.et_category);
         etPrice       = findViewById(R.id.et_price);
         etTime        = findViewById(R.id.et_time);
         etSlots       = findViewById(R.id.et_slots);
         etDescription = findViewById(R.id.et_description);
         ivPreview     = findViewById(R.id.iv_event_preview);
         rvEvents      = findViewById(R.id.rv_admin_events);
-        rvUsers       = findViewById(R.id.rv_users);
-        
-        tvTotalUsers   = findViewById(R.id.tv_total_users);
-        tvTotalEvents  = findViewById(R.id.tv_total_events);
-        tvTotalRevenue = findViewById(R.id.tv_total_revenue);
-
-        setupCategorySpinner();
-        setupRecyclerViews();
-        updateStats();
+        rvApplications = findViewById(R.id.rv_promoter_applications);
 
         findViewById(R.id.layout_select_image).setOnClickListener(v -> selectImage());
         findViewById(R.id.btn_save).setOnClickListener(v -> saveEvent());
-        findViewById(R.id.btn_add_promoter).setOnClickListener(v -> showAddPromoterDialog());
+        findViewById(R.id.btn_pick_location).setOnClickListener(v -> {
+            startActivityForResult(new Intent(this, LocationPickerActivity.class), 300);
+        });
 
         findViewById(R.id.tv_logout).setOnClickListener(v -> {
             getSharedPreferences("bookify_session", MODE_PRIVATE).edit().clear().apply();
@@ -78,128 +76,51 @@ public class AdminActivity extends AppCompatActivity {
         findViewById(R.id.tv_user_view).setOnClickListener(v -> {
             startActivity(new Intent(this, HomeFeedActivity.class));
         });
-    }
 
-    private void setupCategorySpinner() {
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categories);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spCategory.setAdapter(adapter);
-    }
-
-    private void updateStats() {
-        List<User> users = db.getAllUsers();
-        List<Event> events = db.getAllEvents();
-        double revenue = 0;
-        for (Event e : events) {
-            revenue += db.getRevenue(e.getId());
-        }
-
-        tvTotalUsers.setText(String.valueOf(users.size()));
-        tvTotalEvents.setText(String.valueOf(events.size()));
-        tvTotalRevenue.setText(String.format("%.1fk", revenue / 1000));
+        setupRecyclerViews();
     }
 
     private void setupRecyclerViews() {
         // Events
-        List<Event> events = db.getAllEvents();
-        eventAdapter = new AdminEventAdapter(events, db, new AdminEventAdapter.OnEventActionListener() {
-            @Override
-            public void onDeleteClick(Event event) {
-                db.deleteEvent(event.getId());
-                refreshLists();
-            }
-
-            @Override
-            public void onViewClick(Event event) {
-                Intent intent = new Intent(AdminActivity.this, EventDetailActivity.class);
-                intent.putExtra("event_id",       event.getId());
-                intent.putExtra("event_title",    event.getTitle());
-                intent.putExtra("event_location", event.getLocation());
-                intent.putExtra("event_date",     event.getDate());
-                intent.putExtra("event_price",    event.getPrice());
-                intent.putExtra("event_time",     event.getTime());
-                intent.putExtra("event_slots",    event.getSlots());
-                intent.putExtra("event_about",    event.getDescription());
-                intent.putExtra("event_image",    event.getImageUrl());
-                startActivity(intent);
-            }
-        });
         rvEvents.setLayoutManager(new LinearLayoutManager(this));
-        rvEvents.setAdapter(eventAdapter);
+        refreshEventsList();
 
-        // Users
-        List<User> users = db.getAllUsers();
-        userAdapter = new UserAdapter(users, user -> {
-            db.verifyPromoter(user.getId());
-            refreshLists();
-            Toast.makeText(this, user.getFullName() + " verified!", Toast.LENGTH_SHORT).show();
-        });
-        rvUsers.setLayoutManager(new LinearLayoutManager(this));
-        rvUsers.setAdapter(userAdapter);
+        // Applications
+        rvApplications.setLayoutManager(new LinearLayoutManager(this));
+        refreshApplicationsList();
     }
 
-    private void refreshLists() {
-        List<Event> events = db.getAllEvents();
-        eventAdapter = new AdminEventAdapter(events, db, new AdminEventAdapter.OnEventActionListener() {
-            @Override
-            public void onDeleteClick(Event event) {
-                db.deleteEvent(event.getId());
-                refreshLists();
-            }
-
-            @Override
-            public void onViewClick(Event event) {
-                Intent intent = new Intent(AdminActivity.this, EventDetailActivity.class);
-                intent.putExtra("event_id",       event.getId());
-                intent.putExtra("event_title",    event.getTitle());
-                intent.putExtra("event_location", event.getLocation());
-                intent.putExtra("event_date",     event.getDate());
-                intent.putExtra("event_price",    event.getPrice());
-                intent.putExtra("event_time",     event.getTime());
-                intent.putExtra("event_slots",    event.getSlots());
-                intent.putExtra("event_about",    event.getDescription());
-                intent.putExtra("event_image",    event.getImageUrl());
-                startActivity(intent);
-            }
+    private void refreshEventsList() {
+        List<Event> events = db.getAllEventsForAdmin();
+        eventAdapter = new AdminEventAdapter(events, event -> {
+            db.deleteEvent(event.getId());
+            refreshEventsList();
+            Toast.makeText(this, "Event deleted", Toast.LENGTH_SHORT).show();
         });
         rvEvents.setAdapter(eventAdapter);
+    }
 
-        List<User> users = db.getAllUsers();
-        userAdapter = new UserAdapter(users, user -> {
-            db.verifyPromoter(user.getId());
-            refreshLists();
-        });
-        rvUsers.setAdapter(userAdapter);
+    private void refreshApplicationsList() {
+        List<PromoterApplication> applications = db.getPendingPromoterApplications();
+        findViewById(R.id.tv_no_applications).setVisibility(
+                applications.isEmpty() ? View.VISIBLE : View.GONE);
         
-        updateStats();
-    }
+        appAdapter = new PromoterApplicationAdapter(applications, new PromoterApplicationAdapter.OnApplicationActionListener() {
+            @Override
+            public void onApprove(PromoterApplication application) {
+                db.approvePromoterApplication(application.getId(), application.getUserId());
+                Toast.makeText(AdminActivity.this, application.getApplicantName() + " approved!", Toast.LENGTH_SHORT).show();
+                refreshApplicationsList();
+            }
 
-    private void showAddPromoterDialog() {
-        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_promoter, null);
-        EditText etName = dialogView.findViewById(R.id.et_promoter_name);
-        EditText etEmail = dialogView.findViewById(R.id.et_promoter_email);
-        EditText etPass = dialogView.findViewById(R.id.et_promoter_password);
-
-        new AlertDialog.Builder(this)
-                .setTitle("Register New Promoter")
-                .setView(dialogView)
-                .setPositiveButton("Register", (dialog, which) -> {
-                    String name = etName.getText().toString().trim();
-                    String email = etEmail.getText().toString().trim();
-                    String pass = etPass.getText().toString().trim();
-
-                    if (!name.isEmpty() && !email.isEmpty() && !pass.isEmpty()) {
-                        long id = db.registerUserWithRole(name, email, pass, "", 2, 1); // Auto-verified for admin registration
-                        if (id > 0) {
-                            Toast.makeText(this, "Promoter registered!", Toast.LENGTH_SHORT).show();
-                            refreshLists();
-                        } else {
-                            Toast.makeText(this, "Registration failed", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                })
-                .setNegativeButton("Cancel", null)
-                .show();
+            @Override
+            public void onReject(PromoterApplication application) {
+                db.rejectPromoterApplication(application.getId());
+                Toast.makeText(AdminActivity.this, "Application rejected", Toast.LENGTH_SHORT).show();
+                refreshApplicationsList();
+            }
+        });
+        rvApplications.setAdapter(appAdapter);
     }
 
     private void selectImage() {
@@ -219,8 +140,15 @@ public class AdminActivity extends AppCompatActivity {
                 selectedImageUrl = imageUri.toString();
                 ivPreview.setImageURI(imageUri);
                 ivPreview.setAlpha(1.0f);
-                Toast.makeText(this, "Image Selected!", Toast.LENGTH_SHORT).show();
             }
+        } else if (requestCode == 300 && resultCode == RESULT_OK && data != null) {
+            pickedLat = data.getDoubleExtra("latitude", 0);
+            pickedLng = data.getDoubleExtra("longitude", 0);
+            String address = data.getStringExtra("address");
+            if (address != null && !address.isEmpty()) {
+                etLocation.setText(address);
+            }
+            Toast.makeText(this, "Location pinned!", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -228,22 +156,22 @@ public class AdminActivity extends AppCompatActivity {
         String title    = etTitle.getText().toString().trim();
         String location = etLocation.getText().toString().trim();
         String date     = etDate.getText().toString().trim();
-        String category = spCategory.getSelectedItem().toString();
+        String category = etCategory.getText().toString().trim();
         String price    = etPrice.getText().toString().trim();
         String time     = etTime.getText().toString().trim();
         String slots    = etSlots.getText().toString().trim();
         String desc     = etDescription.getText().toString().trim();
 
         if (TextUtils.isEmpty(title) || TextUtils.isEmpty(location) || TextUtils.isEmpty(date)) {
-            Toast.makeText(this, "Please fill required fields", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Title, Location, and Date are required", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        long id = db.addEvent(title, location, date, category, "Tsh " + price, false, selectedImageUrl, time, slots, desc);
+        long id = db.addEvent(title, location, date, category, price, false, selectedImageUrl, time, slots, desc, pickedLat, pickedLng);
         if (id > 0) {
-            Toast.makeText(this, "Event posted successfully! 🚀", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Event posted successfully!", Toast.LENGTH_SHORT).show();
             clearFields();
-            refreshLists();
+            refreshEventsList();
         } else {
             Toast.makeText(this, "Failed to post event", Toast.LENGTH_SHORT).show();
         }
@@ -253,12 +181,13 @@ public class AdminActivity extends AppCompatActivity {
         etTitle.setText("");
         etLocation.setText("");
         etDate.setText("");
+        etCategory.setText("");
         etPrice.setText("");
         etTime.setText("");
         etSlots.setText("");
         etDescription.setText("");
         selectedImageUrl = "";
-        ivPreview.setAlpha(0.3f);
+        ivPreview.setAlpha(0.4f);
         ivPreview.setImageResource(R.drawable.bg_qr_placeholder);
     }
 }

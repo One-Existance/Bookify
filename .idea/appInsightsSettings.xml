@@ -10,9 +10,9 @@
               <option name="connection">
                 <ConnectionSetting>
                   <option name="appId" value="com.example.bookify" />
-                  <option name="mobileSdkAppId" value="1:794083071012:android:8e36d6e9c2994b6dc6f4b1" />
-                  <option name="projectId" value="bookify-461a7" />
-                  <option name="projectNumber" value="794083071012" />
+                  <option name="mobileSdkAppId" value="1:123456789012:android:0123456789abcdef012345" />
+                  <option name="projectId" value="bookify-dummy-id" />
+                  <option name="projectNumber" value="123456789012" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

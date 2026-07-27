@@ -20,11 +20,14 @@ public class Event {
     private int promoterId;
     private String status;
     private String accessCode;
+    private double latitude;
+    private double longitude;
 
     public Event(int id, String title, String location, String date,
                  String category, String price, boolean isPrivate, String imageUrl,
                  String time, String slots, String description,
-                 int organizerId, int promoterId, String status, String accessCode) {
+                 int organizerId, int promoterId, String status, String accessCode,
+                 double latitude, double longitude) {
         this.id = id;
         this.title = title;
         this.location = location;
@@ -40,6 +43,8 @@ public class Event {
         this.promoterId = promoterId;
         this.status = status;
         this.accessCode = accessCode;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     public int getId()          { return id; }
@@ -57,4 +62,6 @@ public class Event {
     public int getPromoterId()  { return promoterId; }
     public String getStatus()   { return status; }
     public String getAccessCode() { return accessCode; }
+    public double getLatitude() { return latitude; }
+    public double getLongitude() { return longitude; }
 }

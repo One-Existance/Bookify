@@ -12,7 +12,7 @@ import java.util.Random;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DB_NAME    = "bookify.db";
-    private static final int    DB_VERSION = 8;
+    private static final int    DB_VERSION = 9;
 
     // Local-only test account: bypasses Firebase Auth entirely (see LoginActivity).
     public static final String TEST_USER_EMAIL = "normal@gmail.com";
@@ -47,6 +47,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "promoter_id INTEGER," +
                 "status TEXT DEFAULT 'PUBLISHED'," +
                 "access_code TEXT," +
+                "latitude REAL DEFAULT 0," +
+                "longitude REAL DEFAULT 0," +
                 "FOREIGN KEY(organizer_id) REFERENCES users(id)," +
                 "FOREIGN KEY(promoter_id) REFERENCES users(id))");
 
@@ -122,6 +124,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put("is_private", isPrivate ? 1 : 0);
         cv.put("image_url", ""); // Default empty
         cv.put("status", Event.STATUS_PUBLISHED);
+        cv.put("latitude", 0.0);
+        cv.put("longitude", 0.0);
         db.insert("events", null, cv);
     }
 
@@ -272,7 +276,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String EVENT_COLUMNS =
             "id, title, location, date, category, price, is_private, image_url, time, slots, description, " +
-            "organizer_id, promoter_id, status, access_code";
+            "organizer_id, promoter_id, status, access_code, latitude, longitude";
 
     public List<Event> getAllEvents() {
         return queryEvents("SELECT " + EVENT_COLUMNS + " FROM events WHERE is_private=0 AND status=?",
@@ -292,7 +296,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public long addEvent(String title, String location, String date, String category,
                          String price, boolean isPrivate, String imageUrl,
-                         String time, String slots, String description) {
+                         String time, String slots, String description,
+                         double lat, double lng) {
         ContentValues cv = new ContentValues();
         cv.put("title", title);
         cv.put("location", location);
@@ -305,13 +310,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put("slots", slots);
         cv.put("description", description);
         cv.put("status", Event.STATUS_PUBLISHED);
+        cv.put("latitude", lat);
+        cv.put("longitude", lng);
         return getWritableDatabase().insert("events", null, cv);
     }
 
     public long requestEvent(String title, String location, String date, String category,
                               String price, boolean isPrivate, String imageUrl,
                               String time, String slots, String description,
-                              int organizerId, int promoterId) {
+                              int organizerId, int promoterId,
+                              double lat, double lng) {
         ContentValues cv = new ContentValues();
         cv.put("title", title);
         cv.put("location", location);
@@ -326,6 +334,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put("organizer_id", organizerId);
         cv.put("promoter_id", promoterId);
         cv.put("status", Event.STATUS_PENDING);
+        cv.put("latitude", lat);
+        cv.put("longitude", lng);
         return getWritableDatabase().insert("events", null, cv);
     }
 
@@ -413,7 +423,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 c.getString(8), c.getString(9), c.getString(10),
                 c.isNull(11) ? -1 : c.getInt(11),
                 c.isNull(12) ? -1 : c.getInt(12),
-                c.getString(13), c.getString(14));
+                c.getString(13), c.getString(14),
+                c.getDouble(15), c.getDouble(16));
     }
 
     // ── Booking methods ───────────────────────────────────────────────────────
