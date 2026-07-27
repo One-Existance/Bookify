@@ -2,6 +2,7 @@ import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
+    id("com.google.gms.google-services")
 }
 
 val localProperties = Properties().apply {
@@ -28,6 +29,12 @@ android {
             "MONGIKE_API_KEY",
             "\"${localProperties.getProperty("MONGIKE_API_KEY", "")}\""
         )
+        buildConfigField(
+            "String",
+            "MAPS_API_KEY",
+            "\"${localProperties.getProperty("MAPS_API_KEY", "")}\""
+        )
+        manifestPlaceholders["MAPS_API_KEY"] = localProperties.getProperty("MAPS_API_KEY", "")
     }
 
     buildFeatures {
@@ -57,6 +64,13 @@ dependencies {
     implementation("androidx.cardview:cardview:1.0.0")
     implementation("androidx.constraintlayout:constraintlayout:2.2.0")
     implementation("com.google.zxing:core:3.5.3")
+    implementation("com.google.android.gms:play-services-maps:19.0.0")
+
+    // Firebase
+    implementation(platform("com.google.firebase:firebase-bom:34.16.0"))
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-auth")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
