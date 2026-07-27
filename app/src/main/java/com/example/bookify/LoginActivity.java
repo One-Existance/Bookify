@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.bookify.data.DatabaseHelper;
 import com.example.bookify.data.User;
@@ -58,8 +59,7 @@ public class LoginActivity extends AppCompatActivity {
         if (TextUtils.isEmpty(password)) { showError("Please enter your password."); return; }
 
         if (email.equalsIgnoreCase(DatabaseHelper.TEST_USER_EMAIL)) {
-            // Local-only test account: skip Firebase entirely so login always works,
-            // even offline or before the Firebase project's Auth is fully set up.
+            // ... (keep existing test logic)
             User testUser = db.getUserByEmail(DatabaseHelper.TEST_USER_EMAIL);
             if (testUser != null) {
                 routeAfterLogin(testUser);

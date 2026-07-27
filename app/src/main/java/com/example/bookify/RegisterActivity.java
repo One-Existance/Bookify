@@ -81,6 +81,7 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
         setLoading(true);
+
         auth.createUserWithEmailAndPassword(email, password)
                 .addOnSuccessListener(result -> {
                     FirebaseUser firebaseUser = result.getUser();
