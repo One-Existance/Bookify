@@ -6,11 +6,9 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
@@ -22,12 +20,13 @@ import com.example.bookify.adapter.UserAdapter;
 import com.example.bookify.data.DatabaseHelper;
 import com.example.bookify.data.Event;
 import com.example.bookify.data.User;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import java.util.List;
 
 public class AdminActivity extends AppCompatActivity {
 
-    private EditText etTitle, etLocation, etDate, etPrice, etTime, etSlots, etDescription;
-    private Spinner spCategory;
+    private EditText etTitle, etLocation, etDate, etCategory, etPrice, etTime, etSlots, etDescription;
     private ImageView ivPreview;
     private TextView tvTotalUsers, tvTotalEvents, tvTotalRevenue;
     private DatabaseHelper db;
@@ -35,8 +34,6 @@ public class AdminActivity extends AppCompatActivity {
     private AdminEventAdapter eventAdapter;
     private UserAdapter userAdapter;
     private String selectedImageUrl = "";
-
-    private final String[] categories = {"Concert", "Gala", "Sports", "Conference", "Party", "Others"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +45,7 @@ public class AdminActivity extends AppCompatActivity {
         etTitle       = findViewById(R.id.et_title);
         etLocation    = findViewById(R.id.et_location);
         etDate        = findViewById(R.id.et_date);
-        spCategory    = findViewById(R.id.sp_category);
+        etCategory    = findViewById(R.id.et_category);
         etPrice       = findViewById(R.id.et_price);
         etTime        = findViewById(R.id.et_time);
         etSlots       = findViewById(R.id.et_slots);
@@ -61,7 +58,6 @@ public class AdminActivity extends AppCompatActivity {
         tvTotalEvents  = findViewById(R.id.tv_total_events);
         tvTotalRevenue = findViewById(R.id.tv_total_revenue);
 
-        setupCategorySpinner();
         setupRecyclerViews();
         updateStats();
 
@@ -80,15 +76,9 @@ public class AdminActivity extends AppCompatActivity {
         });
     }
 
-    private void setupCategorySpinner() {
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categories);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spCategory.setAdapter(adapter);
-    }
-
     private void updateStats() {
         List<User> users = db.getAllUsers();
-        List<Event> events = db.getAllEvents();
+        List<Event> events = db.getAllEventsForAdmin();
         double revenue = 0;
         for (Event e : events) {
             revenue += db.getRevenue(e.getId());
@@ -101,7 +91,7 @@ public class AdminActivity extends AppCompatActivity {
 
     private void setupRecyclerViews() {
         // Events
-        List<Event> events = db.getAllEvents();
+        List<Event> events = db.getAllEventsForAdmin();
         eventAdapter = new AdminEventAdapter(events, db, new AdminEventAdapter.OnEventActionListener() {
             @Override
             public void onDeleteClick(Event event) {
@@ -139,7 +129,7 @@ public class AdminActivity extends AppCompatActivity {
     }
 
     private void refreshLists() {
-        List<Event> events = db.getAllEvents();
+        List<Event> events = db.getAllEventsForAdmin();
         eventAdapter = new AdminEventAdapter(events, db, new AdminEventAdapter.OnEventActionListener() {
             @Override
             public void onDeleteClick(Event event) {
@@ -188,15 +178,29 @@ public class AdminActivity extends AppCompatActivity {
                     String email = etEmail.getText().toString().trim();
                     String pass = etPass.getText().toString().trim();
 
-                    if (!name.isEmpty() && !email.isEmpty() && !pass.isEmpty()) {
-                        long id = db.registerUserWithRole(name, email, pass, "", 2, 1); // Auto-verified for admin registration
-                        if (id > 0) {
-                            Toast.makeText(this, "Promoter registered!", Toast.LENGTH_SHORT).show();
-                            refreshLists();
-                        } else {
-                            Toast.makeText(this, "Registration failed", Toast.LENGTH_SHORT).show();
-                        }
+                    if (name.isEmpty() || email.isEmpty() || pass.isEmpty()) {
+                        Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
+                        return;
                     }
+                    if (pass.length() < 6) {
+                        Toast.makeText(this, "Password must be at least 6 characters", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    // Auto-verified for admin registration: bypasses the application/approval flow
+                    FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, pass)
+                            .addOnSuccessListener(result -> {
+                                FirebaseUser firebaseUser = result.getUser();
+                                long id = db.registerUserWithRole(name, email, firebaseUser.getUid(), "", User.ROLE_PROMOTER);
+                                if (id > 0) {
+                                    Toast.makeText(this, "Promoter registered!", Toast.LENGTH_SHORT).show();
+                                    refreshLists();
+                                } else {
+                                    Toast.makeText(this, "Registration failed", Toast.LENGTH_SHORT).show();
+                                }
+                            })
+                            .addOnFailureListener(e ->
+                                    Toast.makeText(this, "Registration failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
                 })
                 .setNegativeButton("Cancel", null)
                 .show();
@@ -228,7 +232,7 @@ public class AdminActivity extends AppCompatActivity {
         String title    = etTitle.getText().toString().trim();
         String location = etLocation.getText().toString().trim();
         String date     = etDate.getText().toString().trim();
-        String category = spCategory.getSelectedItem().toString();
+        String category = etCategory.getText().toString().trim();
         String price    = etPrice.getText().toString().trim();
         String time     = etTime.getText().toString().trim();
         String slots    = etSlots.getText().toString().trim();
@@ -253,6 +257,7 @@ public class AdminActivity extends AppCompatActivity {
         etTitle.setText("");
         etLocation.setText("");
         etDate.setText("");
+        etCategory.setText("");
         etPrice.setText("");
         etTime.setText("");
         etSlots.setText("");

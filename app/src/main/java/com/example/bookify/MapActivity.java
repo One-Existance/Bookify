@@ -1,6 +1,7 @@
 package com.example.bookify;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -24,26 +25,35 @@ import org.maplibre.android.maps.MapLibreMap;
 import org.maplibre.android.maps.OnMapReadyCallback;
 import org.maplibre.android.maps.Style;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
+
+    public static final String EXTRA_PICK_MODE = "pick_mode";
+    public static final String EXTRA_RESULT_LOCATION_NAME = "result_location_name";
+    public static final String EXTRA_RESULT_LATITUDE = "result_latitude";
+    public static final String EXTRA_RESULT_LONGITUDE = "result_longitude";
 
     private MapView mapView;
     private MapLibreMap mMap;
     private String locationName;
     private LatLng eventLatLng = new LatLng(-6.7924, 39.2083);
     private static final String MAPTILER_KEY = "JhccbJYsCtrTEkg1KAQt";
+    private boolean pickMode;
+    private boolean locationPicked;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+
         // Initialize MapLibre with context before setContentView
         MapLibre.getInstance(this);
 
         setContentView(R.layout.activity_map);
 
+        pickMode = getIntent().getBooleanExtra(EXTRA_PICK_MODE, false);
         locationName = getIntent().getStringExtra("location_name");
         if (locationName == null) locationName = "Tanzania";
 
@@ -52,8 +62,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mapView.getMapAsync(this);
 
         findViewById(R.id.btn_back_map).setOnClickListener(v -> finish());
-        
-        geocodeLocation();
+
+        if (pickMode) {
+            findViewById(R.id.btn_confirm_location).setVisibility(android.view.View.VISIBLE);
+            findViewById(R.id.tv_map_hint).setVisibility(android.view.View.VISIBLE);
+            findViewById(R.id.btn_confirm_location).setEnabled(false);
+            findViewById(R.id.btn_confirm_location).setOnClickListener(v -> confirmPickedLocation());
+        } else {
+            geocodeLocation();
+        }
     }
 
     private void geocodeLocation() {
@@ -75,12 +92,53 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(@NonNull MapLibreMap mapLibreMap) {
         mMap = mapLibreMap;
-        
+
         String styleUrl = "https://api.maptiler.com/maps/streets/style.json?key=" + MAPTILER_KEY;
         mMap.setStyle(new Style.Builder().fromUri(styleUrl), style -> {
             enableLocationComponent(style);
             updateMapPosition();
+
+            if (pickMode) {
+                mMap.addOnMapClickListener(latLng -> {
+                    eventLatLng = latLng;
+                    locationPicked = true;
+                    findViewById(R.id.btn_confirm_location).setEnabled(true);
+                    updateMapPosition();
+                    reverseGeocode(latLng);
+                    return true;
+                });
+            }
         });
+    }
+
+    private void reverseGeocode(LatLng latLng) {
+        new Thread(() -> {
+            String resolvedName = String.format(Locale.US, "%.5f, %.5f", latLng.getLatitude(), latLng.getLongitude());
+            try {
+                Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+                List<Address> addresses = geocoder.getFromLocation(latLng.getLatitude(), latLng.getLongitude(), 1);
+                if (addresses != null && !addresses.isEmpty()) {
+                    String addressLine = addresses.get(0).getAddressLine(0);
+                    if (addressLine != null && !addressLine.isEmpty()) resolvedName = addressLine;
+                }
+            } catch (IOException e) {
+                Log.e("MapActivity", "Reverse geocoding failed", e);
+            }
+            final String finalName = resolvedName;
+            runOnUiThread(() -> {
+                locationName = finalName;
+                updateMapPosition();
+            });
+        }).start();
+    }
+
+    private void confirmPickedLocation() {
+        Intent result = new Intent();
+        result.putExtra(EXTRA_RESULT_LOCATION_NAME, locationName);
+        result.putExtra(EXTRA_RESULT_LATITUDE, eventLatLng.getLatitude());
+        result.putExtra(EXTRA_RESULT_LONGITUDE, eventLatLng.getLongitude());
+        setResult(RESULT_OK, result);
+        finish();
     }
 
     private void enableLocationComponent(@NonNull Style loadedMapStyle) {

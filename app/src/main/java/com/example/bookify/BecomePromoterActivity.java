@@ -1,5 +1,6 @@
 package com.example.bookify;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -10,9 +11,13 @@ import com.example.bookify.data.DatabaseHelper;
 
 public class BecomePromoterActivity extends AppCompatActivity {
 
+    private static final int REQUEST_PICK_LOCATION = 300;
+
     private EditText etHallName, etLocation, etDescription;
     private DatabaseHelper db;
     private int userId;
+    private Double pickedLatitude;
+    private Double pickedLongitude;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +34,23 @@ public class BecomePromoterActivity extends AppCompatActivity {
 
         findViewById(R.id.tv_back).setOnClickListener(v -> finish());
         findViewById(R.id.btn_submit).setOnClickListener(v -> submitApplication());
+        findViewById(R.id.btn_pick_on_map).setOnClickListener(v -> {
+            Intent intent = new Intent(this, MapActivity.class);
+            intent.putExtra(MapActivity.EXTRA_PICK_MODE, true);
+            startActivityForResult(intent, REQUEST_PICK_LOCATION);
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_PICK_LOCATION && resultCode == RESULT_OK && data != null) {
+            String pickedName = data.getStringExtra(MapActivity.EXTRA_RESULT_LOCATION_NAME);
+            pickedLatitude  = data.getDoubleExtra(MapActivity.EXTRA_RESULT_LATITUDE, 0);
+            pickedLongitude = data.getDoubleExtra(MapActivity.EXTRA_RESULT_LONGITUDE, 0);
+            if (pickedName != null) etLocation.setText(pickedName);
+            Toast.makeText(this, "Venue location set from map", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void submitApplication() {
@@ -46,7 +68,8 @@ public class BecomePromoterActivity extends AppCompatActivity {
             return;
         }
 
-        long id = db.submitPromoterApplication(userId, hallName, location, description);
+        long id = db.submitPromoterApplication(userId, hallName, location, description,
+                pickedLatitude, pickedLongitude);
         if (id > 0) {
             Toast.makeText(this, "Application submitted! We'll review it soon.", Toast.LENGTH_LONG).show();
             finish();
