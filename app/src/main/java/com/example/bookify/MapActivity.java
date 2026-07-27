@@ -1,9 +1,12 @@
 package com.example.bookify;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -13,6 +16,7 @@ import androidx.core.app.ActivityCompat;
 
 import org.maplibre.android.MapLibre;
 import org.maplibre.android.annotations.MarkerOptions;
+import org.maplibre.android.annotations.PolylineOptions;
 import org.maplibre.android.camera.CameraUpdateFactory;
 import org.maplibre.android.geometry.LatLng;
 import org.maplibre.android.location.LocationComponent;
@@ -61,6 +65,20 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mapView.getMapAsync(this);
 
         findViewById(R.id.btn_back_map).setOnClickListener(v -> finish());
+        findViewById(R.id.fab_directions).setOnClickListener(v -> openNavigation());
+    }
+
+    private void openNavigation() {
+        Uri gmmIntentUri = Uri.parse("google.navigation:q=" + eventLatLng.getLatitude() + "," + eventLatLng.getLongitude());
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+        mapIntent.setPackage("com.google.android.apps.maps");
+        if (mapIntent.resolveActivity(getPackageManager()) != null) {
+            startActivity(mapIntent);
+        } else {
+            // Fallback for devices without Google Maps
+            Uri fallbackUri = Uri.parse("geo:0,0?q=" + eventLatLng.getLatitude() + "," + eventLatLng.getLongitude());
+            startActivity(new Intent(Intent.ACTION_VIEW, fallbackUri));
+        }
     }
 
     private void geocodeLocation() {
@@ -103,8 +121,22 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 LocationComponentActivationOptions.builder(this, loadedMapStyle).build());
         
         locationComponent.setLocationComponentEnabled(true);
-        locationComponent.setCameraMode(CameraMode.NONE); // Don't snap camera to user automatically
+        locationComponent.setCameraMode(CameraMode.NONE); 
         locationComponent.setRenderMode(RenderMode.COMPASS);
+        
+        // Draw initial "visual route" line if user location is available
+        android.location.Location lastLoc = locationComponent.getLastKnownLocation();
+        if (lastLoc != null) {
+            drawVisualRoute(new LatLng(lastLoc.getLatitude(), lastLoc.getLongitude()));
+        }
+    }
+
+    private void drawVisualRoute(LatLng userLatLng) {
+        if (mMap == null) return;
+        mMap.addPolyline(new PolylineOptions()
+                .add(userLatLng, eventLatLng)
+                .color(Color.parseColor("#8A2BE2"))
+                .width(3f));
     }
 
     @Override
@@ -124,6 +156,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mMap.clear();
         mMap.addMarker(new MarkerOptions().position(eventLatLng).title(locationName));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(eventLatLng, 12));
+        
+        // Refresh line if user location is active
+        if (mMap.getLocationComponent().isLocationComponentEnabled()) {
+            android.location.Location lastLoc = mMap.getLocationComponent().getLastKnownLocation();
+            if (lastLoc != null) {
+                drawVisualRoute(new LatLng(lastLoc.getLatitude(), lastLoc.getLongitude()));
+            }
+        }
     }
 
     @Override

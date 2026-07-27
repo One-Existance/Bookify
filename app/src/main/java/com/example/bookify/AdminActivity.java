@@ -81,21 +81,39 @@ public class AdminActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerViews() {
-        // Events
         rvEvents.setLayoutManager(new LinearLayoutManager(this));
         refreshEventsList();
 
-        // Applications
         rvApplications.setLayoutManager(new LinearLayoutManager(this));
         refreshApplicationsList();
     }
 
     private void refreshEventsList() {
         List<Event> events = db.getAllEventsForAdmin();
-        eventAdapter = new AdminEventAdapter(events, event -> {
-            db.deleteEvent(event.getId());
-            refreshEventsList();
-            Toast.makeText(this, "Event deleted", Toast.LENGTH_SHORT).show();
+        eventAdapter = new AdminEventAdapter(events, db, new AdminEventAdapter.OnEventActionListener() {
+            @Override
+            public void onDeleteClick(Event event) {
+                db.deleteEvent(event.getId());
+                refreshEventsList();
+                Toast.makeText(AdminActivity.this, "Event deleted", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onViewClick(Event event) {
+                Intent intent = new Intent(AdminActivity.this, EventDetailActivity.class);
+                intent.putExtra("event_id",       event.getId());
+                intent.putExtra("event_title",    event.getTitle());
+                intent.putExtra("event_location", event.getLocation());
+                intent.putExtra("event_date",     event.getDate());
+                intent.putExtra("event_price",    event.getPrice());
+                intent.putExtra("event_time",     event.getTime());
+                intent.putExtra("event_slots",    event.getSlots());
+                intent.putExtra("event_about",    event.getDescription());
+                intent.putExtra("event_image",    event.getImageUrl());
+                intent.putExtra("event_lat",      event.getLatitude());
+                intent.putExtra("event_lng",      event.getLongitude());
+                startActivity(intent);
+            }
         });
         rvEvents.setAdapter(eventAdapter);
     }
@@ -187,6 +205,8 @@ public class AdminActivity extends AppCompatActivity {
         etSlots.setText("");
         etDescription.setText("");
         selectedImageUrl = "";
+        pickedLat = 0;
+        pickedLng = 0;
         ivPreview.setAlpha(0.4f);
         ivPreview.setImageResource(R.drawable.bg_qr_placeholder);
     }
