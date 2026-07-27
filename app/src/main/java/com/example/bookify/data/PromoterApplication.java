@@ -13,9 +13,12 @@ public class PromoterApplication {
     private String location;
     private String description;
     private String status;
+    private Double latitude;
+    private Double longitude;
 
     public PromoterApplication(int id, int userId, String applicantName, String applicantEmail,
-                                String hallName, String location, String description, String status) {
+                                String hallName, String location, String description, String status,
+                                Double latitude, Double longitude) {
         this.id = id;
         this.userId = userId;
         this.applicantName = applicantName;
@@ -24,6 +27,8 @@ public class PromoterApplication {
         this.location = location;
         this.description = description;
         this.status = status;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     public int getId()               { return id; }
@@ -34,4 +39,7 @@ public class PromoterApplication {
     public String getLocation()      { return location; }
     public String getDescription()   { return description; }
     public String getStatus()        { return status; }
+    public Double getLatitude()      { return latitude; }
+    public Double getLongitude()     { return longitude; }
+    public boolean hasCoordinates()  { return latitude != null && longitude != null; }
 }

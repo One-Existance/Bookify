@@ -68,6 +68,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "location TEXT NOT NULL," +
                 "description TEXT," +
                 "status TEXT DEFAULT 'PENDING'," +
+                "latitude REAL," +
+                "longitude REAL," +
                 "FOREIGN KEY(user_id) REFERENCES users(id))");
 
         seedEvents(db);
@@ -185,19 +187,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // ── Promoter application methods ────────────────────────────────────────────
 
-    public long submitPromoterApplication(int userId, String hallName, String location, String description) {
+    public long submitPromoterApplication(int userId, String hallName, String location, String description,
+                                           Double latitude, Double longitude) {
         ContentValues cv = new ContentValues();
         cv.put("user_id", userId);
         cv.put("hall_name", hallName);
         cv.put("location", location);
         cv.put("description", description);
         cv.put("status", PromoterApplication.STATUS_PENDING);
+        if (latitude != null && longitude != null) {
+            cv.put("latitude", latitude);
+            cv.put("longitude", longitude);
+        }
         return getWritableDatabase().insert("promoter_applications", null, cv);
     }
 
     public PromoterApplication getLatestPromoterApplication(int userId) {
         Cursor c = getReadableDatabase().rawQuery(
-                "SELECT pa.id, pa.user_id, u.full_name, u.email, pa.hall_name, pa.location, pa.description, pa.status " +
+                "SELECT pa.id, pa.user_id, u.full_name, u.email, pa.hall_name, pa.location, pa.description, pa.status, pa.latitude, pa.longitude " +
                 "FROM promoter_applications pa JOIN users u ON pa.user_id = u.id " +
                 "WHERE pa.user_id=? ORDER BY pa.id DESC LIMIT 1",
                 new String[]{String.valueOf(userId)});
@@ -210,7 +217,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public List<PromoterApplication> getPendingPromoterApplications() {
         List<PromoterApplication> list = new ArrayList<>();
         Cursor c = getReadableDatabase().rawQuery(
-                "SELECT pa.id, pa.user_id, u.full_name, u.email, pa.hall_name, pa.location, pa.description, pa.status " +
+                "SELECT pa.id, pa.user_id, u.full_name, u.email, pa.hall_name, pa.location, pa.description, pa.status, pa.latitude, pa.longitude " +
                 "FROM promoter_applications pa JOIN users u ON pa.user_id = u.id " +
                 "WHERE pa.status=?",
                 new String[]{PromoterApplication.STATUS_PENDING});
@@ -221,7 +228,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private PromoterApplication readPromoterApplication(Cursor c) {
         return new PromoterApplication(c.getInt(0), c.getInt(1), c.getString(2), c.getString(3),
-                c.getString(4), c.getString(5), c.getString(6), c.getString(7));
+                c.getString(4), c.getString(5), c.getString(6), c.getString(7),
+                c.isNull(8) ? null : c.getDouble(8), c.isNull(9) ? null : c.getDouble(9));
     }
 
     public void approvePromoterApplication(int applicationId, int userId) {
@@ -245,13 +253,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public List<PromoterProfile> getApprovedPromoters() {
         List<PromoterProfile> list = new ArrayList<>();
         Cursor c = getReadableDatabase().rawQuery(
-                "SELECT u.id, u.full_name, u.email, pa.hall_name, pa.location, pa.description " +
+                "SELECT u.id, u.full_name, u.email, pa.hall_name, pa.location, pa.description, pa.latitude, pa.longitude " +
                 "FROM promoter_applications pa JOIN users u ON pa.user_id = u.id " +
                 "WHERE pa.status=?",
                 new String[]{PromoterApplication.STATUS_APPROVED});
         while (c.moveToNext()) {
             list.add(new PromoterProfile(c.getInt(0), c.getString(1), c.getString(2),
-                    c.getString(3), c.getString(4), c.getString(5)));
+                    c.getString(3), c.getString(4), c.getString(5),
+                    c.isNull(6) ? null : c.getDouble(6), c.isNull(7) ? null : c.getDouble(7)));
         }
         c.close();
         return list;
@@ -259,14 +268,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public PromoterProfile getPromoterProfile(int promoterUserId) {
         Cursor c = getReadableDatabase().rawQuery(
-                "SELECT u.id, u.full_name, u.email, pa.hall_name, pa.location, pa.description " +
+                "SELECT u.id, u.full_name, u.email, pa.hall_name, pa.location, pa.description, pa.latitude, pa.longitude " +
                 "FROM promoter_applications pa JOIN users u ON pa.user_id = u.id " +
                 "WHERE pa.status=? AND u.id=? ORDER BY pa.id DESC LIMIT 1",
                 new String[]{PromoterApplication.STATUS_APPROVED, String.valueOf(promoterUserId)});
         PromoterProfile profile = null;
         if (c.moveToFirst()) {
             profile = new PromoterProfile(c.getInt(0), c.getString(1), c.getString(2),
-                    c.getString(3), c.getString(4), c.getString(5));
+                    c.getString(3), c.getString(4), c.getString(5),
+                    c.isNull(6) ? null : c.getDouble(6), c.isNull(7) ? null : c.getDouble(7));
         }
         c.close();
         return profile;
@@ -489,5 +499,57 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         c.close();
         return list;
+    }
+
+    // ── Admin methods ────────────────────────────────────────────────────────
+
+    public List<User> getAllUsers() {
+        List<User> list = new ArrayList<>();
+        Cursor c = getReadableDatabase().rawQuery(
+                "SELECT id, full_name, email, phone, role FROM users ORDER BY id DESC", null);
+        while (c.moveToNext()) {
+            list.add(new User(c.getInt(0), c.getString(1), c.getString(2), c.getString(3), c.getString(4)));
+        }
+        c.close();
+        return list;
+    }
+
+    public double getRevenue(int eventId) {
+        Cursor c = getReadableDatabase().rawQuery(
+                "SELECT price FROM events WHERE id=?", new String[]{String.valueOf(eventId)});
+        String price = null;
+        if (c.moveToFirst()) price = c.getString(0);
+        c.close();
+        return parsePrice(price) * getTicketCount(eventId, true);
+    }
+
+    private double parsePrice(String price) {
+        if (price == null) return 0;
+        String digits = price.replaceAll("[^0-9.]", "");
+        if (digits.isEmpty()) return 0;
+        try {
+            return Double.parseDouble(digits);
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
+
+    // Admin-created promoters skip the application/approval flow, so the account
+    // is inserted with the promoter role already set. The Firebase account is
+    // created by the caller (AdminActivity) since FirebaseAuth calls are async.
+    public long registerUserWithRole(String fullName, String email, String firebaseUid, String phone, String role) {
+        ContentValues cv = new ContentValues();
+        cv.put("full_name", fullName);
+        cv.put("email", email);
+        cv.put("firebase_uid", firebaseUid);
+        cv.put("phone", phone);
+        cv.put("role", role);
+        return getWritableDatabase().insert("users", null, cv);
+    }
+
+    public void verifyPromoter(int userId) {
+        ContentValues cv = new ContentValues();
+        cv.put("role", User.ROLE_PROMOTER);
+        getWritableDatabase().update("users", cv, "id=?", new String[]{String.valueOf(userId)});
     }
 }

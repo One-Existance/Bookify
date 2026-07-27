@@ -68,7 +68,17 @@
                 android:textColor="@color/white"
                 android:textColorHint="@color/text_muted"
                 android:textSize="15sp"
-                android:layout_marginBottom="16dp"/>
+                android:layout_marginBottom="8dp"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_pick_on_map"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:text="Pick on Map"
+                android:textColor="@color/primary_purple"
+                app:strokeColor="@color/primary_purple"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
 
             <EditText
                 android:id="@+id/et_description"
