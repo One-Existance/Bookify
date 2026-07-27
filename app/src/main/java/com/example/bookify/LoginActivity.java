@@ -3,9 +3,11 @@ package com.example.bookify;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.bookify.data.DatabaseHelper;
@@ -21,6 +23,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextView tvError;
     private DatabaseHelper db;
     private FirebaseAuth auth;
+    private boolean passwordVisible = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +37,12 @@ public class LoginActivity extends AppCompatActivity {
         tvError   = findViewById(R.id.tv_error);
 
         findViewById(R.id.btn_login).setOnClickListener(v -> attemptLogin());
+
+        ImageView ivPasswordToggle = findViewById(R.id.iv_password_toggle);
+        ivPasswordToggle.setOnClickListener(v -> {
+            passwordVisible = !passwordVisible;
+            togglePasswordVisibility(etPassword, ivPasswordToggle, passwordVisible);
+        });
 
         findViewById(R.id.tv_signup_link).setOnClickListener(v -> {
             startActivity(new Intent(this, RegisterActivity.class));
@@ -118,6 +127,19 @@ public class LoginActivity extends AppCompatActivity {
                 .putString("user_email", email)
                 .putString("role", role)
                 .apply();
+    }
+
+    private void togglePasswordVisibility(EditText editText, ImageView toggleIcon, boolean visible) {
+        android.graphics.Typeface typeface = editText.getTypeface();
+        if (visible) {
+            editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+            toggleIcon.setImageResource(R.drawable.ic_eye_off);
+        } else {
+            editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            toggleIcon.setImageResource(R.drawable.ic_eye);
+        }
+        editText.setTypeface(typeface);
+        editText.setSelection(editText.getText().length());
     }
 
     private void showError(String message) {
