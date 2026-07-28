@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -16,6 +15,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.bookify.adapter.AdminEventAdapter;
 import com.example.bookify.adapter.PromoterApplicationAdapter;
 import com.example.bookify.adapter.UserAdapter;
@@ -26,6 +26,7 @@ import com.example.bookify.data.User;
 import com.example.bookify.util.NotificationHelper;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
 import java.util.List;
 
 public class AdminActivity extends AppCompatActivity {
@@ -37,7 +38,9 @@ public class AdminActivity extends AppCompatActivity {
     private RecyclerView rvEvents, rvUsers, rvApplications;
     private AdminEventAdapter eventAdapter;
     private UserAdapter userAdapter;
+    private PromoterApplicationAdapter appAdapter;
     private String selectedImageUrl = "";
+    private double pickedLat = 0, pickedLng = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,13 +74,12 @@ public class AdminActivity extends AppCompatActivity {
         tvTotalEvents  = findViewById(R.id.tv_total_events);
         tvTotalRevenue = findViewById(R.id.tv_total_revenue);
 
-        setupRecyclerViews();
-        setupApplicationsList();
-        updateStats();
-
         findViewById(R.id.layout_select_image).setOnClickListener(v -> selectImage());
         findViewById(R.id.btn_save).setOnClickListener(v -> saveEvent());
         findViewById(R.id.btn_add_promoter).setOnClickListener(v -> showAddPromoterDialog());
+        findViewById(R.id.btn_pick_location).setOnClickListener(v -> {
+            startActivityForResult(new Intent(this, LocationPickerActivity.class), 300);
+        });
 
         findViewById(R.id.tv_logout).setOnClickListener(v -> {
             getSharedPreferences("bookify_session", MODE_PRIVATE).edit().clear().apply();
@@ -88,6 +90,20 @@ public class AdminActivity extends AppCompatActivity {
         findViewById(R.id.tv_user_view).setOnClickListener(v -> {
             startActivity(new Intent(this, HomeFeedActivity.class));
         });
+
+        setupRecyclerViews();
+        updateStats();
+    }
+
+    private void setupRecyclerViews() {
+        rvEvents.setLayoutManager(new LinearLayoutManager(this));
+        refreshEventsList();
+
+        rvUsers.setLayoutManager(new LinearLayoutManager(this));
+        refreshUsersList();
+
+        rvApplications.setLayoutManager(new LinearLayoutManager(this));
+        refreshApplicationsList();
     }
 
     private void updateStats() {
@@ -103,14 +119,15 @@ public class AdminActivity extends AppCompatActivity {
         tvTotalRevenue.setText(String.format("%.1fk", revenue / 1000));
     }
 
-    private void setupRecyclerViews() {
-        // Events
+    private void refreshEventsList() {
         List<Event> events = db.getAllEventsForAdmin();
         eventAdapter = new AdminEventAdapter(events, db, new AdminEventAdapter.OnEventActionListener() {
             @Override
             public void onDeleteClick(Event event) {
                 db.deleteEvent(event.getId());
-                refreshLists();
+                refreshEventsList();
+                updateStats();
+                Toast.makeText(AdminActivity.this, "Event deleted", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -125,69 +142,31 @@ public class AdminActivity extends AppCompatActivity {
                 intent.putExtra("event_slots",    event.getSlots());
                 intent.putExtra("event_about",    event.getDescription());
                 intent.putExtra("event_image",    event.getImageUrl());
+                intent.putExtra("event_lat",      event.getLatitude());
+                intent.putExtra("event_lng",      event.getLongitude());
                 startActivity(intent);
             }
         });
-        rvEvents.setLayoutManager(new LinearLayoutManager(this));
         rvEvents.setAdapter(eventAdapter);
+    }
 
-        // Users
+    private void refreshUsersList() {
         List<User> users = db.getAllUsers();
         userAdapter = new UserAdapter(users, user -> {
             db.verifyPromoter(user.getId());
-            refreshLists();
+            refreshUsersList();
+            updateStats();
             Toast.makeText(this, user.getFullName() + " verified!", Toast.LENGTH_SHORT).show();
         });
-        rvUsers.setLayoutManager(new LinearLayoutManager(this));
         rvUsers.setAdapter(userAdapter);
     }
 
-    private void refreshLists() {
-        List<Event> events = db.getAllEventsForAdmin();
-        eventAdapter = new AdminEventAdapter(events, db, new AdminEventAdapter.OnEventActionListener() {
-            @Override
-            public void onDeleteClick(Event event) {
-                db.deleteEvent(event.getId());
-                refreshLists();
-            }
-
-            @Override
-            public void onViewClick(Event event) {
-                Intent intent = new Intent(AdminActivity.this, EventDetailActivity.class);
-                intent.putExtra("event_id",       event.getId());
-                intent.putExtra("event_title",    event.getTitle());
-                intent.putExtra("event_location", event.getLocation());
-                intent.putExtra("event_date",     event.getDate());
-                intent.putExtra("event_price",    event.getPrice());
-                intent.putExtra("event_time",     event.getTime());
-                intent.putExtra("event_slots",    event.getSlots());
-                intent.putExtra("event_about",    event.getDescription());
-                intent.putExtra("event_image",    event.getImageUrl());
-                startActivity(intent);
-            }
-        });
-        rvEvents.setAdapter(eventAdapter);
-
-        List<User> users = db.getAllUsers();
-        userAdapter = new UserAdapter(users, user -> {
-            db.verifyPromoter(user.getId());
-            refreshLists();
-        });
-        rvUsers.setAdapter(userAdapter);
-        
-        updateStats();
-    }
-
-    private void setupApplicationsList() {
-        rvApplications.setLayoutManager(new LinearLayoutManager(this));
-        refreshApplications();
-    }
-
-    private void refreshApplications() {
+    private void refreshApplicationsList() {
         List<PromoterApplication> applications = db.getPendingPromoterApplications();
         findViewById(R.id.tv_no_applications).setVisibility(
                 applications.isEmpty() ? View.VISIBLE : View.GONE);
-        rvApplications.setAdapter(new PromoterApplicationAdapter(applications, new PromoterApplicationAdapter.OnApplicationActionListener() {
+
+        appAdapter = new PromoterApplicationAdapter(applications, new PromoterApplicationAdapter.OnApplicationActionListener() {
             @Override
             public void onApprove(PromoterApplication application) {
                 db.approvePromoterApplication(application.getId(), application.getUserId());
@@ -196,8 +175,9 @@ public class AdminActivity extends AppCompatActivity {
                         "Promoter Approved",
                         application.getApplicantName() + " is now a promoter.",
                         new Intent(AdminActivity.this, AdminActivity.class));
-                refreshApplications();
-                refreshLists();
+                refreshApplicationsList();
+                refreshUsersList();
+                updateStats();
             }
 
             @Override
@@ -208,9 +188,10 @@ public class AdminActivity extends AppCompatActivity {
                         "Application Rejected",
                         application.getApplicantName() + "'s promoter application was rejected.",
                         new Intent(AdminActivity.this, AdminActivity.class));
-                refreshApplications();
+                refreshApplicationsList();
             }
-        }));
+        });
+        rvApplications.setAdapter(appAdapter);
     }
 
     private void showAddPromoterDialog() {
@@ -243,7 +224,8 @@ public class AdminActivity extends AppCompatActivity {
                                 long id = db.registerUserWithRole(name, email, firebaseUser.getUid(), "", User.ROLE_PROMOTER);
                                 if (id > 0) {
                                     Toast.makeText(this, "Promoter registered!", Toast.LENGTH_SHORT).show();
-                                    refreshLists();
+                                    refreshUsersList();
+                                    updateStats();
                                 } else {
                                     Toast.makeText(this, "Registration failed", Toast.LENGTH_SHORT).show();
                                 }
@@ -274,6 +256,14 @@ public class AdminActivity extends AppCompatActivity {
                 ivPreview.setAlpha(1.0f);
                 Toast.makeText(this, "Image Selected!", Toast.LENGTH_SHORT).show();
             }
+        } else if (requestCode == 300 && resultCode == RESULT_OK && data != null) {
+            pickedLat = data.getDoubleExtra("latitude", 0);
+            pickedLng = data.getDoubleExtra("longitude", 0);
+            String address = data.getStringExtra("address");
+            if (address != null && !address.isEmpty()) {
+                etLocation.setText(address);
+            }
+            Toast.makeText(this, "Location pinned!", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -292,11 +282,12 @@ public class AdminActivity extends AppCompatActivity {
             return;
         }
 
-        long id = db.addEvent(title, location, date, category, "Tsh " + price, false, selectedImageUrl, time, slots, desc);
+        long id = db.addEvent(title, location, date, category, "Tsh " + price, false, selectedImageUrl, time, slots, desc, pickedLat, pickedLng);
         if (id > 0) {
             Toast.makeText(this, "Event posted successfully! 🚀", Toast.LENGTH_SHORT).show();
             clearFields();
-            refreshLists();
+            refreshEventsList();
+            updateStats();
         } else {
             Toast.makeText(this, "Failed to post event", Toast.LENGTH_SHORT).show();
         }
@@ -312,6 +303,8 @@ public class AdminActivity extends AppCompatActivity {
         etSlots.setText("");
         etDescription.setText("");
         selectedImageUrl = "";
+        pickedLat = 0;
+        pickedLng = 0;
         ivPreview.setAlpha(0.3f);
         ivPreview.setImageResource(R.drawable.bg_qr_placeholder);
     }

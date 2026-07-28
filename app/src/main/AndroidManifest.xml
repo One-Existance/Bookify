@@ -8,6 +8,10 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
+    <queries>
+        <package android:name="com.google.android.apps.maps" />
+    </queries>
+
     <application
         android:name=".BookifyApplication"
         android:allowBackup="true"
@@ -51,6 +55,7 @@
         <activity android:name=".OrganizeEventActivity" android:exported="false" android:label="Organize Event" />
         <activity android:name=".BecomePromoterActivity" android:exported="false" android:label="Become a Promoter" />
         <activity android:name=".MyEventRequestsActivity" android:exported="false" android:label="My Event Requests" />
+        <activity android:name=".LocationPickerActivity" android:exported="false" android:label="Pick Location" />
 
     </application>
 

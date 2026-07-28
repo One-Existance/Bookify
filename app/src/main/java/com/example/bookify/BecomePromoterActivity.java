@@ -16,8 +16,8 @@ public class BecomePromoterActivity extends AppCompatActivity {
     private EditText etHallName, etLocation, etDescription;
     private DatabaseHelper db;
     private int userId;
-    private Double pickedLatitude;
-    private Double pickedLongitude;
+    private double pickedLatitude = 0;
+    private double pickedLongitude = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +35,7 @@ public class BecomePromoterActivity extends AppCompatActivity {
         findViewById(R.id.tv_back).setOnClickListener(v -> finish());
         findViewById(R.id.btn_submit).setOnClickListener(v -> submitApplication());
         findViewById(R.id.btn_pick_on_map).setOnClickListener(v -> {
-            Intent intent = new Intent(this, MapActivity.class);
-            intent.putExtra(MapActivity.EXTRA_PICK_MODE, true);
+            Intent intent = new Intent(this, LocationPickerActivity.class);
             startActivityForResult(intent, REQUEST_PICK_LOCATION);
         });
     }
@@ -45,11 +44,13 @@ public class BecomePromoterActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_PICK_LOCATION && resultCode == RESULT_OK && data != null) {
-            String pickedName = data.getStringExtra(MapActivity.EXTRA_RESULT_LOCATION_NAME);
-            pickedLatitude  = data.getDoubleExtra(MapActivity.EXTRA_RESULT_LATITUDE, 0);
-            pickedLongitude = data.getDoubleExtra(MapActivity.EXTRA_RESULT_LONGITUDE, 0);
-            if (pickedName != null) etLocation.setText(pickedName);
-            Toast.makeText(this, "Venue location set from map", Toast.LENGTH_SHORT).show();
+            String pickedAddress = data.getStringExtra("address");
+            pickedLatitude  = data.getDoubleExtra("latitude", 0);
+            pickedLongitude = data.getDoubleExtra("longitude", 0);
+            if (pickedAddress != null && !pickedAddress.isEmpty()) {
+                etLocation.setText(pickedAddress);
+            }
+            Toast.makeText(this, "Venue location pinned!", Toast.LENGTH_SHORT).show();
         }
     }
 

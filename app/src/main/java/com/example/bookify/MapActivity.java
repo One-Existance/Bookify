@@ -3,8 +3,10 @@ package com.example.bookify;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -14,6 +16,7 @@ import androidx.core.app.ActivityCompat;
 
 import org.maplibre.android.MapLibre;
 import org.maplibre.android.annotations.MarkerOptions;
+import org.maplibre.android.annotations.PolylineOptions;
 import org.maplibre.android.camera.CameraUpdateFactory;
 import org.maplibre.android.geometry.LatLng;
 import org.maplibre.android.location.LocationComponent;
@@ -25,51 +28,56 @@ import org.maplibre.android.maps.MapLibreMap;
 import org.maplibre.android.maps.OnMapReadyCallback;
 import org.maplibre.android.maps.Style;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
-
-    public static final String EXTRA_PICK_MODE = "pick_mode";
-    public static final String EXTRA_RESULT_LOCATION_NAME = "result_location_name";
-    public static final String EXTRA_RESULT_LATITUDE = "result_latitude";
-    public static final String EXTRA_RESULT_LONGITUDE = "result_longitude";
 
     private MapView mapView;
     private MapLibreMap mMap;
     private String locationName;
     private LatLng eventLatLng = new LatLng(-6.7924, 39.2083);
     private static final String MAPTILER_KEY = "JhccbJYsCtrTEkg1KAQt";
-    private boolean pickMode;
-    private boolean locationPicked;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        
         // Initialize MapLibre with context before setContentView
         MapLibre.getInstance(this);
 
         setContentView(R.layout.activity_map);
 
-        pickMode = getIntent().getBooleanExtra(EXTRA_PICK_MODE, false);
         locationName = getIntent().getStringExtra("location_name");
         if (locationName == null) locationName = "Tanzania";
+
+        double lat = getIntent().getDoubleExtra("event_lat", 0);
+        double lng = getIntent().getDoubleExtra("event_lng", 0);
+
+        if (lat != 0 && lng != 0) {
+            eventLatLng = new LatLng(lat, lng);
+        } else {
+            geocodeLocation();
+        }
 
         mapView = findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
 
         findViewById(R.id.btn_back_map).setOnClickListener(v -> finish());
+        findViewById(R.id.fab_directions).setOnClickListener(v -> openNavigation());
+    }
 
-        if (pickMode) {
-            findViewById(R.id.btn_confirm_location).setVisibility(android.view.View.VISIBLE);
-            findViewById(R.id.tv_map_hint).setVisibility(android.view.View.VISIBLE);
-            findViewById(R.id.btn_confirm_location).setEnabled(false);
-            findViewById(R.id.btn_confirm_location).setOnClickListener(v -> confirmPickedLocation());
+    private void openNavigation() {
+        Uri gmmIntentUri = Uri.parse("google.navigation:q=" + eventLatLng.getLatitude() + "," + eventLatLng.getLongitude());
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+        mapIntent.setPackage("com.google.android.apps.maps");
+        if (mapIntent.resolveActivity(getPackageManager()) != null) {
+            startActivity(mapIntent);
         } else {
-            geocodeLocation();
+            // Fallback for devices without Google Maps
+            Uri fallbackUri = Uri.parse("geo:0,0?q=" + eventLatLng.getLatitude() + "," + eventLatLng.getLongitude());
+            startActivity(new Intent(Intent.ACTION_VIEW, fallbackUri));
         }
     }
 
@@ -92,53 +100,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(@NonNull MapLibreMap mapLibreMap) {
         mMap = mapLibreMap;
-
+        
         String styleUrl = "https://api.maptiler.com/maps/streets/style.json?key=" + MAPTILER_KEY;
         mMap.setStyle(new Style.Builder().fromUri(styleUrl), style -> {
             enableLocationComponent(style);
             updateMapPosition();
-
-            if (pickMode) {
-                mMap.addOnMapClickListener(latLng -> {
-                    eventLatLng = latLng;
-                    locationPicked = true;
-                    findViewById(R.id.btn_confirm_location).setEnabled(true);
-                    updateMapPosition();
-                    reverseGeocode(latLng);
-                    return true;
-                });
-            }
         });
-    }
-
-    private void reverseGeocode(LatLng latLng) {
-        new Thread(() -> {
-            String resolvedName = String.format(Locale.US, "%.5f, %.5f", latLng.getLatitude(), latLng.getLongitude());
-            try {
-                Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-                List<Address> addresses = geocoder.getFromLocation(latLng.getLatitude(), latLng.getLongitude(), 1);
-                if (addresses != null && !addresses.isEmpty()) {
-                    String addressLine = addresses.get(0).getAddressLine(0);
-                    if (addressLine != null && !addressLine.isEmpty()) resolvedName = addressLine;
-                }
-            } catch (IOException e) {
-                Log.e("MapActivity", "Reverse geocoding failed", e);
-            }
-            final String finalName = resolvedName;
-            runOnUiThread(() -> {
-                locationName = finalName;
-                updateMapPosition();
-            });
-        }).start();
-    }
-
-    private void confirmPickedLocation() {
-        Intent result = new Intent();
-        result.putExtra(EXTRA_RESULT_LOCATION_NAME, locationName);
-        result.putExtra(EXTRA_RESULT_LATITUDE, eventLatLng.getLatitude());
-        result.putExtra(EXTRA_RESULT_LONGITUDE, eventLatLng.getLongitude());
-        setResult(RESULT_OK, result);
-        finish();
     }
 
     private void enableLocationComponent(@NonNull Style loadedMapStyle) {
@@ -154,8 +121,22 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 LocationComponentActivationOptions.builder(this, loadedMapStyle).build());
         
         locationComponent.setLocationComponentEnabled(true);
-        locationComponent.setCameraMode(CameraMode.NONE); // Don't snap camera to user automatically
+        locationComponent.setCameraMode(CameraMode.NONE); 
         locationComponent.setRenderMode(RenderMode.COMPASS);
+        
+        // Draw initial "visual route" line if user location is available
+        android.location.Location lastLoc = locationComponent.getLastKnownLocation();
+        if (lastLoc != null) {
+            drawVisualRoute(new LatLng(lastLoc.getLatitude(), lastLoc.getLongitude()));
+        }
+    }
+
+    private void drawVisualRoute(LatLng userLatLng) {
+        if (mMap == null) return;
+        mMap.addPolyline(new PolylineOptions()
+                .add(userLatLng, eventLatLng)
+                .color(Color.parseColor("#8A2BE2"))
+                .width(3f));
     }
 
     @Override
@@ -175,6 +156,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mMap.clear();
         mMap.addMarker(new MarkerOptions().position(eventLatLng).title(locationName));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(eventLatLng, 12));
+        
+        // Refresh line if user location is active
+        if (mMap.getLocationComponent().isLocationComponentEnabled()) {
+            android.location.Location lastLoc = mMap.getLocationComponent().getLastKnownLocation();
+            if (lastLoc != null) {
+                drawVisualRoute(new LatLng(lastLoc.getLatitude(), lastLoc.getLongitude()));
+            }
+        }
     }
 
     @Override

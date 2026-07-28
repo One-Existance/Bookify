@@ -63,6 +63,8 @@ public class HomeFeedActivity extends AppCompatActivity {
             intent.putExtra("event_slots",    event.getSlots());
             intent.putExtra("event_about",    event.getDescription());
             intent.putExtra("event_image",    event.getImageUrl());
+            intent.putExtra("event_lat",      event.getLatitude());
+            intent.putExtra("event_lng",      event.getLongitude());
             startActivity(intent);
         });
         rvEvents.setAdapter(eventAdapter);

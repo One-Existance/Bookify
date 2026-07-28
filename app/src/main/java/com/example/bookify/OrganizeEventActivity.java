@@ -19,7 +19,7 @@ import java.util.List;
 
 public class OrganizeEventActivity extends AppCompatActivity {
 
-    private EditText etTitle, etCategory, etDate, etTime, etPrice, etSlots, etDescription;
+    private EditText etTitle, etLocation, etCategory, etDate, etTime, etPrice, etSlots, etDescription;
     private Spinner spinnerPromoter;
     private SwitchCompat switchPrivate;
     private ImageView ivPreview;
@@ -27,6 +27,7 @@ public class OrganizeEventActivity extends AppCompatActivity {
     private List<PromoterProfile> promoters;
     private String selectedImageUrl = "";
     private int userId;
+    private double pickedLat = 0, pickedLng = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +39,7 @@ public class OrganizeEventActivity extends AppCompatActivity {
         userId = prefs.getInt("user_id", -1);
 
         etTitle       = findViewById(R.id.et_title);
+        etLocation    = findViewById(R.id.et_location);
         etCategory    = findViewById(R.id.et_category);
         etDate        = findViewById(R.id.et_date);
         etTime        = findViewById(R.id.et_time);
@@ -51,6 +53,9 @@ public class OrganizeEventActivity extends AppCompatActivity {
         findViewById(R.id.tv_back).setOnClickListener(v -> finish());
         findViewById(R.id.layout_select_image).setOnClickListener(v -> selectImage());
         findViewById(R.id.btn_submit_request).setOnClickListener(v -> submitRequest());
+        findViewById(R.id.btn_pick_location).setOnClickListener(v -> {
+            startActivityForResult(new Intent(this, LocationPickerActivity.class), 300);
+        });
 
         setupPromoterSpinner();
     }
@@ -86,6 +91,14 @@ public class OrganizeEventActivity extends AppCompatActivity {
                 ivPreview.setImageURI(imageUri);
                 ivPreview.setAlpha(1.0f);
             }
+        } else if (requestCode == 300 && resultCode == RESULT_OK && data != null) {
+            pickedLat = data.getDoubleExtra("latitude", 0);
+            pickedLng = data.getDoubleExtra("longitude", 0);
+            String address = data.getStringExtra("address");
+            if (address != null && !address.isEmpty()) {
+                etLocation.setText(address);
+            }
+            Toast.makeText(this, "Location pinned!", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -100,6 +113,7 @@ public class OrganizeEventActivity extends AppCompatActivity {
         }
 
         String title    = etTitle.getText().toString().trim();
+        String specificLocation = etLocation.getText().toString().trim();
         String category = etCategory.getText().toString().trim();
         String date     = etDate.getText().toString().trim();
         String time     = etTime.getText().toString().trim();
@@ -115,8 +129,12 @@ public class OrganizeEventActivity extends AppCompatActivity {
         PromoterProfile promoter = promoters.get(spinnerPromoter.getSelectedItemPosition());
         boolean isPrivate = switchPrivate.isChecked();
 
-        long id = db.requestEvent(title, promoter.getLocation(), date, category, price,
-                isPrivate, selectedImageUrl, time, slots, desc, userId, promoter.getUserId());
+        // Use specific location if entered, else promoter's hall location
+        String finalLocation = TextUtils.isEmpty(specificLocation) ? promoter.getLocation() : specificLocation;
+
+        long id = db.requestEvent(title, finalLocation, date, category, price,
+                isPrivate, selectedImageUrl, time, slots, desc, userId, promoter.getUserId(),
+                pickedLat, pickedLng);
 
         if (id > 0) {
             Toast.makeText(this, "Request sent to " + promoter.getHallName() + "!", Toast.LENGTH_LONG).show();
