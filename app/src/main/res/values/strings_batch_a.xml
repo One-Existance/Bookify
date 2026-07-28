@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Login -->
+    <string name="login_subtitle">Sign in to your Bookify account</string>
+    <string name="login_no_account">Don\'t have an account?</string>
+    <string name="login_signup_link">Sign up</string>
+    <string name="login_error_email_required">Please enter your email.</string>
+    <string name="login_error_password_required">Please enter your password.</string>
+    <string name="login_error_test_account_missing">Test account missing — reinstall the app to reseed the database.</string>
+    <string name="login_error_invalid_credentials">Invalid email or password.</string>
+
+    <!-- Register -->
+    <string name="register_subtitle">Join Bookify and start booking events</string>
+    <string name="register_confirm_password_hint">Confirm Password</string>
+    <string name="register_have_account">Already have an account?</string>
+    <string name="register_error_fields_required">Please fill all required fields</string>
+    <string name="register_error_passwords_mismatch">Passwords do not match</string>
+    <string name="register_error_password_length">Password must be at least 6 characters</string>
+    <string name="register_error_generic">Registration failed. Please try again.</string>
+    <string name="register_error_email_exists">Email already exists</string>
+    <string name="register_error_weak_password">Password is too weak</string>
+
+    <!-- Home feed -->
+    <string name="home_good_morning">Good morning,</string>
+    <string name="category_all">All</string>
+    <string name="category_concerts">Concerts</string>
+    <string name="category_sports">Sports</string>
+    <string name="category_conference">Conference</string>
+    <string name="category_gala">Gala</string>
+    <string name="category_party">Party</string>
+
+    <!-- Explore -->
+    <string name="explore_search_hint">Search events, locations…</string>
+    <string name="explore_all_events">All events</string>
+</resources>

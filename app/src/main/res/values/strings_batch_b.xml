@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Event Detail -->
+    <string name="event_detail_title">Event details</string>
+    <string name="event_detail_label_date">Date</string>
+    <string name="event_detail_label_time">Time</string>
+    <string name="event_detail_label_slots">Slots left</string>
+    <string name="event_detail_label_price">Price</string>
+    <string name="event_detail_section_about">ABOUT</string>
+    <string name="event_detail_view_map">View on Map</string>
+    <string name="event_detail_book_ticket">Book ticket →</string>
+    <string name="event_detail_not_logged_in_title">Not logged in</string>
+    <string name="event_detail_not_logged_in_message">Please log in to book tickets.</string>
+    <string name="event_detail_already_booked_title">Already booked</string>
+    <string name="event_detail_ticket_number_prefix">Your ticket number:\n</string>
+    <string name="event_detail_booking_failed_title">Booking failed</string>
+    <string name="event_detail_view_my_tickets">View My Tickets</string>
+    <string name="dialog_close">Close</string>
+
+    <!-- My Tickets -->
+    <string name="my_tickets_title">My tickets</string>
+    <string name="my_tickets_private">🔒 Private</string>
+    <string name="my_tickets_tab_upcoming">Upcoming</string>
+    <string name="my_tickets_tab_past">Past</string>
+    <string name="my_tickets_empty">No active tickets found.</string>
+    <string name="my_tickets_toast_no_past">No past tickets</string>
+
+    <!-- My Bookings -->
+    <string name="my_bookings_title">My Bookings</string>
+    <string name="my_bookings_empty">No bookings yet.\nTap a concert or event and hit \'Book Ticket\'!</string>
+
+    <!-- Private Event -->
+    <string name="private_event_title">Private event</string>
+    <string name="private_event_invite_only">Invite-only event</string>
+    <string name="private_event_description">Enter the access code your organizer shared with you\nto join this private event.</string>
+    <string name="private_event_access_code_label">Access code</string>
+    <string name="private_event_access_code_hint">Enter access code…</string>
+    <string name="private_event_access_button">Access event →</string>
+    <string name="private_event_error_empty_code">Please enter an access code.</string>
+    <string name="private_event_error_invalid_code">Invalid or expired code.</string>
+
+    <!-- Payment -->
+    <string name="payment_title">Mongike Checkout</string>
+    <string name="payment_select_provider">Select Mobile Money Provider</string>
+    <string name="payment_provider_mpesa">Vodacom M-Pesa</string>
+    <string name="payment_provider_tigo">Tigo Pesa</string>
+    <string name="payment_provider_airtel">Airtel Money</string>
+    <string name="payment_provider_halopesa">HaloPesa</string>
+    <string name="payment_phone_hint">Phone Number (e.g. 255...)</string>
+    <string name="payment_pay_now">Pay Now</string>
+    <string name="payment_toast_enter_phone">Enter phone number</string>
+    <string name="payment_toast_success">Payment Successful! Your ticket is ready.</string>
+    <string name="payment_toast_verification_failed">Payment verification failed. If you paid, please contact support.</string>
+    <string name="payment_toast_could_not_initiate">Could not initiate payment. Check your network.</string>
+
+    <!-- Ticket Detail -->
+    <string name="ticket_detail_title">Ticket Details</string>
+    <string name="ticket_detail_scan_to_validate">SCAN TO VALIDATE</string>
+    <string name="ticket_detail_payment_verified">PAYMENT VERIFIED ✓</string>
+
+    <!-- Booking Card -->
+    <string name="booking_card_status_active">Active</string>
+    <string name="booking_card_ticket_no_label">Ticket No.</string>
+    <string name="booking_card_paid">Paid ✓</string>
+</resources>

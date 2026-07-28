@@ -7,9 +7,14 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
 
     <queries>
         <package android:name="com.google.android.apps.maps" />
+        <package android:name="com.whatsapp" />
+        <package android:name="com.whatsapp.w4b" />
     </queries>
 
     <application
@@ -21,18 +26,19 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:localeConfig="@xml/locales_config"
         android:theme="@style/Theme.Bookify">
 
-        <activity android:name=".MainActivity"        android:exported="true"  android:label="@string/app_name">
+        <activity android:name=".MainActivity"        android:exported="false"  android:label="@string/app_name" />
+
+        <activity android:name=".LoginActivity"         android:exported="false" android:label="Login" />
+        <activity android:name=".RegisterActivity"      android:exported="false" android:label="Register" />
+        <activity android:name=".HomeFeedActivity"      android:exported="true" android:label="Home">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".LoginActivity"         android:exported="false" android:label="Login" />
-        <activity android:name=".RegisterActivity"      android:exported="false" android:label="Register" />
-        <activity android:name=".HomeFeedActivity"      android:exported="false" android:label="Home" />
         <activity android:name=".ExploreActivity"       android:exported="false" android:label="Explore" />
         <activity android:name=".EventDetailActivity"   android:exported="false" android:label="Event Details" />
         <activity android:name=".MyTicketsActivity"     android:exported="false" android:label="My Tickets" />
@@ -46,6 +52,7 @@
         </activity>
         <activity android:name=".MyBookingsActivity"    android:exported="false" android:label="My Bookings" />
         <activity android:name=".ProfileActivity"       android:exported="false" android:label="Profile" />
+        <activity android:name=".EditProfileActivity"   android:exported="false" android:label="Edit Profile" />
         <activity android:name=".SettingsActivity"      android:exported="false" android:label="Settings" />
         <activity android:name=".AdminActivity"         android:exported="false" android:label="Admin Dashboard" />
         <activity android:name=".PromoterDashboardActivity" android:exported="false" android:label="Promoter Dashboard" />
@@ -56,6 +63,18 @@
         <activity android:name=".BecomePromoterActivity" android:exported="false" android:label="Become a Promoter" />
         <activity android:name=".MyEventRequestsActivity" android:exported="false" android:label="My Event Requests" />
         <activity android:name=".LocationPickerActivity" android:exported="false" android:label="Pick Location" />
+        <activity android:name=".ScanEntryActivity"     android:exported="false" android:label="Scan Entry"
+            android:screenOrientation="portrait" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
 
     </application>
 

@@ -23,6 +23,7 @@ import com.example.bookify.data.DatabaseHelper;
 import com.example.bookify.data.Event;
 import com.example.bookify.data.PromoterApplication;
 import com.example.bookify.data.User;
+import com.example.bookify.util.InviteShareHelper;
 import com.example.bookify.util.NotificationHelper;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -127,7 +128,7 @@ public class AdminActivity extends AppCompatActivity {
                 db.deleteEvent(event.getId());
                 refreshEventsList();
                 updateStats();
-                Toast.makeText(AdminActivity.this, "Event deleted", Toast.LENGTH_SHORT).show();
+                Toast.makeText(AdminActivity.this, R.string.admin_event_deleted, Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -146,6 +147,25 @@ public class AdminActivity extends AppCompatActivity {
                 intent.putExtra("event_lng",      event.getLongitude());
                 startActivity(intent);
             }
+
+            @Override
+            public void onShareClick(Event event) {
+                InviteShareHelper.shareGeneric(AdminActivity.this, event);
+            }
+
+            @Override
+            public void onShareWhatsAppClick(Event event) {
+                InviteShareHelper.shareViaWhatsApp(AdminActivity.this, event);
+            }
+
+            @Override
+            public void onScanClick(Event event) {
+                Intent intent = new Intent(AdminActivity.this, ScanEntryActivity.class);
+                intent.putExtra("event_id", event.getId());
+                intent.putExtra("event_access_code", event.getAccessCode());
+                intent.putExtra("event_title", event.getTitle());
+                startActivity(intent);
+            }
         });
         rvEvents.setAdapter(eventAdapter);
     }
@@ -156,7 +176,7 @@ public class AdminActivity extends AppCompatActivity {
             db.verifyPromoter(user.getId());
             refreshUsersList();
             updateStats();
-            Toast.makeText(this, user.getFullName() + " verified!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.admin_promoter_verified_fmt, user.getFullName()), Toast.LENGTH_SHORT).show();
         });
         rvUsers.setAdapter(userAdapter);
     }
@@ -170,10 +190,10 @@ public class AdminActivity extends AppCompatActivity {
             @Override
             public void onApprove(PromoterApplication application) {
                 db.approvePromoterApplication(application.getId(), application.getUserId());
-                Toast.makeText(AdminActivity.this, application.getApplicantName() + " is now a Promoter", Toast.LENGTH_SHORT).show();
+                Toast.makeText(AdminActivity.this, getString(R.string.admin_now_promoter_fmt, application.getApplicantName()), Toast.LENGTH_SHORT).show();
                 NotificationHelper.notify(AdminActivity.this, application.getId(),
-                        "Promoter Approved",
-                        application.getApplicantName() + " is now a promoter.",
+                        getString(R.string.admin_promoter_approved_title),
+                        getString(R.string.admin_now_promoter_notif_fmt, application.getApplicantName()),
                         new Intent(AdminActivity.this, AdminActivity.class));
                 refreshApplicationsList();
                 refreshUsersList();
@@ -183,10 +203,10 @@ public class AdminActivity extends AppCompatActivity {
             @Override
             public void onReject(PromoterApplication application) {
                 db.rejectPromoterApplication(application.getId());
-                Toast.makeText(AdminActivity.this, "Application rejected", Toast.LENGTH_SHORT).show();
+                Toast.makeText(AdminActivity.this, R.string.admin_application_rejected, Toast.LENGTH_SHORT).show();
                 NotificationHelper.notify(AdminActivity.this, application.getId(),
-                        "Application Rejected",
-                        application.getApplicantName() + "'s promoter application was rejected.",
+                        getString(R.string.admin_application_rejected_title),
+                        getString(R.string.admin_application_rejected_notif_fmt, application.getApplicantName()),
                         new Intent(AdminActivity.this, AdminActivity.class));
                 refreshApplicationsList();
             }
@@ -201,19 +221,19 @@ public class AdminActivity extends AppCompatActivity {
         EditText etPass = dialogView.findViewById(R.id.et_promoter_password);
 
         new AlertDialog.Builder(this)
-                .setTitle("Register New Promoter")
+                .setTitle(R.string.admin_register_new_promoter_title)
                 .setView(dialogView)
-                .setPositiveButton("Register", (dialog, which) -> {
+                .setPositiveButton(R.string.admin_register_button, (dialog, which) -> {
                     String name = etName.getText().toString().trim();
                     String email = etEmail.getText().toString().trim();
                     String pass = etPass.getText().toString().trim();
 
                     if (name.isEmpty() || email.isEmpty() || pass.isEmpty()) {
-                        Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, R.string.admin_fill_all_fields, Toast.LENGTH_SHORT).show();
                         return;
                     }
                     if (pass.length() < 6) {
-                        Toast.makeText(this, "Password must be at least 6 characters", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, R.string.admin_password_min_length, Toast.LENGTH_SHORT).show();
                         return;
                     }
 
@@ -223,17 +243,17 @@ public class AdminActivity extends AppCompatActivity {
                                 FirebaseUser firebaseUser = result.getUser();
                                 long id = db.registerUserWithRole(name, email, firebaseUser.getUid(), "", User.ROLE_PROMOTER);
                                 if (id > 0) {
-                                    Toast.makeText(this, "Promoter registered!", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(this, R.string.admin_promoter_registered, Toast.LENGTH_SHORT).show();
                                     refreshUsersList();
                                     updateStats();
                                 } else {
-                                    Toast.makeText(this, "Registration failed", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(this, R.string.admin_registration_failed, Toast.LENGTH_SHORT).show();
                                 }
                             })
                             .addOnFailureListener(e ->
                                     Toast.makeText(this, "Registration failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
                 })
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton(R.string.admin_cancel, null)
                 .show();
     }
 
@@ -254,7 +274,7 @@ public class AdminActivity extends AppCompatActivity {
                 selectedImageUrl = imageUri.toString();
                 ivPreview.setImageURI(imageUri);
                 ivPreview.setAlpha(1.0f);
-                Toast.makeText(this, "Image Selected!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.admin_image_selected, Toast.LENGTH_SHORT).show();
             }
         } else if (requestCode == 300 && resultCode == RESULT_OK && data != null) {
             pickedLat = data.getDoubleExtra("latitude", 0);
@@ -263,7 +283,7 @@ public class AdminActivity extends AppCompatActivity {
             if (address != null && !address.isEmpty()) {
                 etLocation.setText(address);
             }
-            Toast.makeText(this, "Location pinned!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.admin_location_pinned, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -278,18 +298,18 @@ public class AdminActivity extends AppCompatActivity {
         String desc     = etDescription.getText().toString().trim();
 
         if (TextUtils.isEmpty(title) || TextUtils.isEmpty(location) || TextUtils.isEmpty(date)) {
-            Toast.makeText(this, "Please fill required fields", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.admin_fill_required_fields, Toast.LENGTH_SHORT).show();
             return;
         }
 
         long id = db.addEvent(title, location, date, category, "Tsh " + price, false, selectedImageUrl, time, slots, desc, pickedLat, pickedLng);
         if (id > 0) {
-            Toast.makeText(this, "Event posted successfully! 🚀", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.admin_event_posted_success, Toast.LENGTH_SHORT).show();
             clearFields();
             refreshEventsList();
             updateStats();
         } else {
-            Toast.makeText(this, "Failed to post event", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.admin_post_event_failed, Toast.LENGTH_SHORT).show();
         }
     }
 

@@ -11,6 +11,7 @@ import com.example.bookify.adapter.EventAdapter;
 import com.example.bookify.data.DatabaseHelper;
 import com.example.bookify.data.Event;
 import com.example.bookify.data.User;
+import com.example.bookify.util.AuthGate;
 import com.example.bookify.util.NotificationHelper;
 import java.util.Calendar;
 import java.util.List;
@@ -53,6 +54,10 @@ public class HomeFeedActivity extends AppCompatActivity {
         rvEvents.setLayoutManager(new LinearLayoutManager(this));
         eventAdapter = new EventAdapter(events);
         eventAdapter.setOnEventClickListener(event -> {
+            if (!AuthGate.isLoggedIn(this)) {
+                AuthGate.promptLogin(this);
+                return;
+            }
             Intent intent = new Intent(this, EventDetailActivity.class);
             intent.putExtra("event_id",       event.getId());
             intent.putExtra("event_title",    event.getTitle());
@@ -76,16 +81,20 @@ public class HomeFeedActivity extends AppCompatActivity {
 
     private void setupRoleFab(String role) {
         com.google.android.material.floatingactionbutton.FloatingActionButton fab = findViewById(R.id.fab_action);
-        if (User.ROLE_ADMIN.equals(role)) {
-            fab.setVisibility(android.view.View.VISIBLE);
-            fab.setOnClickListener(v -> startActivity(new Intent(this, AdminActivity.class)));
-        } else if (User.ROLE_PROMOTER.equals(role)) {
-            fab.setVisibility(android.view.View.VISIBLE);
-            fab.setOnClickListener(v -> startActivity(new Intent(this, PromoterDashboardActivity.class)));
-        } else {
-            fab.setVisibility(android.view.View.VISIBLE);
-            fab.setOnClickListener(v -> startActivity(new Intent(this, OrganizeEventActivity.class)));
-        }
+        fab.setVisibility(android.view.View.VISIBLE);
+        fab.setOnClickListener(v -> {
+            if (!AuthGate.isLoggedIn(this)) {
+                AuthGate.promptLogin(this);
+                return;
+            }
+            if (User.ROLE_ADMIN.equals(role)) {
+                startActivity(new Intent(this, AdminActivity.class));
+            } else if (User.ROLE_PROMOTER.equals(role)) {
+                startActivity(new Intent(this, PromoterDashboardActivity.class));
+            } else {
+                startActivity(new Intent(this, OrganizeEventActivity.class));
+            }
+        });
     }
 
     private void setupCategoryChips() {
@@ -129,10 +138,17 @@ public class HomeFeedActivity extends AppCompatActivity {
     private void setChipSelected(TextView selected, TextView... others) {
         selected.setBackgroundResource(R.drawable.bg_chip_selected);
         selected.setTextColor(getResources().getColor(R.color.white, getTheme()));
+        int mutedColor = resolveThemeColor(R.attr.colorAppTextMuted);
         for (TextView chip : others) {
             chip.setBackgroundResource(R.drawable.bg_chip_default);
-            chip.setTextColor(getResources().getColor(R.color.text_muted, getTheme()));
+            chip.setTextColor(mutedColor);
         }
+    }
+
+    private int resolveThemeColor(int attrResId) {
+        android.util.TypedValue typedValue = new android.util.TypedValue();
+        getTheme().resolveAttribute(attrResId, typedValue, true);
+        return typedValue.data;
     }
 
     private String getInitials(String name) {

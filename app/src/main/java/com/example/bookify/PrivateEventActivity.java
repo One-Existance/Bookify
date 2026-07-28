@@ -60,13 +60,13 @@ public class PrivateEventActivity extends AppCompatActivity {
     private void accessEvent() {
         String code = etAccessCode.getText() != null ? etAccessCode.getText().toString().trim() : "";
         if (TextUtils.isEmpty(code)) {
-            showError("Please enter an access code.");
+            showError(getString(R.string.private_event_error_empty_code));
             return;
         }
 
         Event event = db.getEventByAccessCode(code.toUpperCase());
         if (event == null) {
-            showError("Invalid or expired code.");
+            showError(getString(R.string.private_event_error_invalid_code));
             return;
         }
 

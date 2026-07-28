@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="scan_entry_title">Scan Entry</string>
+    <string name="scan_button_first">Scan QR Code</string>
+    <string name="scan_button_next">Scan Next</string>
+    <string name="scan_button_done">Done</string>
+    <string name="scan_prompt">Align the QR code within the frame</string>
+    <string name="scan_idle_message">Tap Scan QR Code to check guests in for %1$s.</string>
+
+    <string name="scan_result_checked_in_title">Entry Confirmed</string>
+    <string name="scan_result_checked_in_message">%1$s has been checked in.</string>
+
+    <string name="scan_result_already_title">Already Checked In</string>
+    <string name="scan_result_already_message">%1$s was already checked in for this event.</string>
+
+    <string name="scan_result_wrong_event_title">Wrong Event</string>
+    <string name="scan_result_wrong_event_message">This ticket belongs to \"%1$s\", not this event.</string>
+
+    <string name="scan_result_unpaid_title">Payment Incomplete</string>
+    <string name="scan_result_unpaid_message">This ticket hasn\'t completed payment yet.</string>
+
+    <string name="scan_result_invalid_title">Invalid Code</string>
+    <string name="scan_result_invalid_message">This code doesn\'t match any ticket or invite.</string>
+
+    <string name="scan_result_valid_invite_title">Valid Invite</string>
+    <string name="scan_result_valid_invite_message">This is a valid invite code for this event. Note: invite codes are shared, not unique per guest, so this only confirms it\'s genuine.</string>
+
+    <string name="scan_camera_permission_denied">Camera permission is required to scan QR codes.</string>
+</resources>

@@ -1,28 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <style name="Theme.Bookify" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/primary_purple</item>
         <item name="colorPrimaryVariant">@color/chip_bg</item>
         <item name="colorOnPrimary">@color/white</item>
         <item name="colorSecondary">@color/amber</item>
         <item name="colorOnSecondary">@color/white</item>
-        <item name="android:windowBackground">@color/background_dark</item>
-        <item name="colorSurface">@color/surface_dark</item>
-        <item name="colorOnSurface">@color/white</item>
-        <item name="android:statusBarColor">@color/background_dark</item>
-        <item name="android:navigationBarColor">@color/surface_dark</item>
+
+        <item name="colorAppBackground">@color/background_light</item>
+        <item name="colorAppSurface">@color/surface_light</item>
+        <item name="colorAppTextPrimary">@color/text_primary_light</item>
+        <item name="colorAppTextMuted">@color/text_muted_light</item>
+        <item name="colorAppChipBg">@color/chip_bg_light</item>
+
+        <item name="android:windowBackground">?attr/colorAppBackground</item>
+        <item name="colorSurface">?attr/colorAppSurface</item>
+        <item name="colorOnSurface">?attr/colorAppTextPrimary</item>
+        <item name="android:statusBarColor">?attr/colorAppBackground</item>
+        <item name="android:navigationBarColor">?attr/colorAppSurface</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="27">true</item>
         <item name="editTextStyle">@style/BookifyEditText</item>
     </style>
 
     <style name="BookifyEditText" parent="Widget.MaterialComponents.TextInputEditText.OutlinedBox">
-        <item name="android:textColor">@color/white</item>
-        <item name="android:textColorHint">@color/text_muted</item>
+        <item name="android:textColor">?attr/colorAppTextPrimary</item>
+        <item name="android:textColorHint">?attr/colorAppTextMuted</item>
     </style>
 
     <style name="BookifyInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-        <item name="boxStrokeColor">@color/chip_bg</item>
-        <item name="boxBackgroundColor">@color/surface_dark</item>
-        <item name="hintTextColor">@color/text_muted</item>
-        <item name="android:textColorHint">@color/text_muted</item>
+        <item name="boxStrokeColor">?attr/colorAppChipBg</item>
+        <item name="boxBackgroundColor">?attr/colorAppSurface</item>
+        <item name="hintTextColor">?attr/colorAppTextMuted</item>
+        <item name="android:textColorHint">?attr/colorAppTextMuted</item>
     </style>
 </resources>

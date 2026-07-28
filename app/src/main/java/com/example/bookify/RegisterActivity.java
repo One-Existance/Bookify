@@ -66,17 +66,17 @@ public class RegisterActivity extends AppCompatActivity {
         String phone    = etPhone.getText().toString().trim();
 
         if (TextUtils.isEmpty(fullName) || TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
-            Toast.makeText(this, "Please fill all required fields", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.register_error_fields_required, Toast.LENGTH_SHORT).show();
             return;
         }
 
         if (!password.equals(confirm)) {
-            Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.register_error_passwords_mismatch, Toast.LENGTH_SHORT).show();
             return;
         }
 
         if (password.length() < 6) {
-            Toast.makeText(this, "Password must be at least 6 characters", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.register_error_password_length, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -91,7 +91,7 @@ public class RegisterActivity extends AppCompatActivity {
                     long localId = db.registerLocalProfile(fullName, email, firebaseUser.getUid(), phone);
                     if (localId <= 0) {
                         setLoading(false);
-                        Toast.makeText(this, "Registration failed. Please try again.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, R.string.register_error_generic, Toast.LENGTH_SHORT).show();
                         return;
                     }
 
@@ -106,9 +106,9 @@ public class RegisterActivity extends AppCompatActivity {
                     setLoading(false);
                     String message;
                     if (e instanceof FirebaseAuthUserCollisionException) {
-                        message = "Email already exists";
+                        message = getString(R.string.register_error_email_exists);
                     } else if (e instanceof FirebaseAuthWeakPasswordException) {
-                        message = "Password is too weak";
+                        message = getString(R.string.register_error_weak_password);
                     } else {
                         message = "Registration failed: " + e.getMessage();
                     }

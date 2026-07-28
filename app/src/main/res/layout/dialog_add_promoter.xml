@@ -9,14 +9,14 @@
         android:id="@+id/et_promoter_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Full name"
+        android:hint="@string/full_name_hint"
         android:layout_marginBottom="12dp"/>
 
     <EditText
         android:id="@+id/et_promoter_email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Email"
+        android:hint="@string/admin_email_hint"
         android:inputType="textEmailAddress"
         android:layout_marginBottom="12dp"/>
 
@@ -24,7 +24,7 @@
         android:id="@+id/et_promoter_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Temporary password (min 6 chars)"
+        android:hint="@string/admin_temp_password_hint"
         android:inputType="textPassword"/>
 
 </LinearLayout>

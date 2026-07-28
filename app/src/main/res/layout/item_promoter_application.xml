@@ -4,14 +4,14 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="14dp"
-    android:background="@color/surface_dark"
+    android:background="?attr/colorAppSurface"
     android:layout_marginBottom="10dp">
 
     <TextView
         android:id="@+id/tv_app_hall_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/white"
+        android:textColor="?attr/colorAppTextPrimary"
         android:textSize="16sp"
         android:textStyle="bold"/>
 
@@ -20,7 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:textColor="@color/text_muted"
+        android:textColor="?attr/colorAppTextMuted"
         android:textSize="13sp"/>
 
     <TextView
@@ -28,7 +28,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
-        android:textColor="@color/text_muted"
+        android:textColor="?attr/colorAppTextMuted"
         android:textSize="13sp"/>
 
     <LinearLayout
@@ -43,7 +43,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginEnd="8dp"
-            android:text="Reject"
+            android:text="@string/admin_reject_button"
             android:backgroundTint="#FF5252"
             android:textColor="@color/white"
             android:textSize="13sp"/>
@@ -54,7 +54,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:backgroundTint="@color/primary_purple"
-            android:text="Approve"
+            android:text="@string/admin_approve_button"
             android:textColor="@color/white"
             android:textSize="13sp"/>
     </LinearLayout>

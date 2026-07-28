@@ -4,47 +4,51 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_dark">
+    android:background="?attr/colorAppBackground">
 
     <!-- Bottom nav -->
     <LinearLayout
         android:id="@+id/bottom_nav"
         android:layout_width="match_parent"
         android:layout_height="64dp"
-        android:background="@color/surface_dark"
+        android:background="?attr/colorAppSurface"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <LinearLayout android:id="@+id/nav_home" android:layout_width="0dp" android:layout_height="match_parent"
             android:layout_weight="1" android:gravity="center" android:orientation="vertical">
+            <ImageView android:layout_width="22dp" android:layout_height="22dp"
+                android:src="@drawable/ic_nav_home" app:tint="?attr/colorAppTextMuted" android:contentDescription="@string/nav_home" />
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="⌂" android:textColor="@color/text_muted" android:textSize="20sp" />
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="Home" android:textColor="@color/text_muted" android:textSize="11sp" />
+                android:layout_marginTop="2dp"
+                android:text="@string/nav_home" android:textColor="?attr/colorAppTextMuted" android:textSize="11sp" />
         </LinearLayout>
 
         <LinearLayout android:id="@+id/nav_explore" android:layout_width="0dp" android:layout_height="match_parent"
             android:layout_weight="1" android:gravity="center" android:orientation="vertical">
+            <ImageView android:layout_width="22dp" android:layout_height="22dp"
+                android:src="@drawable/ic_nav_explore" app:tint="?attr/colorAppTextMuted" android:contentDescription="@string/nav_explore" />
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="⊕" android:textColor="@color/text_muted" android:textSize="20sp" />
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="Explore" android:textColor="@color/text_muted" android:textSize="11sp" />
+                android:layout_marginTop="2dp"
+                android:text="@string/nav_explore" android:textColor="?attr/colorAppTextMuted" android:textSize="11sp" />
         </LinearLayout>
 
         <LinearLayout android:id="@+id/nav_tickets" android:layout_width="0dp" android:layout_height="match_parent"
             android:layout_weight="1" android:gravity="center" android:orientation="vertical">
+            <ImageView android:layout_width="22dp" android:layout_height="22dp"
+                android:src="@drawable/ic_ticket" app:tint="@color/primary_purple" android:contentDescription="@string/nav_tickets" />
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="✉" android:textColor="@color/primary_purple" android:textSize="20sp" />
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="Tickets" android:textColor="@color/primary_purple" android:textSize="11sp" />
+                android:layout_marginTop="2dp"
+                android:text="@string/nav_tickets" android:textColor="@color/primary_purple" android:textSize="11sp" />
         </LinearLayout>
 
         <LinearLayout android:id="@+id/nav_profile" android:layout_width="0dp" android:layout_height="match_parent"
             android:layout_weight="1" android:gravity="center" android:orientation="vertical">
+            <ImageView android:layout_width="22dp" android:layout_height="22dp"
+                android:src="@drawable/ic_nav_profile" app:tint="?attr/colorAppTextMuted" android:contentDescription="@string/nav_profile" />
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="◎" android:textColor="@color/text_muted" android:textSize="20sp" />
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="Profile" android:textColor="@color/text_muted" android:textSize="11sp" />
+                android:layout_marginTop="2dp"
+                android:text="@string/nav_profile" android:textColor="?attr/colorAppTextMuted" android:textSize="11sp" />
         </LinearLayout>
     </LinearLayout>
 
@@ -69,12 +73,12 @@
                 android:layout_marginBottom="20dp">
                 <TextView
                     android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
-                    android:text="My tickets"
-                    android:textColor="@color/white" android:textSize="24sp" android:textStyle="bold" />
+                    android:text="@string/my_tickets_title"
+                    android:textColor="?attr/colorAppTextPrimary" android:textSize="24sp" android:textStyle="bold" />
                 <TextView
                     android:id="@+id/btn_private"
                     android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="🔒 Private"
+                    android:text="@string/my_tickets_private"
                     android:textColor="@color/primary_purple" android:textSize="13sp" />
             </LinearLayout>
 
@@ -92,23 +96,23 @@
                     android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
                     android:background="@drawable/bg_tab_selected"
                     android:gravity="center"
-                    android:text="Upcoming"
+                    android:text="@string/my_tickets_tab_upcoming"
                     android:textColor="@color/white" android:textSize="14sp" android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/tab_past"
                     android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
                     android:gravity="center"
-                    android:text="Past"
-                    android:textColor="@color/text_muted" android:textSize="14sp" />
+                    android:text="@string/my_tickets_tab_past"
+                    android:textColor="?attr/colorAppTextMuted" android:textSize="14sp" />
             </LinearLayout>
 
             <TextView
                 android:id="@+id/tv_no_tickets"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="No active tickets found."
-                android:textColor="@color/text_muted"
+                android:text="@string/my_tickets_empty"
+                android:textColor="?attr/colorAppTextMuted"
                 android:gravity="center"
                 android:layout_marginTop="40dp"
                 android:visibility="gone"/>

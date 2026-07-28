@@ -1,0 +1,59 @@
+<resources>
+    <string name="app_name">Bookify</string>
+    <string name="tagline">Weka nafasi za matukio, popote Tanzania.</string>
+    <string name="get_started">Anza</string>
+    <string name="log_in">Ingia</string>
+    <string name="welcome_back">Karibu tena</string>
+    <string name="sign_in_to_continue">Ingia ili kuendelea</string>
+    <string name="email_hint">Barua pepe</string>
+    <string name="password_hint">Nenosiri</string>
+    <string name="no_account">Huna akaunti? Jisajili</string>
+    <string name="create_account">Fungua akaunti</string>
+    <string name="full_name_hint">Jina kamili</string>
+    <string name="phone_hint">Nambari ya simu</string>
+    <string name="already_have_account">Una akaunti tayari? Ingia</string>
+    <string name="search_hint">Tafuta matukio karibu nawe…</string>
+    <string name="nearby_events">Matukio karibu nawe</string>
+    <string name="see_all">Ona yote →</string>
+    <string name="nav_home">Nyumbani</string>
+    <string name="nav_explore">Chunguza</string>
+    <string name="nav_tickets">Tiketi</string>
+    <string name="nav_profile">Wasifu</string>
+    <string name="edit_profile_title">Hariri Wasifu</string>
+    <string name="save">Hifadhi</string>
+    <string name="error_name_required">Tafadhali weka jina lako</string>
+    <string name="error_generic">Hitilafu imetokea. Tafadhali jaribu tena.</string>
+    <string name="settings_section_appearance">MWONEKANO</string>
+    <string name="settings_dark_mode">Hali ya giza</string>
+    <string name="settings_dark_mode_desc">Badilisha kati ya mwonekano mwepesi na wa giza</string>
+    <string name="settings_language">Lugha</string>
+    <string name="language_english">Kiingereza</string>
+    <string name="language_swahili">Kiswahili</string>
+
+    <!-- Profile -->
+    <string name="profile_my_bookings">Nafasi Zangu</string>
+    <string name="profile_my_organized_events">Matukio Niliyopanga</string>
+    <string name="profile_become_promoter">Kuwa Mtangazaji</string>
+    <string name="profile_promoter_dashboard">Dashibodi ya Mtangazaji</string>
+    <string name="profile_promoter_pending">Ombi la Utangazaji linasubiri ukaguzi</string>
+    <string name="profile_settings">Mipangilio</string>
+    <string name="profile_logout">Toka</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Mipangilio</string>
+    <string name="settings_section_notifications">ARIFA</string>
+    <string name="settings_push_notifications">Arifa za papo hapo</string>
+    <string name="settings_push_notifications_desc">Pata arifa kuhusu matukio yako</string>
+    <string name="settings_email_reminders">Vikumbusho vya barua pepe</string>
+    <string name="settings_email_reminders_desc">Vikumbusho hutumwa saa 24 kabla ya tukio</string>
+    <string name="settings_section_about">KUHUSU</string>
+    <string name="settings_app_version">Toleo la programu</string>
+    <string name="settings_app_version_value">1.0.0</string>
+    <string name="settings_group">Kikundi</string>
+    <string name="settings_group_value">DIT Group No. 8</string>
+    <string name="settings_class">Darasa</string>
+    <string name="settings_class_value">OD23IT</string>
+    <string name="settings_notification_hint">Kama arifa hazionekani, ziwashe kwa Bookify kwenye mipangilio ya programu ya simu yako.</string>
+    <string name="auth_required_title">Unahitaji kuingia</string>
+    <string name="auth_required_message">Fungua akaunti au ingia ili kuona maelezo ya tukio na kuweka nafasi ya tiketi.</string>
+</resources>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Admin dashboard -->
+    <string name="admin_dashboard_title">Admin Dashboard</string>
+    <string name="admin_logout">Logout</string>
+    <string name="admin_stat_users">Users</string>
+    <string name="admin_stat_events">Events</string>
+    <string name="admin_stat_revenue">Revenue</string>
+    <string name="admin_select_event_picture">SELECT EVENT PICTURE</string>
+    <string name="admin_event_title_hint">Event Title</string>
+    <string name="admin_category_hint">Category (e.g. Concert, Gala)</string>
+    <string name="admin_location_hint">Location</string>
+    <string name="admin_pin_button">PIN</string>
+    <string name="admin_date_hint">Date (e.g. Jun 20)</string>
+    <string name="admin_time_hint">Time (e.g. 7:00 P...)</string>
+    <string name="admin_price_hint">Price (e.g. Tsh 15k)</string>
+    <string name="admin_slots_hint">Slots (Number)</string>
+    <string name="admin_description_hint">Description</string>
+    <string name="admin_view_as_user">View as Regular User</string>
+    <string name="admin_all_users_title">All Users</string>
+    <string name="admin_add_promoter_button">Add Promoter</string>
+    <string name="admin_pending_applications_title">Pending Promoter Applications</string>
+    <string name="admin_no_pending_applications">No pending applications.</string>
+    <string name="admin_manage_events_title">Manage Events (all statuses)</string>
+    <string name="admin_post_event_now">POST EVENT NOW</string>
+    <string name="admin_event_image_desc">Event Image</string>
+    <string name="admin_view_button">View</string>
+    <string name="admin_delete_button">Delete</string>
+    <string name="admin_reject_button">Reject</string>
+    <string name="admin_approve_button">Approve</string>
+    <string name="admin_make_promoter_button">Make Promoter</string>
+    <string name="admin_email_hint">Email</string>
+    <string name="admin_temp_password_hint">Temporary password (min 6 chars)</string>
+
+    <!-- Admin dashboard: toasts, dialogs, notifications -->
+    <string name="admin_event_deleted">Event deleted</string>
+    <string name="admin_promoter_verified_fmt">%1$s verified!</string>
+    <string name="admin_now_promoter_fmt">%1$s is now a Promoter</string>
+    <string name="admin_promoter_approved_title">Promoter Approved</string>
+    <string name="admin_now_promoter_notif_fmt">%1$s is now a promoter.</string>
+    <string name="admin_application_rejected">Application rejected</string>
+    <string name="admin_application_rejected_title">Application Rejected</string>
+    <string name="admin_application_rejected_notif_fmt">%1$s\'s promoter application was rejected.</string>
+    <string name="admin_register_new_promoter_title">Register New Promoter</string>
+    <string name="admin_register_button">Register</string>
+    <string name="admin_fill_all_fields">Please fill all fields</string>
+    <string name="admin_password_min_length">Password must be at least 6 characters</string>
+    <string name="admin_promoter_registered">Promoter registered!</string>
+    <string name="admin_registration_failed">Registration failed</string>
+    <string name="admin_cancel">Cancel</string>
+    <string name="admin_image_selected">Image Selected!</string>
+    <string name="admin_location_pinned">Location pinned!</string>
+    <string name="admin_fill_required_fields">Please fill required fields</string>
+    <string name="admin_event_posted_success">Event posted successfully! 🚀</string>
+    <string name="admin_post_event_failed">Failed to post event</string>
+
+    <!-- Map / location picker -->
+    <string name="map_back_button">Back</string>
+    <string name="map_hint_drop_pin">Tap the map to drop a pin at your venue</string>
+    <string name="map_use_this_location">Use This Location</string>
+    <string name="map_get_directions">Get Directions</string>
+    <string name="map_move_to_pick_location">Move map to pick location</string>
+    <string name="map_confirm_location_caps">CONFIRM THIS LOCATION</string>
+    <string name="map_location_permission_denied">Location permission denied</string>
+</resources>

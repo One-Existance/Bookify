@@ -4,14 +4,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_dark">
+    android:background="?attr/colorAppBackground">
 
     <!-- Bottom nav bar -->
     <LinearLayout
         android:id="@+id/bottom_nav"
         android:layout_width="match_parent"
         android:layout_height="64dp"
-        android:background="@color/surface_dark"
+        android:background="?attr/colorAppSurface"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -19,34 +19,38 @@
 
         <LinearLayout android:id="@+id/nav_home" android:layout_width="0dp" android:layout_height="match_parent"
             android:layout_weight="1" android:gravity="center" android:orientation="vertical">
+            <ImageView android:layout_width="22dp" android:layout_height="22dp"
+                android:src="@drawable/ic_nav_home" app:tint="@color/primary_purple" android:contentDescription="@string/nav_home" />
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="⌂" android:textColor="@color/primary_purple" android:textSize="20sp" />
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
                 android:text="@string/nav_home" android:textColor="@color/primary_purple" android:textSize="11sp" />
         </LinearLayout>
 
         <LinearLayout android:id="@+id/nav_explore" android:layout_width="0dp" android:layout_height="match_parent"
             android:layout_weight="1" android:gravity="center" android:orientation="vertical">
+            <ImageView android:layout_width="22dp" android:layout_height="22dp"
+                android:src="@drawable/ic_nav_explore" app:tint="?attr/colorAppTextMuted" android:contentDescription="@string/nav_explore" />
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="⊕" android:textColor="@color/text_muted" android:textSize="20sp" />
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="@string/nav_explore" android:textColor="@color/text_muted" android:textSize="11sp" />
+                android:layout_marginTop="2dp"
+                android:text="@string/nav_explore" android:textColor="?attr/colorAppTextMuted" android:textSize="11sp" />
         </LinearLayout>
 
         <LinearLayout android:id="@+id/nav_tickets" android:layout_width="0dp" android:layout_height="match_parent"
             android:layout_weight="1" android:gravity="center" android:orientation="vertical">
+            <ImageView android:layout_width="22dp" android:layout_height="22dp"
+                android:src="@drawable/ic_ticket" app:tint="?attr/colorAppTextMuted" android:contentDescription="@string/nav_tickets" />
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="✉" android:textColor="@color/text_muted" android:textSize="20sp" />
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="@string/nav_tickets" android:textColor="@color/text_muted" android:textSize="11sp" />
+                android:layout_marginTop="2dp"
+                android:text="@string/nav_tickets" android:textColor="?attr/colorAppTextMuted" android:textSize="11sp" />
         </LinearLayout>
 
         <LinearLayout android:id="@+id/nav_profile" android:layout_width="0dp" android:layout_height="match_parent"
             android:layout_weight="1" android:gravity="center" android:orientation="vertical">
+            <ImageView android:layout_width="22dp" android:layout_height="22dp"
+                android:src="@drawable/ic_nav_profile" app:tint="?attr/colorAppTextMuted" android:contentDescription="@string/nav_profile" />
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="◎" android:textColor="@color/text_muted" android:textSize="20sp" />
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="@string/nav_profile" android:textColor="@color/text_muted" android:textSize="11sp" />
+                android:layout_marginTop="2dp"
+                android:text="@string/nav_profile" android:textColor="?attr/colorAppTextMuted" android:textSize="11sp" />
         </LinearLayout>
     </LinearLayout>
 
@@ -54,7 +58,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="@color/background_dark"
+        android:background="?attr/colorAppBackground"
         app:layout_constraintBottom_toTopOf="@id/bottom_nav"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -83,8 +87,8 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Good morning,"
-                        android:textColor="@color/text_muted"
+                        android:text="@string/home_good_morning"
+                        android:textColor="?attr/colorAppTextMuted"
                         android:textSize="14sp" />
 
                     <TextView
@@ -92,7 +96,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Sarah ✨"
-                        android:textColor="@color/white"
+                        android:textColor="?attr/colorAppTextPrimary"
                         android:textSize="20sp"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -119,18 +123,19 @@
                 android:orientation="horizontal"
                 android:paddingHorizontal="16dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="🔍"
-                    android:textSize="16sp" />
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/ic_search"
+                    app:tint="?attr/colorAppTextMuted"
+                    android:contentDescription="@string/search_hint" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:text="@string/search_hint"
-                    android:textColor="@color/text_muted"
+                    android:textColor="?attr/colorAppTextMuted"
                     android:textSize="14sp" />
             </LinearLayout>
 
@@ -154,7 +159,7 @@
                         android:background="@drawable/bg_chip_selected"
                         android:paddingHorizontal="18dp"
                         android:paddingVertical="8dp"
-                        android:text="All"
+                        android:text="@string/category_all"
                         android:textColor="@color/white"
                         android:textSize="13sp"
                         android:textStyle="bold" />
@@ -167,8 +172,8 @@
                         android:background="@drawable/bg_chip_default"
                         android:paddingHorizontal="18dp"
                         android:paddingVertical="8dp"
-                        android:text="Concerts"
-                        android:textColor="@color/text_muted"
+                        android:text="@string/category_concerts"
+                        android:textColor="?attr/colorAppTextMuted"
                         android:textSize="13sp" />
 
                     <TextView
@@ -179,8 +184,8 @@
                         android:background="@drawable/bg_chip_default"
                         android:paddingHorizontal="18dp"
                         android:paddingVertical="8dp"
-                        android:text="Sports"
-                        android:textColor="@color/text_muted"
+                        android:text="@string/category_sports"
+                        android:textColor="?attr/colorAppTextMuted"
                         android:textSize="13sp" />
 
                     <TextView
@@ -191,8 +196,8 @@
                         android:background="@drawable/bg_chip_default"
                         android:paddingHorizontal="18dp"
                         android:paddingVertical="8dp"
-                        android:text="Conference"
-                        android:textColor="@color/text_muted"
+                        android:text="@string/category_conference"
+                        android:textColor="?attr/colorAppTextMuted"
                         android:textSize="13sp" />
 
                     <TextView
@@ -203,8 +208,8 @@
                         android:background="@drawable/bg_chip_default"
                         android:paddingHorizontal="18dp"
                         android:paddingVertical="8dp"
-                        android:text="Gala"
-                        android:textColor="@color/text_muted"
+                        android:text="@string/category_gala"
+                        android:textColor="?attr/colorAppTextMuted"
                         android:textSize="13sp" />
 
                     <TextView
@@ -215,8 +220,8 @@
                         android:background="@drawable/bg_chip_default"
                         android:paddingHorizontal="18dp"
                         android:paddingVertical="8dp"
-                        android:text="Party"
-                        android:textColor="@color/text_muted"
+                        android:text="@string/category_party"
+                        android:textColor="?attr/colorAppTextMuted"
                         android:textSize="13sp" />
                 </LinearLayout>
             </HorizontalScrollView>
@@ -235,7 +240,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/nearby_events"
-                    android:textColor="@color/white"
+                    android:textColor="?attr/colorAppTextPrimary"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
@@ -243,7 +248,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/see_all"
-                    android:textColor="@color/text_muted"
+                    android:textColor="?attr/colorAppTextMuted"
                     android:textSize="13sp" />
             </LinearLayout>
 

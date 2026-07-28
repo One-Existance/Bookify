@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_dark">
+    android:background="?attr/colorAppBackground">
 
     <!-- Top bar -->
     <LinearLayout
@@ -25,7 +25,7 @@
             android:layout_height="40dp"
             android:gravity="center"
             android:text="←"
-            android:textColor="@color/white"
+            android:textColor="?attr/colorAppTextPrimary"
             android:textSize="22sp" />
 
         <TextView
@@ -33,8 +33,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="Event details"
-            android:textColor="@color/white"
+            android:text="@string/event_detail_title"
+            android:textColor="?attr/colorAppTextPrimary"
             android:textSize="17sp"
             android:textStyle="bold"
             android:layout_marginEnd="40dp" />
@@ -80,12 +80,13 @@
                     android:orientation="vertical"
                     android:padding="20dp">
 
-                    <TextView
-                        android:id="@+id/tv_detail_icon"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🎵"
-                        android:textSize="36sp" />
+                    <ImageView
+                        android:id="@+id/iv_detail_icon"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:src="@drawable/ic_event"
+                        app:tint="@color/white"
+                        android:contentDescription="@null" />
 
                     <View
                         android:layout_width="0dp"
@@ -107,7 +108,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:text="Mlimani City Ground · Jun 20, 2025"
-                        android:textColor="@color/text_muted"
+                        android:textColor="?attr/colorAppTextMuted"
                         android:textSize="13sp" />
                 </LinearLayout>
             </FrameLayout>
@@ -132,12 +133,16 @@
                         android:background="@drawable/bg_info_cell"
                         android:orientation="vertical"
                         android:padding="14dp">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:text="📅 Date" android:textColor="@color/text_muted" android:textSize="11sp" />
+                        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:gravity="center_vertical">
+                            <ImageView android:layout_width="13dp" android:layout_height="13dp" android:layout_marginEnd="4dp"
+                                android:src="@drawable/ic_event" app:tint="?attr/colorAppTextMuted" android:contentDescription="@null" />
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="@string/event_detail_label_date" android:textColor="?attr/colorAppTextMuted" android:textSize="11sp" />
+                        </LinearLayout>
                         <TextView android:id="@+id/tv_date"
                             android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:layout_marginTop="6dp"
-                            android:text="Jun 20, 2025" android:textColor="@color/white"
+                            android:text="Jun 20, 2025" android:textColor="?attr/colorAppTextPrimary"
                             android:textSize="14sp" android:textStyle="bold" />
                     </LinearLayout>
 
@@ -148,12 +153,16 @@
                         android:background="@drawable/bg_info_cell"
                         android:orientation="vertical"
                         android:padding="14dp">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:text="🕖 Time" android:textColor="@color/text_muted" android:textSize="11sp" />
+                        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:gravity="center_vertical">
+                            <ImageView android:layout_width="13dp" android:layout_height="13dp" android:layout_marginEnd="4dp"
+                                android:src="@drawable/ic_clock" app:tint="?attr/colorAppTextMuted" android:contentDescription="@null" />
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="@string/event_detail_label_time" android:textColor="?attr/colorAppTextMuted" android:textSize="11sp" />
+                        </LinearLayout>
                         <TextView android:id="@+id/tv_time"
                             android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:layout_marginTop="6dp"
-                            android:text="7:00 PM" android:textColor="@color/white"
+                            android:text="7:00 PM" android:textColor="?attr/colorAppTextPrimary"
                             android:textSize="14sp" android:textStyle="bold" />
                     </LinearLayout>
                 </LinearLayout>
@@ -172,8 +181,12 @@
                         android:background="@drawable/bg_info_cell"
                         android:orientation="vertical"
                         android:padding="14dp">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:text="🎟 Slots left" android:textColor="@color/text_muted" android:textSize="11sp" />
+                        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:gravity="center_vertical">
+                            <ImageView android:layout_width="13dp" android:layout_height="13dp" android:layout_marginEnd="4dp"
+                                android:src="@drawable/ic_ticket" app:tint="?attr/colorAppTextMuted" android:contentDescription="@null" />
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="@string/event_detail_label_slots" android:textColor="?attr/colorAppTextMuted" android:textSize="11sp" />
+                        </LinearLayout>
                         <TextView android:id="@+id/tv_slots"
                             android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:layout_marginTop="6dp"
@@ -188,12 +201,16 @@
                         android:background="@drawable/bg_info_cell"
                         android:orientation="vertical"
                         android:padding="14dp">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:text="💰 Price" android:textColor="@color/text_muted" android:textSize="11sp" />
+                        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:gravity="center_vertical">
+                            <ImageView android:layout_width="13dp" android:layout_height="13dp" android:layout_marginEnd="4dp"
+                                android:src="@drawable/ic_payments" app:tint="?attr/colorAppTextMuted" android:contentDescription="@null" />
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="@string/event_detail_label_price" android:textColor="?attr/colorAppTextMuted" android:textSize="11sp" />
+                        </LinearLayout>
                         <TextView android:id="@+id/tv_price"
                             android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:layout_marginTop="6dp"
-                            android:text="Tsh 15,000" android:textColor="@color/white"
+                            android:text="Tsh 15,000" android:textColor="?attr/colorAppTextPrimary"
                             android:textSize="14sp" android:textStyle="bold" />
                     </LinearLayout>
                 </LinearLayout>
@@ -204,8 +221,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:text="ABOUT"
-                android:textColor="@color/text_muted"
+                android:text="@string/event_detail_section_about"
+                android:textColor="?attr/colorAppTextMuted"
                 android:textSize="11sp"
                 android:letterSpacing="0.1" />
 
@@ -215,7 +232,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="Join us for an unforgettable night with Sauti Sol performing their greatest hits live in Dar es Salaam."
-                android:textColor="@color/white"
+                android:textColor="?attr/colorAppTextPrimary"
                 android:textSize="14sp"
                 android:lineSpacingExtra="4dp" />
 
@@ -225,8 +242,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="📍 View on Map"
+                android:text="@string/event_detail_view_map"
                 android:textColor="@color/amber"
+                app:icon="@drawable/ic_location"
+                app:iconGravity="textStart"
                 app:iconTint="@color/amber" />
 
             <View android:layout_width="match_parent" android:layout_height="16dp" />
@@ -239,7 +258,7 @@
         android:id="@+id/bottom_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/surface_dark"
+        android:background="?attr/colorAppSurface"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:paddingHorizontal="20dp"
@@ -259,7 +278,7 @@
             android:layout_height="52dp"
             android:layout_weight="1"
             android:background="@drawable/bg_button_amber"
-            android:text="Book ticket →"
+            android:text="@string/event_detail_book_ticket"
             android:textColor="@color/white"
             android:textSize="16sp"
             android:textStyle="bold" />

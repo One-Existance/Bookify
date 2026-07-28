@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Shared -->
+    <string name="nav_back_arrow">← Rudi</string>
+    <string name="hint_date">Tarehe</string>
+    <string name="hint_time">Muda</string>
+    <string name="action_accept">Kubali</string>
+    <string name="action_reject">Kataa</string>
+    <string name="action_cancel">Ghairi</string>
+    <string name="share_invite_chooser_title">Shiriki mwaliko</string>
+    <string name="share_via_whatsapp">WhatsApp</string>
+    <string name="whatsapp_not_installed">WhatsApp haijasakinishwa kwenye kifaa hiki</string>
+
+    <!-- Become Promoter -->
+    <string name="promoter_become_title">Kuwa Mtangazaji</string>
+    <string name="promoter_become_desc">Tuambie kuhusu ukumbi wako. Msimamizi atakagua kabla hujaanza kupokea maombi ya matukio.</string>
+    <string name="promoter_hall_name_hint">Jina la ukumbi</string>
+    <string name="promoter_location_hint">Mahali</string>
+    <string name="promoter_pick_on_map">Chagua kwenye Ramani</string>
+    <string name="promoter_hall_desc_hint">Eleza ukumbi wako (uwezo, huduma, n.k.)</string>
+    <string name="promoter_submit_application">WASILISHA OMBI</string>
+    <string name="promoter_location_pinned">Mahali pa ukumbi pamewekwa!</string>
+    <string name="promoter_fill_required">Tafadhali jaza jina la ukumbi na mahali</string>
+    <string name="promoter_must_login">Lazima uingie ili kuomba</string>
+    <string name="promoter_application_submitted">Ombi limewasilishwa! Tutalikagua hivi karibuni.</string>
+    <string name="promoter_application_failed">Imeshindwa kuwasilisha ombi</string>
+
+    <!-- Promoter Dashboard -->
+    <string name="promoter_dashboard_title">Dashibodi ya Mtangazaji</string>
+    <string name="promoter_logout">Toka</string>
+    <string name="promoter_view_as_user">Angalia kama Mtumiaji wa Kawaida</string>
+    <string name="promoter_pending_requests_heading">Maombi ya Matukio Yanayosubiri</string>
+    <string name="promoter_no_pending_requests">Hakuna maombi yanayosubiri kwa sasa.</string>
+    <string name="promoter_request_rejected">Ombi limekataliwa</string>
+    <string name="promoter_notif_rejected_title">Tukio Limekataliwa</string>
+    <string name="promoter_notif_rejected_body">Umekataa \"%1$s\".</string>
+    <string name="promoter_confirm_title">Thibitisha masharti na kubali</string>
+    <string name="promoter_hint_price">Bei</string>
+    <string name="promoter_event_approved">Tukio limekubaliwa!</string>
+    <string name="promoter_notif_approved_title">Tukio Limekubaliwa</string>
+    <string name="promoter_notif_approved_body">Umekubali \"%1$s\" — sasa liko hewani.</string>
+
+    <!-- Organize Event -->
+    <string name="organize_title">Panga Tukio</string>
+    <string name="organize_choose_promoter">Chagua mtangazaji/ukumbi</string>
+    <string name="organize_private_event_label">Tukio la faragha (kwa mwaliko tu)</string>
+    <string name="organize_select_picture">CHAGUA PICHA YA TUKIO</string>
+    <string name="organize_title_hint">Jina la Tukio</string>
+    <string name="organize_location_hint">Mahali Mahususi</string>
+    <string name="organize_pin_button">WEKA PIN</string>
+    <string name="organize_category_hint">Aina (mf. Harusi, Tamasha)</string>
+    <string name="organize_price_hint">Bei iliyopendekezwa ya tiketi</string>
+    <string name="organize_slots_hint">Nafasi (Idadi)</string>
+    <string name="organize_description_hint">Maelezo</string>
+    <string name="organize_submit_request">TUMA OMBI KWA MTANGAZAJI</string>
+    <string name="organize_no_promoters">Hakuna watangazaji waliopo bado</string>
+    <string name="organize_location_pinned">Mahali pamewekwa!</string>
+    <string name="organize_no_promoters_toast">Hakuna watangazaji walioidhinishwa wa kuomba bado — rudi baadaye</string>
+    <string name="organize_must_login">Lazima uingie ili kupanga tukio</string>
+    <string name="organize_fill_required">Tafadhali jaza jina, tarehe na bei</string>
+    <string name="organize_request_sent">Ombi limetumwa kwa %1$s!</string>
+    <string name="organize_request_failed">Imeshindwa kutuma ombi</string>
+
+    <!-- My Event Requests -->
+    <string name="my_events_title">Matukio Niliyopanga</string>
+    <string name="my_events_empty">Bado hujapanga tukio lolote. Nenda Nyumbani kuanza.</string>
+
+    <!-- item_event_request -->
+    <string name="event_request_requested_by">Imeombwa na %1$s</string>
+
+    <!-- item_my_event_request -->
+    <string name="share_invite_code">Shiriki QR ya Kuingia</string>
+</resources>

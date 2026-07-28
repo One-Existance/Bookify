@@ -103,12 +103,12 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
             holder.tvIcon.setVisibility(View.VISIBLE);
             
             String cat = event.getCategory().toLowerCase();
-            if (cat.contains("concert")) holder.tvIcon.setText("🎵");
-            else if (cat.contains("sports")) holder.tvIcon.setText("⚽");
-            else if (cat.contains("conference")) holder.tvIcon.setText("🎤");
-            else if (cat.contains("gala")) holder.tvIcon.setText("🍷");
-            else if (cat.contains("party")) holder.tvIcon.setText("🎉");
-            else holder.tvIcon.setText("🏛️");
+            if (cat.contains("concert")) holder.tvIcon.setImageResource(R.drawable.ic_music_note);
+            else if (cat.contains("sports")) holder.tvIcon.setImageResource(R.drawable.ic_sports);
+            else if (cat.contains("conference")) holder.tvIcon.setImageResource(R.drawable.ic_mic);
+            else if (cat.contains("gala")) holder.tvIcon.setImageResource(R.drawable.ic_star);
+            else if (cat.contains("party")) holder.tvIcon.setImageResource(R.drawable.ic_star);
+            else holder.tvIcon.setImageResource(R.drawable.ic_building);
         }
 
         String cat = event.getCategory().toLowerCase();
@@ -127,8 +127,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     public int getItemCount() { return filteredEvents.size(); }
 
     static class EventViewHolder extends RecyclerView.ViewHolder {
-        TextView tvTitle, tvLocationDate, tvCategory, tvPrice, tvIcon;
-        android.widget.ImageView ivImage;
+        TextView tvTitle, tvLocationDate, tvCategory, tvPrice;
+        android.widget.ImageView ivImage, tvIcon;
 
         EventViewHolder(@NonNull View itemView) {
             super(itemView);

@@ -12,7 +12,7 @@ import java.util.Random;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DB_NAME    = "bookify.db";
-    private static final int    DB_VERSION = 9;
+    private static final int    DB_VERSION = 10;
 
     // Local-only test account: bypasses Firebase Auth entirely (see LoginActivity).
     public static final String TEST_USER_EMAIL = "normal@gmail.com";
@@ -58,6 +58,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "event_id INTEGER NOT NULL," +
                 "ticket_number TEXT NOT NULL," +
                 "status TEXT DEFAULT 'PENDING'," +
+                "checked_in INTEGER DEFAULT 0," +
                 "FOREIGN KEY(user_id) REFERENCES users(id)," +
                 "FOREIGN KEY(event_id) REFERENCES events(id))");
 
@@ -320,6 +321,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put("slots", slots);
         cv.put("description", description);
         cv.put("status", Event.STATUS_PUBLISHED);
+        cv.put("access_code", generateAccessCode());
         cv.put("latitude", lat);
         cv.put("longitude", lng);
         return getWritableDatabase().insert("events", null, cv);
@@ -371,9 +373,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put("date", finalDate);
         cv.put("time", finalTime);
         cv.put("status", Event.STATUS_PUBLISHED);
-        if (isPrivate) {
-            cv.put("access_code", generateAccessCode());
-        }
+        // Every approved event gets an entry QR code, not just private ones -
+        // organizers use it at the door regardless of whether the listing itself is gated.
+        cv.put("access_code", generateAccessCode());
         getWritableDatabase().update("events", cv, "id=?", new String[]{String.valueOf(eventId)});
     }
 
@@ -390,14 +392,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public Event getEventByAccessCode(String code) {
         List<Event> events = queryEvents(
-                "SELECT " + EVENT_COLUMNS + " FROM events WHERE access_code=? AND status=? AND is_private=1",
+                "SELECT " + EVENT_COLUMNS + " FROM events WHERE access_code=? AND status=?",
                 new String[]{code, Event.STATUS_PUBLISHED});
         return events.isEmpty() ? null : events.get(0);
     }
 
     private String generateAccessCode() {
         Random rand = new Random();
-        return "PRIV-" + String.format("%04d", rand.nextInt(9000) + 1000)
+        return "EVT-" + String.format("%04d", rand.nextInt(9000) + 1000)
                 + "-" + String.format("%04d", rand.nextInt(9000) + 1000);
     }
 
@@ -551,5 +553,54 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues cv = new ContentValues();
         cv.put("role", User.ROLE_PROMOTER);
         getWritableDatabase().update("users", cv, "id=?", new String[]{String.valueOf(userId)});
+    }
+
+    /**
+     * Validates a scanned ticket QR against a specific event and, on first scan,
+     * marks it checked in. Reusing the same ticket_number a second time (or scanning
+     * it at the wrong event) is rejected instead of silently succeeding again.
+     */
+    public CheckInResult checkInTicket(String ticketNumber, int eventId) {
+        Cursor c = getReadableDatabase().rawQuery(
+                "SELECT b.status, b.checked_in, b.event_id, u.full_name, e.title " +
+                        "FROM bookings b " +
+                        "JOIN users u ON b.user_id = u.id " +
+                        "JOIN events e ON b.event_id = e.id " +
+                        "WHERE b.ticket_number=?",
+                new String[]{ticketNumber});
+
+        if (!c.moveToFirst()) {
+            c.close();
+            return new CheckInResult(CheckInResult.Status.INVALID_TICKET, null, null);
+        }
+
+        String status = c.getString(0);
+        boolean checkedIn = c.getInt(1) != 0;
+        int bookingEventId = c.getInt(2);
+        String attendeeName = c.getString(3);
+        String eventTitle = c.getString(4);
+        c.close();
+
+        if (bookingEventId != eventId) {
+            return new CheckInResult(CheckInResult.Status.WRONG_EVENT, attendeeName, eventTitle);
+        }
+        if (!"COMPLETED".equals(status)) {
+            return new CheckInResult(CheckInResult.Status.UNPAID, attendeeName, eventTitle);
+        }
+        if (checkedIn) {
+            return new CheckInResult(CheckInResult.Status.ALREADY_CHECKED_IN, attendeeName, eventTitle);
+        }
+
+        ContentValues cv = new ContentValues();
+        cv.put("checked_in", 1);
+        getWritableDatabase().update("bookings", cv, "ticket_number=?", new String[]{ticketNumber});
+        return new CheckInResult(CheckInResult.Status.CHECKED_IN, attendeeName, eventTitle);
+    }
+
+    public boolean updateUserName(int userId, String fullName) {
+        ContentValues cv = new ContentValues();
+        cv.put("full_name", fullName);
+        int rows = getWritableDatabase().update("users", cv, "id=?", new String[]{String.valueOf(userId)});
+        return rows > 0;
     }
 }

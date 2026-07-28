@@ -22,15 +22,14 @@ public class ProfileActivity extends AppCompatActivity {
         db = new DatabaseHelper(this);
 
         SharedPreferences prefs = getSharedPreferences("bookify_session", MODE_PRIVATE);
-        String name  = prefs.getString("user_name",  getIntent().getStringExtra("user_name"));
-        String email = prefs.getString("user_email", "");
         String role  = prefs.getString("role", User.ROLE_USER);
         int userId   = prefs.getInt("user_id", -1);
-        if (name == null) name = "Guest";
 
-        ((TextView) findViewById(R.id.tv_name)).setText(name);
-        ((TextView) findViewById(R.id.tv_email)).setText(email);
-        ((TextView) findViewById(R.id.tv_avatar_initials)).setText(getInitials(name));
+        refreshProfileHeader();
+
+        // Edit profile name
+        findViewById(R.id.btn_edit_name).setOnClickListener(v ->
+                startActivity(new Intent(this, EditProfileActivity.class)));
 
         // My Bookings
         findViewById(R.id.row_my_bookings).setOnClickListener(v ->
@@ -64,6 +63,23 @@ public class ProfileActivity extends AppCompatActivity {
                 startActivity(new Intent(this, MyTicketsActivity.class)));
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        refreshProfileHeader();
+    }
+
+    private void refreshProfileHeader() {
+        SharedPreferences prefs = getSharedPreferences("bookify_session", MODE_PRIVATE);
+        String name  = prefs.getString("user_name",  getIntent().getStringExtra("user_name"));
+        String email = prefs.getString("user_email", "");
+        if (name == null) name = "Guest";
+
+        ((TextView) findViewById(R.id.tv_name)).setText(name);
+        ((TextView) findViewById(R.id.tv_email)).setText(email);
+        ((TextView) findViewById(R.id.tv_avatar_initials)).setText(getInitials(name));
+    }
+
     private void setupPromoterRow(String role, int userId) {
         TextView label = findViewById(R.id.tv_promoter_row_label);
         TextView arrow = findViewById(R.id.tv_promoter_row_arrow);
@@ -74,7 +90,7 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
         if (User.ROLE_PROMOTER.equals(role)) {
-            label.setText("🏟  Promoter Dashboard");
+            label.setText(R.string.profile_promoter_dashboard);
             arrow.setText("›");
             findViewById(R.id.row_promoter).setOnClickListener(v ->
                     startActivity(new Intent(this, PromoterDashboardActivity.class)));
@@ -83,11 +99,11 @@ public class ProfileActivity extends AppCompatActivity {
 
         PromoterApplication application = db.getLatestPromoterApplication(userId);
         if (application != null && PromoterApplication.STATUS_PENDING.equals(application.getStatus())) {
-            label.setText("🏟  Promoter application pending review");
+            label.setText(R.string.profile_promoter_pending);
             arrow.setText("");
             findViewById(R.id.row_promoter).setOnClickListener(null);
         } else {
-            label.setText("🏟  Become a Promoter");
+            label.setText(R.string.profile_become_promoter);
             arrow.setText("›");
             findViewById(R.id.row_promoter).setOnClickListener(v ->
                     startActivity(new Intent(this, BecomePromoterActivity.class)));

@@ -72,10 +72,10 @@ public class PromoterDashboardActivity extends AppCompatActivity {
             @Override
             public void onReject(EventRequest request) {
                 db.rejectEventRequest(request.getEvent().getId());
-                Toast.makeText(PromoterDashboardActivity.this, "Request rejected", Toast.LENGTH_SHORT).show();
+                Toast.makeText(PromoterDashboardActivity.this, R.string.promoter_request_rejected, Toast.LENGTH_SHORT).show();
                 NotificationHelper.notify(PromoterDashboardActivity.this, request.getEvent().getId(),
-                        "Event Rejected",
-                        "You rejected \"" + request.getEvent().getTitle() + "\".",
+                        getString(R.string.promoter_notif_rejected_title),
+                        getString(R.string.promoter_notif_rejected_body, request.getEvent().getTitle()),
                         new Intent(PromoterDashboardActivity.this, PromoterDashboardActivity.class));
                 refreshRequests();
             }
@@ -89,38 +89,38 @@ public class PromoterDashboardActivity extends AppCompatActivity {
         layout.setPadding(padding, padding, padding, padding);
 
         EditText etPrice = new EditText(this);
-        etPrice.setHint("Price");
+        etPrice.setHint(R.string.promoter_hint_price);
         etPrice.setText(request.getEvent().getPrice());
         layout.addView(etPrice);
 
         EditText etDate = new EditText(this);
-        etDate.setHint("Date");
+        etDate.setHint(R.string.hint_date);
         etDate.setText(request.getEvent().getDate());
         layout.addView(etDate);
 
         EditText etTime = new EditText(this);
-        etTime.setHint("Time");
+        etTime.setHint(R.string.hint_time);
         etTime.setText(request.getEvent().getTime());
         layout.addView(etTime);
 
         new AlertDialog.Builder(this)
-                .setTitle("Confirm terms & accept")
+                .setTitle(R.string.promoter_confirm_title)
                 .setView(layout)
-                .setPositiveButton("Accept", (dialog, which) -> {
+                .setPositiveButton(R.string.action_accept, (dialog, which) -> {
                     db.approveEventRequest(
                             request.getEvent().getId(),
                             etPrice.getText().toString().trim(),
                             etDate.getText().toString().trim(),
                             etTime.getText().toString().trim(),
                             request.getEvent().isPrivate());
-                    Toast.makeText(this, "Event approved!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.promoter_event_approved, Toast.LENGTH_SHORT).show();
                     NotificationHelper.notify(this, request.getEvent().getId(),
-                            "Event Approved",
-                            "You approved \"" + request.getEvent().getTitle() + "\" — it's now live.",
+                            getString(R.string.promoter_notif_approved_title),
+                            getString(R.string.promoter_notif_approved_body, request.getEvent().getTitle()),
                             new Intent(this, PromoterDashboardActivity.class));
                     refreshRequests();
                 })
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton(R.string.action_cancel, null)
                 .show();
     }
 }

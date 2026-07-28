@@ -67,7 +67,7 @@ public class OrganizeEventActivity extends AppCompatActivity {
             labels.add(p.getHallName() + " — " + p.getLocation());
         }
         if (labels.isEmpty()) {
-            labels.add("No promoters available yet");
+            labels.add(getString(R.string.organize_no_promoters));
         }
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, labels);
         spinnerPromoter.setAdapter(adapter);
@@ -98,17 +98,17 @@ public class OrganizeEventActivity extends AppCompatActivity {
             if (address != null && !address.isEmpty()) {
                 etLocation.setText(address);
             }
-            Toast.makeText(this, "Location pinned!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.organize_location_pinned, Toast.LENGTH_SHORT).show();
         }
     }
 
     private void submitRequest() {
         if (promoters.isEmpty()) {
-            Toast.makeText(this, "No approved promoters to request yet — check back later", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.organize_no_promoters_toast, Toast.LENGTH_SHORT).show();
             return;
         }
         if (userId == -1) {
-            Toast.makeText(this, "You must be logged in to organize an event", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.organize_must_login, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -122,7 +122,7 @@ public class OrganizeEventActivity extends AppCompatActivity {
         String desc     = etDescription.getText().toString().trim();
 
         if (TextUtils.isEmpty(title) || TextUtils.isEmpty(date) || TextUtils.isEmpty(price)) {
-            Toast.makeText(this, "Please fill title, date and price", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.organize_fill_required, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -137,11 +137,11 @@ public class OrganizeEventActivity extends AppCompatActivity {
                 pickedLat, pickedLng);
 
         if (id > 0) {
-            Toast.makeText(this, "Request sent to " + promoter.getHallName() + "!", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.organize_request_sent, promoter.getHallName()), Toast.LENGTH_LONG).show();
             startActivity(new Intent(this, MyEventRequestsActivity.class));
             finish();
         } else {
-            Toast.makeText(this, "Failed to send request", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.organize_request_failed, Toast.LENGTH_SHORT).show();
         }
     }
 }

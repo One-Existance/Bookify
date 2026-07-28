@@ -4,14 +4,14 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="24dp"
-    android:background="@color/background_dark"
+    android:background="?attr/colorAppBackground"
     android:gravity="center_horizontal">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Mongike Checkout"
-        android:textColor="@color/white"
+        android:text="@string/payment_title"
+        android:textColor="?attr/colorAppTextPrimary"
         android:textSize="22sp"
         android:textStyle="bold"
         android:layout_marginTop="40dp"
@@ -30,8 +30,8 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Select Mobile Money Provider"
-        android:textColor="@color/text_muted"
+        android:text="@string/payment_select_provider"
+        android:textColor="?attr/colorAppTextMuted"
         android:textSize="14sp"
         android:layout_marginBottom="12dp"/>
 
@@ -41,32 +41,32 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_marginBottom="24dp">
-        <RadioButton android:id="@+id/rb_mpesa" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Vodacom M-Pesa" android:textColor="@color/white" android:buttonTint="@color/primary_purple" android:checked="true"/>
-        <RadioButton android:id="@+id/rb_tigo" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Tigo Pesa" android:textColor="@color/white" android:buttonTint="@color/primary_purple"/>
-        <RadioButton android:id="@+id/rb_airtel" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Airtel Money" android:textColor="@color/white" android:buttonTint="@color/primary_purple"/>
-        <RadioButton android:id="@+id/rb_halo" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="HaloPesa" android:textColor="@color/white" android:buttonTint="@color/primary_purple"/>
+        <RadioButton android:id="@+id/rb_mpesa" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/payment_provider_mpesa" android:textColor="?attr/colorAppTextPrimary" android:buttonTint="@color/primary_purple" android:checked="true"/>
+        <RadioButton android:id="@+id/rb_tigo" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/payment_provider_tigo" android:textColor="?attr/colorAppTextPrimary" android:buttonTint="@color/primary_purple"/>
+        <RadioButton android:id="@+id/rb_airtel" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/payment_provider_airtel" android:textColor="?attr/colorAppTextPrimary" android:buttonTint="@color/primary_purple"/>
+        <RadioButton android:id="@+id/rb_halo" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/payment_provider_halopesa" android:textColor="?attr/colorAppTextPrimary" android:buttonTint="@color/primary_purple"/>
     </RadioGroup>
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColorHint="@color/text_muted"
+        android:textColorHint="?attr/colorAppTextMuted"
         android:layout_marginBottom="32dp">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_phone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Phone Number (e.g. 255...)"
-            android:textColor="@color/white"
+            android:hint="@string/payment_phone_hint"
+            android:textColor="?attr/colorAppTextPrimary"
             android:inputType="phone"
-            android:background="@color/surface_dark"/>
+            android:background="?attr/colorAppSurface"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
         android:id="@+id/btn_pay_now"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:text="Pay Now"
+        android:text="@string/payment_pay_now"
         android:backgroundTint="@color/primary_purple"
         android:textColor="@color/white"
         android:textStyle="bold"/>

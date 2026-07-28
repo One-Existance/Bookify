@@ -45,7 +45,7 @@ public class MyTicketsActivity extends AppCompatActivity {
         TextView tabPast     = findViewById(R.id.tab_past);
 
         tabPast.setOnClickListener(v ->
-                Toast.makeText(this, "No past tickets", Toast.LENGTH_SHORT).show());
+                Toast.makeText(this, R.string.my_tickets_toast_no_past, Toast.LENGTH_SHORT).show());
 
         // Private bookings link
         findViewById(R.id.btn_private).setOnClickListener(v ->

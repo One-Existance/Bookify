@@ -15,11 +15,15 @@ Bookify is an Android event booking app for Tanzania.
 - **Roles: three-tier (`USER` / `PROMOTER` / `ADMIN`)** stored in `users.role` — see "Roles & Event-Organizing Flow" below
 - **Session: SharedPreferences** — key `"bookify_session"`, stores `user_id` (int), `user_name`, `user_email`, `role` (String: `USER`/`PROMOTER`/`ADMIN`). Saved on login/register, cleared on logout (also signs out of Firebase Auth).
 - **UI Libraries:** AppCompat, Material Components, RecyclerView, CardView, ConstraintLayout
-- **QR Codes:** ZXing (`com.google.zxing:core:3.5.3`) — generates QR bitmaps from ticket numbers, drawn in-app (no camera/scanning yet)
+- **QR Codes:** ZXing (`com.google.zxing:core:3.5.3`) generates QR bitmaps from ticket numbers (per-attendee, `TicketDetailActivity`) and from event `access_code`s (per-event entry QR, `util/InviteShareHelper`, any PUBLISHED event public or private). **Scanning:** `com.journeyapps:zxing-android-embedded:4.3.0` + `ScanEntryActivity` — camera-based scan screen (needs `CAMERA` permission, requested at runtime) reachable from a "Scan Entry" button on organizer/admin event lists. Scans either a ticket QR (`DatabaseHelper.checkInTicket()` — real per-attendee check-in with anti-duplicate/wrong-event/unpaid rejection, `bookings.checked_in` column) or an event invite QR (just confirms the code matches this event; that code is shared across all invitees so there's no anti-duplicate protection on that path).
+- **Sharing:** `FileProvider` (`res/xml/file_paths.xml`, authority `${applicationId}.fileprovider`) shares generated QR PNGs as `content://` URIs. `util/InviteShareHelper` shares an event's invite text + QR image via the generic Android share sheet or directly through WhatsApp (`setPackage("com.whatsapp")`, falls back to `com.whatsapp.w4b`). Requires `com.whatsapp`/`com.whatsapp.w4b` in the manifest `<queries>` block (Android 11+ package-visibility rule).
 - **Payments:** Mongike mobile money gateway (Tanzania: M-Pesa, Tigo, Airtel, Halopesa) — called directly from `PaymentActivity` via `HttpURLConnection`
 - **Maps:** Google Maps (`com.google.android.gms:play-services-maps:19.0.0`) via `MapActivity.java` — geocodes an event's location string to a `LatLng` and drops a marker; needs a `MAPS_API_KEY` entry in `local.properties` (currently unset, so the map won't render real tiles until one is added — see Important Notes)
 - **Notifications:** Real Android notifications via `util/NotificationHelper.java` — creates the `bookify_notifications` channel, requests `POST_NOTIFICATIONS` at runtime (required on API 33+), and posts notifications gated by both the OS permission and the Settings toggle (`bookify_settings` → `notifications`). Fired on booking confirmation (`EventDetailActivity`), promoter accept/reject (`PromoterDashboardActivity`), and admin promoter-application approve/reject (`AdminActivity`)
-- **Permissions:** `INTERNET`, `ACCESS_NETWORK_STATE`, `POST_NOTIFICATIONS` (all in `AndroidManifest.xml`)
+- **Permissions:** `INTERNET`, `ACCESS_NETWORK_STATE`, `POST_NOTIFICATIONS`, `ACCESS_FINE_LOCATION`, `ACCESS_COARSE_LOCATION` (all in `AndroidManifest.xml`)
+- **Dark/light mode:** Runtime-togglable via `AppCompatDelegate.setDefaultNightMode()`, toggle lives in `SettingsActivity` (persisted to `bookify_settings` → `dark_mode`, default dark). Every screen uses semantic theme attrs (`res/values/attrs.xml`: `colorAppBackground`/`colorAppSurface`/`colorAppTextPrimary`/`colorAppTextMuted`/`colorAppChipBg`) resolved by `res/values/themes.xml` (light) vs `res/values-night/themes.xml` (dark); brand accents (purple/amber/card colors) stay constant across both. `BookifyApplication` applies the persisted preference on process start.
+- **Language:** English/Swahili via the AndroidX per-app language API (`AppCompatDelegate.setApplicationLocales`, `res/xml/locales_config.xml` + manifest `android:localeConfig`), toggle in `SettingsActivity`. ~237 strings live in `res/values/strings.xml` + `strings_batch_a..d.xml`, translated in matching `res/values-sw/` files. Dynamic/DB-driven text (event data, ticket numbers, exception messages) is intentionally not localized.
+- **Icons:** ~23 hand-authored vector drawables in `res/drawable/ic_*.xml` (neutral fill, tinted per usage via `app:tint`/`android:tint`) replace emoji used as UI chrome (nav bar, row icons, category icons, info-grid labels, badges) — see `ic_qr_scanner`/`ic_check_circle`/etc. Content/copy emoji (invite message body, greeting flourish) were intentionally left alone; see CHANGES.md Session 3 for the full list of what was/wasn't converted.
 
 ---
 
@@ -28,25 +32,27 @@ Bookify is an Android event booking app for Tanzania.
 ### Activities
 | File | Purpose |
 |------|---------|
-| `MainActivity.java` | Splash screen — logo, tagline, "Get started" → Register, "Log in" → Login |
+| `MainActivity.java` | Splash screen — logo, tagline, "Get started" → Register, "Log in" → Login. **No longer the launcher** — only reached via explicit navigation (e.g. logout); the app now opens straight to `HomeFeedActivity` |
 | `LoginActivity.java` | Email + password login via Firebase Auth (`signInWithEmailAndPassword`); links/creates the local profile row by `firebase_uid`; saves session (incl. `role`); routes `ADMIN` → AdminActivity, `PROMOTER` → PromoterDashboardActivity, `USER` → HomeFeedActivity; password field has a working show/hide eye toggle |
 | `RegisterActivity.java` | Full name, email, password (min 6 chars, confirm match), phone; creates the account via Firebase Auth (`createUserWithEmailAndPassword`), then a local profile row (always `role=USER`); saves session; both password + confirm-password fields have independent working show/hide eye toggles |
-| `HomeFeedActivity.java` | Home feed — dynamic greeting, avatar (tappable → Profile), category chips, events RecyclerView, bottom nav; single role-aware FAB (`fab_action`) → AdminActivity/PromoterDashboardActivity/OrganizeEventActivity depending on session `role`; requests the `POST_NOTIFICATIONS` runtime permission on first load |
+| `HomeFeedActivity.java` | **Launcher activity.** Home feed — dynamic greeting (falls back to "Guest" with no session, which is what makes guest browsing work), avatar (tappable → Profile), category chips, events RecyclerView, bottom nav; single role-aware FAB (`fab_action`) → AdminActivity/PromoterDashboardActivity/OrganizeEventActivity depending on session `role`; requests the `POST_NOTIFICATIONS` runtime permission on first load. Event taps and the FAB are gated by `util/AuthGate` — guests get a Log In/Create Account prompt instead |
 | `MapActivity.java` | Shows an event's location on a Google Map — geocodes the location string to a `LatLng`, drops a marker, centers the camera; needs `MAPS_API_KEY` set in `local.properties` to render actual map tiles |
-| `ExploreActivity.java` | Browse + live search all events (filters as user types); bottom nav Explore active |
+| `ExploreActivity.java` | Browse + live search all events (filters as user types); bottom nav Explore active; event taps gated by `util/AuthGate` same as Home |
 | `EventDetailActivity.java` | Event detail — hero card (with image if set), 4-cell info grid, About text; Book Ticket → creates a `PENDING` booking → launches `PaymentActivity` → on success routes to `TicketDetailActivity` to show the QR code |
 | `MyTicketsActivity.java` | My tickets — now DB-backed (`db.getUserBookings`) via `BookingAdapter`; only shows `COMPLETED` (paid) bookings; empty state if none; "🔒 Private" link; bottom nav Tickets active |
 | `PrivateEventActivity.java` | Private event — access code entry, real DB lookup (`db.getEventByAccessCode`); on match launches `EventDetailActivity` with that event's extras, reusing the normal booking/payment pipeline; bottom nav Tickets active |
 | `MyBookingsActivity.java` | My bookings — DB-backed list of current user's bookings via BookingAdapter; shows empty state if none |
-| `ProfileActivity.java` | Profile — loads name/email/initials from SharedPreferences; My Bookings, **My Organized Events**, role-aware **Promoter row** (Become a Promoter / pending / Promoter Dashboard, hidden for Admin), Settings rows; logout signs out of Firebase Auth and clears session |
-| `SettingsActivity.java` | Settings — push notification + email reminder toggles (persisted in `"bookify_settings"` prefs); turning the notification toggle on also requests `POST_NOTIFICATIONS` if not already granted; About section |
+| `ProfileActivity.java` | Profile — loads name/email/initials from SharedPreferences (refreshed in `onResume()`); pencil-icon button next to the name opens `EditProfileActivity`; My Bookings, **My Organized Events**, role-aware **Promoter row** (Become a Promoter / pending / Promoter Dashboard, hidden for Admin), Settings rows; logout signs out of Firebase Auth and clears session |
+| `EditProfileActivity.java` | Edit full name — pre-fills from session, Save writes to `DatabaseHelper.updateUserName()` and the `bookify_session` prefs, then finishes back to Profile |
+| `SettingsActivity.java` | Settings — push notification + email reminder toggles (persisted in `"bookify_settings"` prefs); turning the notification toggle on also requests `POST_NOTIFICATIONS` if not already granted; **Appearance section: Dark mode switch** (`AppCompatDelegate.setDefaultNightMode`) and **Language row** (English/Kiswahili picker dialog, `AppCompatDelegate.setApplicationLocales`); About section |
 | `AdminActivity.java` | Admin dashboard (`role=ADMIN` only, guarded in `onCreate()`) — form to post new events (status defaults `PUBLISHED`, no approval loop); RecyclerView of **all** events regardless of status/visibility (`getAllEventsForAdmin`) with delete button; **new: Pending Promoter Applications list** with Approve/Reject (`PromoterApplicationAdapter`); "Logout" and "View as User" links |
 | `PaymentActivity.java` | Mongike mobile-money checkout — collects phone number, POSTs to the Mongike API, mock-verifies the payment, then calls `db.completePayment()` to flip the booking to `COMPLETED` and returns `RESULT_OK` |
 | `TicketDetailActivity.java` | Shows a booked ticket — title, info, ticket number, event image (if any), and a ZXing-generated QR code encoding the ticket number |
 | `BecomePromoterActivity.java` | Form (hall/venue name, location, description) → `db.submitPromoterApplication()`, status `PENDING` until Admin reviews it |
 | `PromoterDashboardActivity.java` | `role=PROMOTER` only (guarded) — shows the promoter's approved hall info, and pending event requests (`getPendingEventRequestsForPromoter`) with Accept (dialog to adjust price/date/time before confirming) / Reject actions; "Logout" and "View as User" links |
 | `OrganizeEventActivity.java` | Any logged-in user — Spinner of approved promoters (`getApprovedPromoters`) + the event form (same field set/image-picker pattern as AdminActivity) + a public/private switch; submits via `db.requestEvent()` with `status=PENDING`, not yet visible anywhere |
-| `MyEventRequestsActivity.java` | Lists events the current user organized (`getEventsByOrganizer`, any status) with a status badge; for `PUBLISHED` **private** events, a "Share Invite Code" button opens the Android share sheet with a formatted invite message + access code |
+| `MyEventRequestsActivity.java` | Lists events the current user organized (`getEventsByOrganizer`, any status) with a status badge; for any `PUBLISHED` event (public or private) with an `access_code`, three buttons — "Share Entry QR" (generic share sheet), "WhatsApp" (opens WhatsApp directly) via `util/InviteShareHelper`, and "Scan Entry" (opens `ScanEntryActivity` for that event) |
+| `ScanEntryActivity.java` | Camera QR scanner (zxing-android-embedded) for door entry — scans a ticket QR (`db.checkInTicket()`, per-attendee check-in + anti-duplicate) or an event invite QR (validity check only); loops via "Scan Next" |
 
 ### Data Layer
 | File | Purpose |
@@ -88,8 +94,9 @@ Bookify is an Android event booking app for Tanzania.
 | `activity_my_tickets.xml` | My tickets — Upcoming/Past tabs, RecyclerView (DB-backed) + empty-state view, bottom nav |
 | `activity_private_event.xml` | Private event — circle icon, access code input (real), error label, bottom nav |
 | `activity_my_bookings.xml` | My bookings — back button, empty state TextView, RecyclerView |
-| `activity_profile.xml` | Profile — avatar, name/email, My Bookings row, **My Organized Events row**, **Promoter row**, Settings row, logout button, bottom nav |
-| `activity_settings.xml` | Settings — back button, notification toggles (SwitchCompat), About rows |
+| `activity_profile.xml` | Profile — avatar, name/email + edit-name pencil button, My Bookings row, **My Organized Events row**, **Promoter row**, Settings row, logout button, bottom nav |
+| `activity_edit_profile.xml` | Edit Profile — back button, full-name field, Save button |
+| `activity_settings.xml` | Settings — back button, notification toggles (SwitchCompat), **Appearance section (Dark mode switch + Language row)**, About rows |
 | `activity_admin.xml` | Admin dashboard — event form fields, image picker preview, Save button, **Pending Promoter Applications RecyclerView**, RecyclerView of all events (any status), logout/view-as-user links |
 | `activity_payment.xml` | Payment — amount display, phone number input, "Pay Now" button, progress bar |
 | `activity_ticket_detail.xml` | Ticket detail — title, info, ticket number, event image, QR code image, back button |
@@ -150,7 +157,7 @@ Launcher icon (`ic_launcher_background.xml` + `ic_launcher_foreground.xml`, adap
 | `chip_bg` | #2A2650 | Unselected category chips |
 | `error_red` | #CF6679 | Error messages, logout button text |
 
-Theme: `Theme.MaterialComponents.DayNight.NoActionBar` (always dark)
+Theme: `Theme.MaterialComponents.DayNight.NoActionBar`, now genuinely day/night — toggled by the user (Settings → Dark mode), not by system setting. Screens reference semantic attrs (`?attr/colorAppBackground` etc., see Tech Stack) rather than the raw dark-palette colors directly; `res/values/colors.xml` holds both the original dark palette and a new `_light` suffixed palette used by `res/values/themes.xml`, while `res/values-night/themes.xml` maps the same attrs back to the dark palette.
 
 ---
 
@@ -159,7 +166,7 @@ Theme: `Theme.MaterialComponents.DayNight.NoActionBar` (always dark)
 
 **users** — id, full_name, email (UNIQUE), `firebase_uid` (UNIQUE, nullable until first login/register), phone, **`role`** (`'USER'`/`'PROMOTER'`/`'ADMIN'`, default `'USER'` — replaced the old `is_admin` boolean). Passwords are no longer stored here — Firebase Auth owns credentials.
 **events** — id, title, location, date, category, price, is_private, `image_url`, `time`, `slots`, `description`, **`organizer_id`** (nullable — the `USER` who requested it), **`promoter_id`** (nullable — whose hall hosts it), **`status`** (`'PENDING'`/`'PUBLISHED'`/`'REJECTED'`, default `'PUBLISHED'`), **`access_code`** (set only when a private event's request is approved)
-**bookings** — id, user_id, event_id, ticket_number, `status` (default `PENDING`, becomes `COMPLETED` after payment)
+**bookings** — id, user_id, event_id, ticket_number, `status` (default `PENDING`, becomes `COMPLETED` after payment), **`checked_in`** (default 0, flipped to 1 by `ScanEntryActivity`/`checkInTicket()` on first door scan)
 **promoter_applications** *(new)* — id, user_id, hall_name, location, description, `status` (`'PENDING'`/`'APPROVED'`/`'REJECTED'`)
 
 Admin-created events (via `AdminActivity`) and all seeded events get `status='PUBLISHED'` directly with `organizer_id`/`promoter_id` NULL — Admin bypasses the promoter-approval loop for its own posts. Events requested via `OrganizeEventActivity` start at `status='PENDING'` and are invisible to `getAllEvents()`/`searchEvents()` until a promoter approves them.
@@ -176,19 +183,20 @@ Seeded on first launch:
 - `getApprovedPromoters()` — `List<PromoterProfile>` for the "choose a promoter" picker; `getPromoterProfile(promoterUserId)` — one promoter's approved hall info
 - `getAllEvents()` / `searchEvents(query)` — public events only, **and now `status='PUBLISHED'` only**
 - `getAllEventsForAdmin()` — no filters at all, for Admin's monitoring view
-- `addEvent(...)` — admin event creation, `status='PUBLISHED'` directly
+- `addEvent(...)` — admin event creation, `status='PUBLISHED'` directly, now also generates an `access_code` (entry QR) like the organizer-approval path
 - `requestEvent(..., organizerId, promoterId)` — organizer's "organize event" submission, `status='PENDING'`
 - `getPendingEventRequestsForPromoter(promoterId)` — `List<EventRequest>` (event + organizer name) for the promoter dashboard
-- `approveEventRequest(eventId, finalPrice, finalDate, finalTime, isPrivate)` — promoter's Accept: updates price/date/time, `status='PUBLISHED'`, generates `access_code` if `isPrivate`
+- `approveEventRequest(eventId, finalPrice, finalDate, finalTime, isPrivate)` — promoter's Accept: updates price/date/time, `status='PUBLISHED'`, **always** generates an `access_code` (public or private — used as the event's entry QR, not just a private-listing gate)
 - `rejectEventRequest(eventId)` — `status='REJECTED'`
 - `getEventsByOrganizer(organizerId)` — all statuses, for "My Organized Events"
-- `getEventByAccessCode(code)` — used by `PrivateEventActivity`; only matches `status='PUBLISHED'` + `is_private=1`
+- `getEventByAccessCode(code)` — used by `PrivateEventActivity`; matches any `status='PUBLISHED'` event (public or private) — no longer gated on `is_private=1`
 - `deleteEvent(eventId)` — admin event deletion
 - `bookEvent(userId, eventId)` — generates BKF-XXXX-XXXX ticket, inserts booking with `status='PENDING'`
 - `completePayment(userId, eventId)` — flips a booking's status to `COMPLETED` after Mongike payment succeeds
 - `isAlreadyBooked(userId, eventId)` — duplicate check (any status)
 - `getTicketNumber(userId, eventId)` — retrieve ticket number, **only for `COMPLETED` bookings**
 - `getUserBookings(userId)` — JOIN bookings+events, **only `COMPLETED`** bookings, returns List<Booking>
+- `updateUserName(userId, fullName)` — used by `EditProfileActivity` to rename a user's local profile row
 
 ---
 
@@ -228,20 +236,27 @@ Three roles, `users.role`: `USER` (default), `PROMOTER`, `ADMIN`. Registration n
 
 ## Full Navigation Map
 ```
-MainActivity (Splash)
+HomeFeedActivity (Launcher — always the first screen, logged in or not)
+  ├── Guest: greeting falls back to "Guest"; FAB and event-card taps show
+  │          AuthGate's Log In/Create Account prompt instead of navigating
+  ├── Avatar circle (top right) → ProfileActivity
+  ├── Event card tap (logged in) → EventDetailActivity
+  ├── FAB (fab_action, role-aware, logged in) → AdminActivity (ADMIN) / PromoterDashboardActivity (PROMOTER) / OrganizeEventActivity (USER)
+  ├── Explore bottom nav        → ExploreActivity
+  ├── Tickets bottom nav        → MyTicketsActivity
+  └── Profile bottom nav        → ProfileActivity
+
+MainActivity (Splash — no longer the launcher; reached via explicit navigation, e.g. logout)
   ├── "Get started" → RegisterActivity
   └── "Log in"      → LoginActivity
         ├── (success, role=USER)     → HomeFeedActivity [clears stack]
         ├── (success, role=PROMOTER) → PromoterDashboardActivity [clears stack]
         └── (success, role=ADMIN)    → AdminActivity [clears stack]
 
-HomeFeedActivity
-  ├── Avatar circle (top right) → ProfileActivity
-  ├── Event card tap            → EventDetailActivity
-  ├── FAB (fab_action, role-aware) → AdminActivity (ADMIN) / PromoterDashboardActivity (PROMOTER) / OrganizeEventActivity (USER)
-  ├── Explore bottom nav        → ExploreActivity
-  ├── Tickets bottom nav        → MyTicketsActivity
-  └── Profile bottom nav        → ProfileActivity
+AuthGate prompt (Home/Explore event tap or Home FAB, guest only)
+  ├── "Log In"          → LoginActivity
+  ├── "Create Account"  → RegisterActivity
+  └── "Cancel"           → dismiss, stay put
 
 OrganizeEventActivity (any logged-in user, reached via the Home FAB)
   ├── Submit request → MyEventRequestsActivity [finishes]
@@ -336,6 +351,10 @@ AdminActivity (role=ADMIN only, reached via login or the Home FAB)
 ---
 
 ## Pending / Next Steps
+- [x] ~~Users can't edit their profile name~~ Done — `EditProfileActivity`, see Tech Stack/Activities. Email/phone deliberately left non-editable (email is tied to Firebase Auth identity; scope decision made this session)
+- [x] ~~No dark/light mode or Swahili translation~~ Done — see Tech Stack ("Dark/light mode" and "Language" entries). Note: `MapActivity`'s translucent-scrim map hint and QR-code white backdrops were deliberately left as fixed white/black — they're not theme surfaces, they're functional overlays (legibility over live map tiles / QR scannability)
+- [x] ~~No way to share a private event invite via WhatsApp specifically~~ Done — see Tech Stack ("QR Codes"/"Sharing" entries) and `MyEventRequestsActivity`/`AdminActivity`. Every PUBLISHED event (not just private ones) now gets an entry QR, shareable via WhatsApp or the generic share sheet.
+- [ ] **No in-app QR *scanning* for door entry** — `InviteShareHelper` generates and shares the entry QR, but there's still no camera-based scan screen for organizers to validate it against the DB (mark an attendee "checked in", prevent duplicate entry, etc.) — same gap as the pre-existing ticket-QR scanning TODO below, now doubly relevant. Would need a new dependency (e.g. `journeyapps:zxing-android-embedded` or CameraX + ML Kit) plus a DB column to track redemption.
 - [ ] PaymentActivity — `checkMongikeAccountStatus()` is mocked (always returns `true`); needs a real webhook or status-polling integration against Mongike
 - [ ] **Rotate the Mongike API key** — it was committed in plaintext to `PaymentActivity.java` in commit `0532675` and is permanently exposed in git history even though it's now moved to `local.properties`/`BuildConfig` (see Important Notes)
 - [x] ~~PrivateEventActivity — real access code validation against DB~~ Done — wired to `getEventByAccessCode()`, launches `EventDetailActivity` on match

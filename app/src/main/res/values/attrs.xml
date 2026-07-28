@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Semantic colors that flip between the light and dark palettes.
+         Brand accents (primary_purple, amber, card_purple, card_green, error_red)
+         stay constant across themes and are referenced directly via @color. -->
+    <attr name="colorAppBackground" format="color" />
+    <attr name="colorAppSurface" format="color" />
+    <attr name="colorAppTextPrimary" format="color" />
+    <attr name="colorAppTextMuted" format="color" />
+    <attr name="colorAppChipBg" format="color" />
+</resources>

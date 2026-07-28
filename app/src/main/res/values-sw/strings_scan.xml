@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="scan_entry_title">Skani ya Kuingia</string>
+    <string name="scan_button_first">Skani Msimbo wa QR</string>
+    <string name="scan_button_next">Skani Mwingine</string>
+    <string name="scan_button_done">Maliza</string>
+    <string name="scan_prompt">Elekeza msimbo wa QR ndani ya fremu</string>
+    <string name="scan_idle_message">Gusa Skani Msimbo wa QR kuingiza wageni kwa %1$s.</string>
+
+    <string name="scan_result_checked_in_title">Kuingia Kumethibitishwa</string>
+    <string name="scan_result_checked_in_message">%1$s ameingizwa kwenye tukio.</string>
+
+    <string name="scan_result_already_title">Ameshaingizwa</string>
+    <string name="scan_result_already_message">%1$s alishaingizwa kwenye tukio hili.</string>
+
+    <string name="scan_result_wrong_event_title">Tukio Sio Hili</string>
+    <string name="scan_result_wrong_event_message">Tiketi hii ni ya \"%1$s\", si tukio hili.</string>
+
+    <string name="scan_result_unpaid_title">Malipo Hayajakamilika</string>
+    <string name="scan_result_unpaid_message">Tiketi hii bado haijakamilisha malipo.</string>
+
+    <string name="scan_result_invalid_title">Msimbo Batili</string>
+    <string name="scan_result_invalid_message">Msimbo huu haufanani na tiketi au mwaliko wowote.</string>
+
+    <string name="scan_result_valid_invite_title">Mwaliko Sahihi</string>
+    <string name="scan_result_valid_invite_message">Huu ni msimbo sahihi wa mwaliko kwa tukio hili. Kumbuka: misimbo ya mwaliko inashirikiwa, si ya kipekee kwa kila mgeni, hivyo hii inathibitisha tu kuwa ni halali.</string>
+
+    <string name="scan_camera_permission_denied">Ruhusa ya kamera inahitajika kuskani misimbo ya QR.</string>
+</resources>

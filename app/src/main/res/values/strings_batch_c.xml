@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Shared -->
+    <string name="nav_back_arrow">← Back</string>
+    <string name="hint_date">Date</string>
+    <string name="hint_time">Time</string>
+    <string name="action_accept">Accept</string>
+    <string name="action_reject">Reject</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="share_invite_chooser_title">Share invite</string>
+    <string name="share_via_whatsapp">WhatsApp</string>
+    <string name="whatsapp_not_installed">WhatsApp isn\'t installed on this device</string>
+
+    <!-- Become Promoter -->
+    <string name="promoter_become_title">Become a Promoter</string>
+    <string name="promoter_become_desc">Tell us about your hall or venue. An admin will review this before you can start accepting event requests.</string>
+    <string name="promoter_hall_name_hint">Hall / Venue name</string>
+    <string name="promoter_location_hint">Location</string>
+    <string name="promoter_pick_on_map">Pick on Map</string>
+    <string name="promoter_hall_desc_hint">Describe your hall (capacity, facilities, etc.)</string>
+    <string name="promoter_submit_application">SUBMIT APPLICATION</string>
+    <string name="promoter_location_pinned">Venue location pinned!</string>
+    <string name="promoter_fill_required">Please fill in hall name and location</string>
+    <string name="promoter_must_login">You must be logged in to apply</string>
+    <string name="promoter_application_submitted">Application submitted! We\'ll review it soon.</string>
+    <string name="promoter_application_failed">Failed to submit application</string>
+
+    <!-- Promoter Dashboard -->
+    <string name="promoter_dashboard_title">Promoter Dashboard</string>
+    <string name="promoter_logout">Logout</string>
+    <string name="promoter_view_as_user">View as Regular User</string>
+    <string name="promoter_pending_requests_heading">Pending Event Requests</string>
+    <string name="promoter_no_pending_requests">No pending requests right now.</string>
+    <string name="promoter_request_rejected">Request rejected</string>
+    <string name="promoter_notif_rejected_title">Event Rejected</string>
+    <string name="promoter_notif_rejected_body">You rejected \"%1$s\".</string>
+    <string name="promoter_confirm_title">Confirm terms &amp; accept</string>
+    <string name="promoter_hint_price">Price</string>
+    <string name="promoter_event_approved">Event approved!</string>
+    <string name="promoter_notif_approved_title">Event Approved</string>
+    <string name="promoter_notif_approved_body">You approved \"%1$s\" — it\'s now live.</string>
+
+    <!-- Organize Event -->
+    <string name="organize_title">Organize an Event</string>
+    <string name="organize_choose_promoter">Choose a promoter/hall</string>
+    <string name="organize_private_event_label">Private event (invite-only)</string>
+    <string name="organize_select_picture">SELECT EVENT PICTURE</string>
+    <string name="organize_title_hint">Event Title</string>
+    <string name="organize_location_hint">Specific Location</string>
+    <string name="organize_pin_button">PIN</string>
+    <string name="organize_category_hint">Category (e.g. Wedding, Concert)</string>
+    <string name="organize_price_hint">Proposed ticket price</string>
+    <string name="organize_slots_hint">Slots (Number)</string>
+    <string name="organize_description_hint">Description</string>
+    <string name="organize_submit_request">SEND REQUEST TO PROMOTER</string>
+    <string name="organize_no_promoters">No promoters available yet</string>
+    <string name="organize_location_pinned">Location pinned!</string>
+    <string name="organize_no_promoters_toast">No approved promoters to request yet — check back later</string>
+    <string name="organize_must_login">You must be logged in to organize an event</string>
+    <string name="organize_fill_required">Please fill title, date and price</string>
+    <string name="organize_request_sent">Request sent to %1$s!</string>
+    <string name="organize_request_failed">Failed to send request</string>
+
+    <!-- My Event Requests -->
+    <string name="my_events_title">My Organized Events</string>
+    <string name="my_events_empty">You haven\'t organized any events yet. Head to Home to get started.</string>
+
+    <!-- item_event_request -->
+    <string name="event_request_requested_by">Requested by %1$s</string>
+
+    <!-- item_my_event_request -->
+    <string name="share_invite_code">Share Entry QR</string>
+</resources>

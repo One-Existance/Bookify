@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_dark">
+    android:background="?attr/colorAppBackground">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -24,8 +24,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Organize an Event"
-                    android:textColor="@color/white"
+                    android:text="@string/organize_title"
+                    android:textColor="?attr/colorAppTextPrimary"
                     android:textSize="20sp"
                     android:textStyle="bold" />
                 <TextView
@@ -33,7 +33,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
-                    android:text="← Back"
+                    android:text="@string/nav_back_arrow"
                     android:textColor="@color/primary_purple"
                     android:textSize="14sp" />
             </RelativeLayout>
@@ -41,8 +41,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Choose a promoter/hall"
-                android:textColor="@color/text_muted"
+                android:text="@string/organize_choose_promoter"
+                android:textColor="?attr/colorAppTextMuted"
                 android:textSize="13sp"
                 android:layout_marginBottom="8dp"/>
 
@@ -66,8 +66,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Private event (invite-only)"
-                    android:textColor="@color/white"
+                    android:text="@string/organize_private_event_label"
+                    android:textColor="?attr/colorAppTextPrimary"
                     android:textSize="15sp"/>
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/switch_private"
@@ -93,8 +93,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:text="SELECT EVENT PICTURE"
-                    android:textColor="@color/white"
+                    android:text="@string/organize_select_picture"
+                    android:textColor="?attr/colorAppTextPrimary"
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:letterSpacing="0.1"/>
@@ -105,10 +105,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="54dp"
                 android:background="@drawable/bg_admin_input"
-                android:hint="Event Title"
+                android:hint="@string/organize_title_hint"
                 android:paddingHorizontal="20dp"
-                android:textColor="@color/white"
-                android:textColorHint="@color/text_muted"
+                android:textColor="?attr/colorAppTextPrimary"
+                android:textColorHint="?attr/colorAppTextMuted"
                 android:textSize="15sp"
                 android:layout_marginBottom="16dp"/>
 
@@ -123,18 +123,18 @@
                     android:layout_height="54dp"
                     android:layout_weight="1"
                     android:background="@drawable/bg_admin_input"
-                    android:hint="Specific Location"
+                    android:hint="@string/organize_location_hint"
                     android:paddingHorizontal="20dp"
-                    android:textColor="@color/white"
-                    android:textColorHint="@color/text_muted"
+                    android:textColor="?attr/colorAppTextPrimary"
+                    android:textColorHint="?attr/colorAppTextMuted"
                     android:textSize="15sp"/>
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_pick_location"
                     android:layout_width="wrap_content"
                     android:layout_height="54dp"
                     android:layout_marginStart="8dp"
-                    android:text="PIN"
-                    app:backgroundTint="@color/surface_dark" />
+                    android:text="@string/organize_pin_button"
+                    app:backgroundTint="?attr/colorAppSurface" />
             </LinearLayout>
 
             <EditText
@@ -142,10 +142,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="54dp"
                 android:background="@drawable/bg_admin_input"
-                android:hint="Category (e.g. Wedding, Concert)"
+                android:hint="@string/organize_category_hint"
                 android:paddingHorizontal="20dp"
-                android:textColor="@color/white"
-                android:textColorHint="@color/text_muted"
+                android:textColor="?attr/colorAppTextPrimary"
+                android:textColorHint="?attr/colorAppTextMuted"
                 android:textSize="15sp"
                 android:layout_marginBottom="16dp"/>
 
@@ -160,10 +160,10 @@
                     android:layout_height="54dp"
                     android:layout_weight="1"
                     android:background="@drawable/bg_admin_input"
-                    android:hint="Date"
+                    android:hint="@string/hint_date"
                     android:paddingHorizontal="20dp"
-                    android:textColor="@color/white"
-                    android:textColorHint="@color/text_muted"
+                    android:textColor="?attr/colorAppTextPrimary"
+                    android:textColorHint="?attr/colorAppTextMuted"
                     android:textSize="15sp"
                     android:layout_marginEnd="8dp"/>
                 <EditText
@@ -172,10 +172,10 @@
                     android:layout_height="54dp"
                     android:layout_weight="1"
                     android:background="@drawable/bg_admin_input"
-                    android:hint="Time"
+                    android:hint="@string/hint_time"
                     android:paddingHorizontal="20dp"
-                    android:textColor="@color/white"
-                    android:textColorHint="@color/text_muted"
+                    android:textColor="?attr/colorAppTextPrimary"
+                    android:textColorHint="?attr/colorAppTextMuted"
                     android:textSize="15sp"
                     android:layout_marginStart="8dp"/>
             </LinearLayout>
@@ -191,10 +191,10 @@
                     android:layout_height="54dp"
                     android:layout_weight="1"
                     android:background="@drawable/bg_admin_input"
-                    android:hint="Proposed ticket price"
+                    android:hint="@string/organize_price_hint"
                     android:paddingHorizontal="20dp"
-                    android:textColor="@color/white"
-                    android:textColorHint="@color/text_muted"
+                    android:textColor="?attr/colorAppTextPrimary"
+                    android:textColorHint="?attr/colorAppTextMuted"
                     android:textSize="15sp"
                     android:layout_marginEnd="8dp"/>
                 <EditText
@@ -203,10 +203,10 @@
                     android:layout_height="54dp"
                     android:layout_weight="1"
                     android:background="@drawable/bg_admin_input"
-                    android:hint="Slots (Number)"
+                    android:hint="@string/organize_slots_hint"
                     android:paddingHorizontal="20dp"
-                    android:textColor="@color/white"
-                    android:textColorHint="@color/text_muted"
+                    android:textColor="?attr/colorAppTextPrimary"
+                    android:textColorHint="?attr/colorAppTextMuted"
                     android:textSize="15sp"
                     android:inputType="number"
                     android:layout_marginStart="8dp"/>
@@ -217,11 +217,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
                 android:background="@drawable/bg_admin_input"
-                android:hint="Description"
+                android:hint="@string/organize_description_hint"
                 android:gravity="top"
                 android:padding="20dp"
-                android:textColor="@color/white"
-                android:textColorHint="@color/text_muted"
+                android:textColor="?attr/colorAppTextPrimary"
+                android:textColorHint="?attr/colorAppTextMuted"
                 android:textSize="15sp"
                 android:layout_marginBottom="16dp"/>
 
@@ -234,7 +234,7 @@
         android:layout_height="56dp"
         android:layout_margin="20dp"
         android:backgroundTint="@color/primary_purple"
-        android:text="SEND REQUEST TO PROMOTER"
+        android:text="@string/organize_submit_request"
         android:textColor="@color/white"
         android:textStyle="bold"
         app:cornerRadius="12dp"

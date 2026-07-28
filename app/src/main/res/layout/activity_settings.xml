@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_dark"
+    android:background="?attr/colorAppBackground"
     android:fillViewport="true">
 
     <LinearLayout
@@ -28,7 +28,7 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:text="←"
-                android:textColor="@color/white"
+                android:textColor="?attr/colorAppTextPrimary"
                 android:textSize="22sp" />
 
             <TextView
@@ -36,8 +36,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="Settings"
-                android:textColor="@color/white"
+                android:text="@string/settings_title"
+                android:textColor="?attr/colorAppTextPrimary"
                 android:textSize="17sp"
                 android:textStyle="bold"
                 android:layout_marginEnd="40dp" />
@@ -50,8 +50,8 @@
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
             android:paddingBottom="8dp"
-            android:text="NOTIFICATIONS"
-            android:textColor="@color/text_muted"
+            android:text="@string/settings_section_notifications"
+            android:textColor="?attr/colorAppTextMuted"
             android:textSize="11sp"
             android:letterSpacing="0.1" />
 
@@ -69,11 +69,11 @@
             <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
                 android:layout_weight="1" android:orientation="vertical">
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="Push notifications"
-                    android:textColor="@color/white" android:textSize="15sp" />
+                    android:text="@string/settings_push_notifications"
+                    android:textColor="?attr/colorAppTextPrimary" android:textSize="15sp" />
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="Get notified about your events"
-                    android:textColor="@color/text_muted" android:textSize="12sp"
+                    android:text="@string/settings_push_notifications_desc"
+                    android:textColor="?attr/colorAppTextMuted" android:textSize="12sp"
                     android:layout_marginTop="2dp" />
             </LinearLayout>
 
@@ -97,11 +97,11 @@
             <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
                 android:layout_weight="1" android:orientation="vertical">
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="Email reminders"
-                    android:textColor="@color/white" android:textSize="15sp" />
+                    android:text="@string/settings_email_reminders"
+                    android:textColor="?attr/colorAppTextPrimary" android:textSize="15sp" />
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="Reminders sent 24h before events"
-                    android:textColor="@color/text_muted" android:textSize="12sp"
+                    android:text="@string/settings_email_reminders_desc"
+                    android:textColor="?attr/colorAppTextMuted" android:textSize="12sp"
                     android:layout_marginTop="2dp" />
             </LinearLayout>
 
@@ -111,6 +111,66 @@
                 android:layout_height="wrap_content" />
         </LinearLayout>
 
+        <!-- Appearance section -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingBottom="8dp"
+            android:text="@string/settings_section_appearance"
+            android:textColor="?attr/colorAppTextMuted"
+            android:textSize="11sp"
+            android:letterSpacing="0.1" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_info_cell"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="16dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="10dp">
+
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                android:layout_weight="1" android:orientation="vertical">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="@string/settings_dark_mode"
+                    android:textColor="?attr/colorAppTextPrimary" android:textSize="15sp" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="@string/settings_dark_mode_desc"
+                    android:textColor="?attr/colorAppTextMuted" android:textSize="12sp"
+                    android:layout_marginTop="2dp" />
+            </LinearLayout>
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switch_dark_mode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/row_language"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_info_cell"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="16dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="24dp">
+            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                android:text="@string/settings_language" android:textColor="?attr/colorAppTextPrimary" android:textSize="15sp" />
+            <TextView android:id="@+id/tv_language_value" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="English" android:textColor="?attr/colorAppTextMuted" android:textSize="14sp"
+                android:layout_marginEnd="6dp" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="›" android:textColor="?attr/colorAppTextMuted" android:textSize="20sp" />
+        </LinearLayout>
+
         <!-- About section -->
         <TextView
             android:layout_width="match_parent"
@@ -118,8 +178,8 @@
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
             android:paddingBottom="8dp"
-            android:text="ABOUT"
-            android:textColor="@color/text_muted"
+            android:text="@string/settings_section_about"
+            android:textColor="?attr/colorAppTextMuted"
             android:textSize="11sp"
             android:letterSpacing="0.1" />
 
@@ -134,9 +194,9 @@
             android:layout_marginRight="20dp"
             android:layout_marginBottom="10dp">
             <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
-                android:text="App version" android:textColor="@color/white" android:textSize="15sp" />
+                android:text="@string/settings_app_version" android:textColor="?attr/colorAppTextPrimary" android:textSize="15sp" />
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="1.0.0" android:textColor="@color/text_muted" android:textSize="14sp" />
+                android:text="@string/settings_app_version_value" android:textColor="?attr/colorAppTextMuted" android:textSize="14sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -150,9 +210,9 @@
             android:layout_marginRight="20dp"
             android:layout_marginBottom="10dp">
             <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
-                android:text="Group" android:textColor="@color/white" android:textSize="15sp" />
+                android:text="@string/settings_group" android:textColor="?attr/colorAppTextPrimary" android:textSize="15sp" />
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="DIT Group No. 8" android:textColor="@color/text_muted" android:textSize="14sp" />
+                android:text="@string/settings_group_value" android:textColor="?attr/colorAppTextMuted" android:textSize="14sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -166,9 +226,9 @@
             android:layout_marginRight="20dp"
             android:layout_marginBottom="20dp">
             <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
-                android:text="Class" android:textColor="@color/white" android:textSize="15sp" />
+                android:text="@string/settings_class" android:textColor="?attr/colorAppTextPrimary" android:textSize="15sp" />
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="OD23IT" android:textColor="@color/text_muted" android:textSize="14sp" />
+                android:text="@string/settings_class_value" android:textColor="?attr/colorAppTextMuted" android:textSize="14sp" />
         </LinearLayout>
 
     </LinearLayout>

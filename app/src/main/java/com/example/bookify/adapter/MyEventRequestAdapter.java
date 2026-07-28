@@ -14,15 +14,20 @@ import java.util.List;
 public class MyEventRequestAdapter extends RecyclerView.Adapter<MyEventRequestAdapter.ViewHolder> {
 
     private final List<Event> events;
-    private final OnShareClickListener listener;
+    private final OnShareClickListener shareListener;
+    private final OnShareClickListener whatsAppListener;
+    private final OnShareClickListener scanListener;
 
     public interface OnShareClickListener {
         void onShareClick(Event event);
     }
 
-    public MyEventRequestAdapter(List<Event> events, OnShareClickListener listener) {
+    public MyEventRequestAdapter(List<Event> events, OnShareClickListener shareListener,
+                                  OnShareClickListener whatsAppListener, OnShareClickListener scanListener) {
         this.events = events;
-        this.listener = listener;
+        this.shareListener = shareListener;
+        this.whatsAppListener = whatsAppListener;
+        this.scanListener = scanListener;
     }
 
     @NonNull
@@ -41,9 +46,13 @@ public class MyEventRequestAdapter extends RecyclerView.Adapter<MyEventRequestAd
         holder.tvStatus.setText(event.getStatus());
 
         boolean canShare = Event.STATUS_PUBLISHED.equals(event.getStatus())
-                && event.isPrivate() && event.getAccessCode() != null;
-        holder.btnShare.setVisibility(canShare ? View.VISIBLE : View.GONE);
-        holder.btnShare.setOnClickListener(v -> listener.onShareClick(event));
+                && event.getAccessCode() != null;
+        holder.layoutShareActions.setVisibility(canShare ? View.VISIBLE : View.GONE);
+        holder.btnShare.setOnClickListener(v -> shareListener.onShareClick(event));
+        holder.btnShareWhatsApp.setOnClickListener(v -> whatsAppListener.onShareClick(event));
+
+        holder.btnScanEntry.setVisibility(canShare ? View.VISIBLE : View.GONE);
+        holder.btnScanEntry.setOnClickListener(v -> scanListener.onShareClick(event));
     }
 
     @Override
@@ -51,14 +60,18 @@ public class MyEventRequestAdapter extends RecyclerView.Adapter<MyEventRequestAd
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitle, tvInfo, tvStatus;
-        Button btnShare;
+        View layoutShareActions;
+        Button btnShare, btnShareWhatsApp, btnScanEntry;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
             tvTitle  = itemView.findViewById(R.id.tv_my_request_title);
             tvInfo   = itemView.findViewById(R.id.tv_my_request_info);
             tvStatus = itemView.findViewById(R.id.tv_my_request_status);
+            layoutShareActions = itemView.findViewById(R.id.layout_share_actions);
             btnShare = itemView.findViewById(R.id.btn_share_code);
+            btnShareWhatsApp = itemView.findViewById(R.id.btn_share_whatsapp);
+            btnScanEntry = itemView.findViewById(R.id.btn_scan_entry);
         }
     }
 }

@@ -39,7 +39,8 @@ public class EventRequestAdapter extends RecyclerView.Adapter<EventRequestAdapte
         EventRequest request = requests.get(position);
         holder.tvTitle.setText(request.getEvent().getTitle()
                 + (request.getEvent().isPrivate() ? " 🔒" : " 🌐"));
-        holder.tvOrganizer.setText("Requested by " + request.getOrganizerName());
+        holder.tvOrganizer.setText(holder.tvOrganizer.getContext()
+                .getString(R.string.event_request_requested_by, request.getOrganizerName()));
         holder.tvInfo.setText(request.getEvent().getCategory() + " · " + request.getEvent().getDate()
                 + " · " + request.getEvent().getTime() + " · " + request.getEvent().getPrice());
 

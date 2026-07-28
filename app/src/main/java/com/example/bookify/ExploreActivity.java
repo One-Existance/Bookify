@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.bookify.adapter.EventAdapter;
 import com.example.bookify.data.DatabaseHelper;
+import com.example.bookify.util.AuthGate;
 import com.google.android.material.textfield.TextInputEditText;
 
 public class ExploreActivity extends AppCompatActivity {
@@ -27,6 +28,10 @@ public class ExploreActivity extends AppCompatActivity {
         rvEvents.setLayoutManager(new LinearLayoutManager(this));
         adapter = new EventAdapter(db.getAllEvents());
         adapter.setOnEventClickListener(event -> {
+            if (!AuthGate.isLoggedIn(this)) {
+                AuthGate.promptLogin(this);
+                return;
+            }
             Intent intent = new Intent(this, EventDetailActivity.class);
             intent.putExtra("event_id",       event.getId());
             intent.putExtra("event_title",    event.getTitle());

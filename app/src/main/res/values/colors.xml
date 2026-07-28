@@ -11,4 +11,12 @@
     <color name="white">#FFFFFFFF</color>
     <color name="black">#FF000000</color>
     <color name="error_red">#CF6679</color>
+    <color name="whatsapp_green">#25D366</color>
+
+    <!-- Light palette (used by the default, non-night theme) -->
+    <color name="background_light">#F5F4FA</color>
+    <color name="surface_light">#FFFFFF</color>
+    <color name="text_primary_light">#1A1635</color>
+    <color name="text_muted_light">#6B6785</color>
+    <color name="chip_bg_light">#E7E4F6</color>
 </resources>

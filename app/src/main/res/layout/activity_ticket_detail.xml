@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_dark"
+    android:background="?attr/colorAppBackground"
     android:gravity="center_horizontal"
     android:orientation="vertical"
     android:padding="24dp">
@@ -17,15 +17,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="←"
-            android:textColor="@color/white"
+            android:textColor="?attr/colorAppTextPrimary"
             android:textSize="24sp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:text="Ticket Details"
-            android:textColor="@color/white"
+            android:text="@string/ticket_detail_title"
+            android:textColor="?attr/colorAppTextPrimary"
             android:textSize="20sp"
             android:textStyle="bold" />
     </RelativeLayout>
@@ -43,7 +43,7 @@
             android:layout_height="120dp"
             android:scaleType="centerCrop"
             android:layout_marginBottom="16dp"
-            android:background="@color/surface_dark"
+            android:background="?attr/colorAppSurface"
             android:visibility="gone"/>
 
         <TextView
@@ -61,7 +61,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="Location | Date"
-            android:textColor="@color/text_muted"
+            android:textColor="?attr/colorAppTextMuted"
             android:textSize="14sp" />
 
         <View
@@ -74,8 +74,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="SCAN TO VALIDATE"
-            android:textColor="@color/text_muted"
+            android:text="@string/ticket_detail_scan_to_validate"
+            android:textColor="?attr/colorAppTextMuted"
             android:textSize="12sp"
             android:letterSpacing="0.2"
             android:layout_marginBottom="16dp"/>
@@ -105,7 +105,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="8dp"
-            android:text="PAYMENT VERIFIED ✓"
+            android:text="@string/ticket_detail_payment_verified"
             android:textColor="@color/primary_purple"
             android:textSize="12sp"
             android:textStyle="bold" />

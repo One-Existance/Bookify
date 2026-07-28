@@ -4,47 +4,51 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_dark">
+    android:background="?attr/colorAppBackground">
 
     <!-- Bottom nav -->
     <LinearLayout
         android:id="@+id/bottom_nav"
         android:layout_width="match_parent"
         android:layout_height="64dp"
-        android:background="@color/surface_dark"
+        android:background="?attr/colorAppSurface"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <LinearLayout android:id="@+id/nav_home" android:layout_width="0dp" android:layout_height="match_parent"
             android:layout_weight="1" android:gravity="center" android:orientation="vertical">
+            <ImageView android:layout_width="22dp" android:layout_height="22dp"
+                android:src="@drawable/ic_nav_home" app:tint="?attr/colorAppTextMuted" android:contentDescription="@string/nav_home" />
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="⌂" android:textColor="@color/text_muted" android:textSize="20sp" />
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="Home" android:textColor="@color/text_muted" android:textSize="11sp" />
+                android:layout_marginTop="2dp"
+                android:text="@string/nav_home" android:textColor="?attr/colorAppTextMuted" android:textSize="11sp" />
         </LinearLayout>
 
         <LinearLayout android:layout_width="0dp" android:layout_height="match_parent"
             android:layout_weight="1" android:gravity="center" android:orientation="vertical">
+            <ImageView android:layout_width="22dp" android:layout_height="22dp"
+                android:src="@drawable/ic_nav_explore" app:tint="?attr/colorAppTextMuted" android:contentDescription="@string/nav_explore" />
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="⊕" android:textColor="@color/text_muted" android:textSize="20sp" />
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="Explore" android:textColor="@color/text_muted" android:textSize="11sp" />
+                android:layout_marginTop="2dp"
+                android:text="@string/nav_explore" android:textColor="?attr/colorAppTextMuted" android:textSize="11sp" />
         </LinearLayout>
 
         <LinearLayout android:id="@+id/nav_tickets" android:layout_width="0dp" android:layout_height="match_parent"
             android:layout_weight="1" android:gravity="center" android:orientation="vertical">
+            <ImageView android:layout_width="22dp" android:layout_height="22dp"
+                android:src="@drawable/ic_ticket" app:tint="@color/primary_purple" android:contentDescription="@string/nav_tickets" />
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="✉" android:textColor="@color/primary_purple" android:textSize="20sp" />
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="Tickets" android:textColor="@color/primary_purple" android:textSize="11sp" />
+                android:layout_marginTop="2dp"
+                android:text="@string/nav_tickets" android:textColor="@color/primary_purple" android:textSize="11sp" />
         </LinearLayout>
 
         <LinearLayout android:id="@+id/nav_profile" android:layout_width="0dp" android:layout_height="match_parent"
             android:layout_weight="1" android:gravity="center" android:orientation="vertical">
+            <ImageView android:layout_width="22dp" android:layout_height="22dp"
+                android:src="@drawable/ic_nav_profile" app:tint="?attr/colorAppTextMuted" android:contentDescription="@string/nav_profile" />
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="◎" android:textColor="@color/text_muted" android:textSize="20sp" />
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="Profile" android:textColor="@color/text_muted" android:textSize="11sp" />
+                android:layout_marginTop="2dp"
+                android:text="@string/nav_profile" android:textColor="?attr/colorAppTextMuted" android:textSize="11sp" />
         </LinearLayout>
     </LinearLayout>
 
@@ -67,8 +71,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="Private event"
-                android:textColor="@color/white"
+                android:text="@string/private_event_title"
+                android:textColor="?attr/colorAppTextPrimary"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="32dp" />
@@ -85,8 +89,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="Invite-only event"
-                android:textColor="@color/white"
+                android:text="@string/private_event_invite_only"
+                android:textColor="?attr/colorAppTextPrimary"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -96,29 +100,29 @@
                 android:gravity="center"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="32dp"
-                android:text="Enter the access code your organizer shared with you\nto join this private event."
-                android:textColor="@color/text_muted"
+                android:text="@string/private_event_description"
+                android:textColor="?attr/colorAppTextMuted"
                 android:textSize="14sp" />
 
             <!-- Access code input -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Access code"
-                android:textColor="@color/text_muted"
+                android:text="@string/private_event_access_code_label"
+                android:textColor="?attr/colorAppTextMuted"
                 android:textSize="13sp"
                 android:layout_marginBottom="8dp" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Enter access code…"
+                android:hint="@string/private_event_access_code_hint"
                 style="@style/BookifyInputLayout">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_access_code"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/white" />
+                    android:textColor="?attr/colorAppTextPrimary" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Access button -->
@@ -128,7 +132,7 @@
                 android:layout_height="52dp"
                 android:layout_marginTop="20dp"
                 android:background="@drawable/bg_button_amber"
-                android:text="Access event →"
+                android:text="@string/private_event_access_button"
                 android:textColor="@color/white"
                 android:textSize="16sp"
                 android:textStyle="bold" />

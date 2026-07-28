@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_dark"
+    android:background="?attr/colorAppBackground"
     android:orientation="vertical">
 
     <!-- Top bar -->
@@ -22,7 +22,7 @@
             android:layout_height="40dp"
             android:gravity="center"
             android:text="←"
-            android:textColor="@color/white"
+            android:textColor="?attr/colorAppTextPrimary"
             android:textSize="22sp" />
 
         <TextView
@@ -30,8 +30,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="My Bookings"
-            android:textColor="@color/white"
+            android:text="@string/my_bookings_title"
+            android:textColor="?attr/colorAppTextPrimary"
             android:textSize="17sp"
             android:textStyle="bold"
             android:layout_marginEnd="40dp" />
@@ -44,8 +44,8 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="48dp"
-        android:text="No bookings yet.\nTap a concert or event and hit 'Book Ticket'!"
-        android:textColor="@color/text_muted"
+        android:text="@string/my_bookings_empty"
+        android:textColor="?attr/colorAppTextMuted"
         android:textSize="15sp"
         android:visibility="gone" />
 

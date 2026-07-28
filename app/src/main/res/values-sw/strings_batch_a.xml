@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Login -->
+    <string name="login_subtitle">Ingia kwenye akaunti yako ya Bookify</string>
+    <string name="login_no_account">Huna akaunti?</string>
+    <string name="login_signup_link">Jisajili</string>
+    <string name="login_error_email_required">Tafadhali weka barua pepe yako.</string>
+    <string name="login_error_password_required">Tafadhali weka nenosiri lako.</string>
+    <string name="login_error_test_account_missing">Akaunti ya majaribio haipo — sakinisha upya programu ili kuweka upya hifadhidata.</string>
+    <string name="login_error_invalid_credentials">Barua pepe au nenosiri sio sahihi.</string>
+
+    <!-- Register -->
+    <string name="register_subtitle">Jiunge na Bookify uanze kuhifadhi matukio</string>
+    <string name="register_confirm_password_hint">Thibitisha Nenosiri</string>
+    <string name="register_have_account">Una akaunti tayari?</string>
+    <string name="register_error_fields_required">Tafadhali jaza sehemu zote zinazohitajika</string>
+    <string name="register_error_passwords_mismatch">Manenosiri hayafanani</string>
+    <string name="register_error_password_length">Nenosiri lazima liwe na herufi 6 au zaidi</string>
+    <string name="register_error_generic">Usajili umeshindikana. Tafadhali jaribu tena.</string>
+    <string name="register_error_email_exists">Barua pepe tayari ipo</string>
+    <string name="register_error_weak_password">Nenosiri ni dhaifu</string>
+
+    <!-- Home feed -->
+    <string name="home_good_morning">Habari za asubuhi,</string>
+    <string name="category_all">Zote</string>
+    <string name="category_concerts">Tamasha</string>
+    <string name="category_sports">Michezo</string>
+    <string name="category_conference">Mkutano</string>
+    <string name="category_gala">Gala</string>
+    <string name="category_party">Sherehe</string>
+
+    <!-- Explore -->
+    <string name="explore_search_hint">Tafuta matukio, maeneo…</string>
+    <string name="explore_all_events">Matukio yote</string>
+</resources>

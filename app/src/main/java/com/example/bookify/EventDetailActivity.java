@@ -51,7 +51,7 @@ public class EventDetailActivity extends AppCompatActivity {
             iv.setVisibility(android.view.View.VISIBLE);
             iv.setImageURI(android.net.Uri.parse(image));
             findViewById(R.id.image_overlay).setVisibility(android.view.View.VISIBLE);
-            findViewById(R.id.tv_detail_icon).setVisibility(android.view.View.GONE);
+            findViewById(R.id.iv_detail_icon).setVisibility(android.view.View.GONE);
         }
 
         if (location != null && date != null)
@@ -73,14 +73,14 @@ public class EventDetailActivity extends AppCompatActivity {
         int userId = prefs.getInt("user_id", -1);
 
         if (userId == -1 || eventId == -1) {
-            showDialog("Not logged in", "Please log in to book tickets.", null);
+            showDialog(getString(R.string.event_detail_not_logged_in_title), getString(R.string.event_detail_not_logged_in_message), null);
             return;
         }
 
         if (db.isAlreadyBooked(userId, eventId)) {
             String existing = db.getTicketNumber(userId, eventId);
             if (existing != null) {
-                showDialog("Already booked", "Your ticket number:\n" + existing, existing);
+                showDialog(getString(R.string.event_detail_already_booked_title), getString(R.string.event_detail_ticket_number_prefix) + existing, existing);
             } else {
                 // Booking exists but not completed (status is PENDING)
                 goToPayment();
@@ -92,7 +92,7 @@ public class EventDetailActivity extends AppCompatActivity {
         if (result > 0) {
             goToPayment();
         } else {
-            showDialog("Booking failed", "Something went wrong. Please try again.", null);
+            showDialog(getString(R.string.event_detail_booking_failed_title), getString(R.string.error_generic), null);
         }
     }
 
@@ -133,10 +133,10 @@ public class EventDetailActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
                 .setTitle(title)
                 .setMessage(message)
-                .setNegativeButton("Close", null);
+                .setNegativeButton(R.string.dialog_close, null);
 
         if (ticket != null) {
-            builder.setPositiveButton("View My Tickets", (d, w) ->
+            builder.setPositiveButton(R.string.event_detail_view_my_tickets, (d, w) ->
                     startActivity(new Intent(this, MyTicketsActivity.class)));
         }
 

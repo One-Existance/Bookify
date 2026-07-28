@@ -147,7 +147,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 enableLocationComponent(mMap.getStyle());
             }
         } else {
-            Toast.makeText(this, "Location permission denied", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.map_location_permission_denied, Toast.LENGTH_SHORT).show();
         }
     }
 

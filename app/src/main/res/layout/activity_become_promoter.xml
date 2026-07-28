@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_dark">
+    android:background="?attr/colorAppBackground">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -24,8 +24,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Become a Promoter"
-                    android:textColor="@color/white"
+                    android:text="@string/promoter_become_title"
+                    android:textColor="?attr/colorAppTextPrimary"
                     android:textSize="20sp"
                     android:textStyle="bold" />
                 <TextView
@@ -33,7 +33,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
-                    android:text="← Back"
+                    android:text="@string/nav_back_arrow"
                     android:textColor="@color/primary_purple"
                     android:textSize="14sp" />
             </RelativeLayout>
@@ -41,8 +41,8 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Tell us about your hall or venue. An admin will review this before you can start accepting event requests."
-                android:textColor="@color/text_muted"
+                android:text="@string/promoter_become_desc"
+                android:textColor="?attr/colorAppTextMuted"
                 android:textSize="13sp"
                 android:layout_marginBottom="24dp"/>
 
@@ -51,10 +51,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="54dp"
                 android:background="@drawable/bg_admin_input"
-                android:hint="Hall / Venue name"
+                android:hint="@string/promoter_hall_name_hint"
                 android:paddingHorizontal="20dp"
-                android:textColor="@color/white"
-                android:textColorHint="@color/text_muted"
+                android:textColor="?attr/colorAppTextPrimary"
+                android:textColorHint="?attr/colorAppTextMuted"
                 android:textSize="15sp"
                 android:layout_marginBottom="16dp"/>
 
@@ -63,10 +63,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="54dp"
                 android:background="@drawable/bg_admin_input"
-                android:hint="Location"
+                android:hint="@string/promoter_location_hint"
                 android:paddingHorizontal="20dp"
-                android:textColor="@color/white"
-                android:textColorHint="@color/text_muted"
+                android:textColor="?attr/colorAppTextPrimary"
+                android:textColorHint="?attr/colorAppTextMuted"
                 android:textSize="15sp"
                 android:layout_marginBottom="8dp"/>
 
@@ -75,7 +75,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:text="Pick on Map"
+                android:text="@string/promoter_pick_on_map"
                 android:textColor="@color/primary_purple"
                 app:strokeColor="@color/primary_purple"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
@@ -85,11 +85,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
                 android:background="@drawable/bg_admin_input"
-                android:hint="Describe your hall (capacity, facilities, etc.)"
+                android:hint="@string/promoter_hall_desc_hint"
                 android:gravity="top"
                 android:padding="20dp"
-                android:textColor="@color/white"
-                android:textColorHint="@color/text_muted"
+                android:textColor="?attr/colorAppTextPrimary"
+                android:textColorHint="?attr/colorAppTextMuted"
                 android:textSize="15sp"
                 android:layout_marginBottom="24dp"/>
 
@@ -102,7 +102,7 @@
         android:layout_height="56dp"
         android:layout_margin="20dp"
         android:backgroundTint="@color/primary_purple"
-        android:text="SUBMIT APPLICATION"
+        android:text="@string/promoter_submit_application"
         android:textColor="@color/white"
         android:textStyle="bold"
         app:cornerRadius="12dp"

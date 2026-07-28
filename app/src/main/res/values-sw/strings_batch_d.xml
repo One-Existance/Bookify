@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Admin dashboard -->
+    <string name="admin_dashboard_title">Dashibodi ya Msimamizi</string>
+    <string name="admin_logout">Toka</string>
+    <string name="admin_stat_users">Watumiaji</string>
+    <string name="admin_stat_events">Matukio</string>
+    <string name="admin_stat_revenue">Mapato</string>
+    <string name="admin_select_event_picture">CHAGUA PICHA YA TUKIO</string>
+    <string name="admin_event_title_hint">Kichwa cha Tukio</string>
+    <string name="admin_category_hint">Aina (mfano: Tamasha, Gala)</string>
+    <string name="admin_location_hint">Mahali</string>
+    <string name="admin_pin_button">PIN</string>
+    <string name="admin_date_hint">Tarehe (mfano: Jun 20)</string>
+    <string name="admin_time_hint">Muda (mfano: 7:00 M...)</string>
+    <string name="admin_price_hint">Bei (mfano: Tsh 15k)</string>
+    <string name="admin_slots_hint">Nafasi (Namba)</string>
+    <string name="admin_description_hint">Maelezo</string>
+    <string name="admin_view_as_user">Tazama Kama Mtumiaji wa Kawaida</string>
+    <string name="admin_all_users_title">Watumiaji Wote</string>
+    <string name="admin_add_promoter_button">Ongeza Mtangazaji</string>
+    <string name="admin_pending_applications_title">Maombi ya Utangazaji Yanayosubiri</string>
+    <string name="admin_no_pending_applications">Hakuna maombi yanayosubiri.</string>
+    <string name="admin_manage_events_title">Simamia Matukio (hali zote)</string>
+    <string name="admin_post_event_now">CHAPISHA TUKIO SASA</string>
+    <string name="admin_event_image_desc">Picha ya Tukio</string>
+    <string name="admin_view_button">Tazama</string>
+    <string name="admin_delete_button">Futa</string>
+    <string name="admin_reject_button">Kataa</string>
+    <string name="admin_approve_button">Kubali</string>
+    <string name="admin_make_promoter_button">Fanya Mtangazaji</string>
+    <string name="admin_email_hint">Barua pepe</string>
+    <string name="admin_temp_password_hint">Nenosiri la muda (herufi 6 au zaidi)</string>
+
+    <!-- Admin dashboard: toasts, dialogs, notifications -->
+    <string name="admin_event_deleted">Tukio limefutwa</string>
+    <string name="admin_promoter_verified_fmt">%1$s amethibitishwa!</string>
+    <string name="admin_now_promoter_fmt">%1$s sasa ni Mtangazaji</string>
+    <string name="admin_promoter_approved_title">Mtangazaji Amekubaliwa</string>
+    <string name="admin_now_promoter_notif_fmt">%1$s sasa ni mtangazaji.</string>
+    <string name="admin_application_rejected">Ombi limekataliwa</string>
+    <string name="admin_application_rejected_title">Ombi Limekataliwa</string>
+    <string name="admin_application_rejected_notif_fmt">Ombi la utangazaji la %1$s limekataliwa.</string>
+    <string name="admin_register_new_promoter_title">Sajili Mtangazaji Mpya</string>
+    <string name="admin_register_button">Sajili</string>
+    <string name="admin_fill_all_fields">Tafadhali jaza sehemu zote</string>
+    <string name="admin_password_min_length">Nenosiri lazima liwe na herufi 6 au zaidi</string>
+    <string name="admin_promoter_registered">Mtangazaji amesajiliwa!</string>
+    <string name="admin_registration_failed">Usajili umeshindikana</string>
+    <string name="admin_cancel">Ghairi</string>
+    <string name="admin_image_selected">Picha Imechaguliwa!</string>
+    <string name="admin_location_pinned">Mahali pamewekwa!</string>
+    <string name="admin_fill_required_fields">Tafadhali jaza sehemu zinazohitajika</string>
+    <string name="admin_event_posted_success">Tukio limechapishwa kwa mafanikio! 🚀</string>
+    <string name="admin_post_event_failed">Imeshindwa kuchapisha tukio</string>
+
+    <!-- Map / location picker -->
+    <string name="map_back_button">Nyuma</string>
+    <string name="map_hint_drop_pin">Gusa ramani kuweka pini kwenye eneo lako</string>
+    <string name="map_use_this_location">Tumia Mahali Hapa</string>
+    <string name="map_get_directions">Pata Muelekeo</string>
+    <string name="map_move_to_pick_location">Sogeza ramani kuchagua mahali</string>
+    <string name="map_confirm_location_caps">THIBITISHA MAHALI HAPA</string>
+    <string name="map_location_permission_denied">Ruhusa ya mahali imekataliwa</string>
+</resources>

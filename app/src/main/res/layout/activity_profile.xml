@@ -4,47 +4,51 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_dark">
+    android:background="?attr/colorAppBackground">
 
     <!-- Bottom nav -->
     <LinearLayout
         android:id="@+id/bottom_nav"
         android:layout_width="match_parent"
         android:layout_height="64dp"
-        android:background="@color/surface_dark"
+        android:background="?attr/colorAppSurface"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <LinearLayout android:id="@+id/nav_home" android:layout_width="0dp" android:layout_height="match_parent"
             android:layout_weight="1" android:gravity="center" android:orientation="vertical">
+            <ImageView android:layout_width="22dp" android:layout_height="22dp"
+                android:src="@drawable/ic_nav_home" app:tint="?attr/colorAppTextMuted" android:contentDescription="@string/nav_home" />
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="⌂" android:textColor="@color/text_muted" android:textSize="20sp" />
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="Home" android:textColor="@color/text_muted" android:textSize="11sp" />
+                android:layout_marginTop="2dp"
+                android:text="@string/nav_home" android:textColor="?attr/colorAppTextMuted" android:textSize="11sp" />
         </LinearLayout>
 
         <LinearLayout android:layout_width="0dp" android:layout_height="match_parent"
             android:layout_weight="1" android:gravity="center" android:orientation="vertical">
+            <ImageView android:layout_width="22dp" android:layout_height="22dp"
+                android:src="@drawable/ic_nav_explore" app:tint="?attr/colorAppTextMuted" android:contentDescription="@string/nav_explore" />
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="⊕" android:textColor="@color/text_muted" android:textSize="20sp" />
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="Explore" android:textColor="@color/text_muted" android:textSize="11sp" />
+                android:layout_marginTop="2dp"
+                android:text="@string/nav_explore" android:textColor="?attr/colorAppTextMuted" android:textSize="11sp" />
         </LinearLayout>
 
         <LinearLayout android:id="@+id/nav_tickets" android:layout_width="0dp" android:layout_height="match_parent"
             android:layout_weight="1" android:gravity="center" android:orientation="vertical">
+            <ImageView android:layout_width="22dp" android:layout_height="22dp"
+                android:src="@drawable/ic_ticket" app:tint="?attr/colorAppTextMuted" android:contentDescription="@string/nav_tickets" />
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="✉" android:textColor="@color/text_muted" android:textSize="20sp" />
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="Tickets" android:textColor="@color/text_muted" android:textSize="11sp" />
+                android:layout_marginTop="2dp"
+                android:text="@string/nav_tickets" android:textColor="?attr/colorAppTextMuted" android:textSize="11sp" />
         </LinearLayout>
 
         <LinearLayout android:id="@+id/nav_profile" android:layout_width="0dp" android:layout_height="match_parent"
             android:layout_weight="1" android:gravity="center" android:orientation="vertical">
+            <ImageView android:layout_width="22dp" android:layout_height="22dp"
+                android:src="@drawable/ic_nav_profile" app:tint="@color/primary_purple" android:contentDescription="@string/nav_profile" />
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="◎" android:textColor="@color/primary_purple" android:textSize="20sp" />
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="Profile" android:textColor="@color/primary_purple" android:textSize="11sp" />
+                android:layout_marginTop="2dp"
+                android:text="@string/nav_profile" android:textColor="@color/primary_purple" android:textSize="11sp" />
         </LinearLayout>
     </LinearLayout>
 
@@ -101,15 +105,33 @@
                     android:padding="2dp"/>
             </RelativeLayout>
 
-            <TextView
-                android:id="@+id/tv_name"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Sarah Mahwera"
-                android:textColor="@color/white"
-                android:textSize="22sp"
-                android:textStyle="bold" />
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sarah Mahwera"
+                    android:textColor="?attr/colorAppTextPrimary"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/btn_edit_name"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginStart="6dp"
+                    android:padding="6dp"
+                    android:src="@drawable/ic_edit"
+                    app:tint="@color/primary_purple"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/edit_profile_title" />
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/tv_email"
@@ -117,11 +139,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:text="sarah@email.com"
-                android:textColor="@color/text_muted"
+                android:textColor="?attr/colorAppTextMuted"
                 android:textSize="14sp" />
 
             <View android:layout_width="match_parent" android:layout_height="1dp"
-                android:background="@color/surface_dark" android:layout_marginVertical="32dp" />
+                android:background="?attr/colorAppSurface" android:layout_marginVertical="32dp" />
 
             <!-- My Bookings -->
             <LinearLayout
@@ -133,10 +155,14 @@
                 android:gravity="center_vertical"
                 android:padding="16dp"
                 android:layout_marginBottom="12dp">
+                <ImageView android:layout_width="20dp" android:layout_height="20dp"
+                    android:layout_marginEnd="14dp"
+                    android:src="@drawable/ic_ticket" app:tint="@color/primary_purple"
+                    android:contentDescription="@string/profile_my_bookings" />
                 <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
-                    android:text="🎟  My Bookings" android:textColor="@color/white" android:textSize="15sp" />
+                    android:text="@string/profile_my_bookings" android:textColor="?attr/colorAppTextPrimary" android:textSize="15sp" />
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="›" android:textColor="@color/text_muted" android:textSize="20sp" />
+                    android:text="›" android:textColor="?attr/colorAppTextMuted" android:textSize="20sp" />
             </LinearLayout>
 
             <!-- My Organized Events -->
@@ -149,10 +175,14 @@
                 android:gravity="center_vertical"
                 android:padding="16dp"
                 android:layout_marginBottom="12dp">
+                <ImageView android:layout_width="20dp" android:layout_height="20dp"
+                    android:layout_marginEnd="14dp"
+                    android:src="@drawable/ic_event" app:tint="@color/primary_purple"
+                    android:contentDescription="@string/profile_my_organized_events" />
                 <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
-                    android:text="🎪  My Organized Events" android:textColor="@color/white" android:textSize="15sp" />
+                    android:text="@string/profile_my_organized_events" android:textColor="?attr/colorAppTextPrimary" android:textSize="15sp" />
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="›" android:textColor="@color/text_muted" android:textSize="20sp" />
+                    android:text="›" android:textColor="?attr/colorAppTextMuted" android:textSize="20sp" />
             </LinearLayout>
 
             <!-- Promoter status/entry point -->
@@ -165,10 +195,14 @@
                 android:gravity="center_vertical"
                 android:padding="16dp"
                 android:layout_marginBottom="12dp">
+                <ImageView android:layout_width="20dp" android:layout_height="20dp"
+                    android:layout_marginEnd="14dp"
+                    android:src="@drawable/ic_storefront" app:tint="@color/primary_purple"
+                    android:contentDescription="@string/profile_become_promoter" />
                 <TextView android:id="@+id/tv_promoter_row_label" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
-                    android:text="🏟  Become a Promoter" android:textColor="@color/white" android:textSize="15sp" />
+                    android:text="@string/profile_become_promoter" android:textColor="?attr/colorAppTextPrimary" android:textSize="15sp" />
                 <TextView android:id="@+id/tv_promoter_row_arrow" android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="›" android:textColor="@color/text_muted" android:textSize="20sp" />
+                    android:text="›" android:textColor="?attr/colorAppTextMuted" android:textSize="20sp" />
             </LinearLayout>
 
             <!-- Settings -->
@@ -181,10 +215,14 @@
                 android:gravity="center_vertical"
                 android:padding="16dp"
                 android:layout_marginBottom="24dp">
+                <ImageView android:layout_width="20dp" android:layout_height="20dp"
+                    android:layout_marginEnd="14dp"
+                    android:src="@drawable/ic_settings" app:tint="@color/primary_purple"
+                    android:contentDescription="@string/profile_settings" />
                 <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
-                    android:text="⚙  Settings" android:textColor="@color/white" android:textSize="15sp" />
+                    android:text="@string/profile_settings" android:textColor="?attr/colorAppTextPrimary" android:textSize="15sp" />
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="›" android:textColor="@color/text_muted" android:textSize="20sp" />
+                    android:text="›" android:textColor="?attr/colorAppTextMuted" android:textSize="20sp" />
             </LinearLayout>
 
             <!-- Logout -->
@@ -193,7 +231,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="52dp"
                 android:background="@drawable/bg_info_cell"
-                android:text="Log out"
+                android:text="@string/profile_logout"
                 android:textColor="@color/error_red"
                 android:textSize="16sp"
                 android:textStyle="bold" />

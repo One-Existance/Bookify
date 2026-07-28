@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Event Detail -->
+    <string name="event_detail_title">Maelezo ya Tukio</string>
+    <string name="event_detail_label_date">📅 Tarehe</string>
+    <string name="event_detail_label_time">🕖 Muda</string>
+    <string name="event_detail_label_slots">🎟 Nafasi zilizobaki</string>
+    <string name="event_detail_label_price">💰 Bei</string>
+    <string name="event_detail_section_about">KUHUSU</string>
+    <string name="event_detail_view_map">📍 Tazama kwenye Ramani</string>
+    <string name="event_detail_book_ticket">Nunua tiketi →</string>
+    <string name="event_detail_not_logged_in_title">Hujaingia</string>
+    <string name="event_detail_not_logged_in_message">Tafadhali ingia ili kununua tiketi.</string>
+    <string name="event_detail_already_booked_title">Tayari Umenunua</string>
+    <string name="event_detail_ticket_number_prefix">Nambari yako ya tiketi:\n</string>
+    <string name="event_detail_booking_failed_title">Uwekaji Nafasi Umeshindikana</string>
+    <string name="event_detail_view_my_tickets">Tazama Tiketi Zangu</string>
+    <string name="dialog_close">Funga</string>
+
+    <!-- My Tickets -->
+    <string name="my_tickets_title">Tiketi Zangu</string>
+    <string name="my_tickets_private">🔒 Faragha</string>
+    <string name="my_tickets_tab_upcoming">Zijazo</string>
+    <string name="my_tickets_tab_past">Zilizopita</string>
+    <string name="my_tickets_empty">Hakuna tiketi amilifu zilizopatikana.</string>
+    <string name="my_tickets_toast_no_past">Hakuna tiketi za zamani</string>
+
+    <!-- My Bookings -->
+    <string name="my_bookings_title">Nafasi Zangu</string>
+    <string name="my_bookings_empty">Bado hujaweka nafasi yoyote.\nGusa tamasha au tukio kisha bofya \'Nunua Tiketi\'!</string>
+
+    <!-- Private Event -->
+    <string name="private_event_title">Tukio la Faragha</string>
+    <string name="private_event_invite_only">Tukio la Mwaliko Pekee</string>
+    <string name="private_event_description">Weka msimbo wa ufikiaji ulioshirikiwa na mpangaji\nili kujiunga na tukio hili la faragha.</string>
+    <string name="private_event_access_code_label">Msimbo wa ufikiaji</string>
+    <string name="private_event_access_code_hint">Weka msimbo wa ufikiaji…</string>
+    <string name="private_event_access_button">Fungua Tukio →</string>
+    <string name="private_event_error_empty_code">Tafadhali weka msimbo wa ufikiaji.</string>
+    <string name="private_event_error_invalid_code">Msimbo si sahihi au umeisha muda.</string>
+
+    <!-- Payment -->
+    <string name="payment_title">Malipo ya Mongike</string>
+    <string name="payment_select_provider">Chagua Mtoa Huduma wa Pesa za Simu</string>
+    <string name="payment_provider_mpesa">Vodacom M-Pesa</string>
+    <string name="payment_provider_tigo">Tigo Pesa</string>
+    <string name="payment_provider_airtel">Airtel Money</string>
+    <string name="payment_provider_halopesa">HaloPesa</string>
+    <string name="payment_phone_hint">Nambari ya Simu (mf. 255...)</string>
+    <string name="payment_pay_now">Lipa Sasa</string>
+    <string name="payment_toast_enter_phone">Weka nambari ya simu</string>
+    <string name="payment_toast_success">Malipo Yamefanikiwa! Tiketi yako iko tayari.</string>
+    <string name="payment_toast_verification_failed">Uthibitishaji wa malipo umeshindikana. Kama umelipa, tafadhali wasiliana na usaidizi.</string>
+    <string name="payment_toast_could_not_initiate">Imeshindwa kuanzisha malipo. Angalia mtandao wako.</string>
+
+    <!-- Ticket Detail -->
+    <string name="ticket_detail_title">Maelezo ya Tiketi</string>
+    <string name="ticket_detail_scan_to_validate">SKANI ILI KUTHIBITISHA</string>
+    <string name="ticket_detail_payment_verified">MALIPO YAMETHIBITISHWA ✓</string>
+
+    <!-- Booking Card -->
+    <string name="booking_card_status_active">Hai</string>
+    <string name="booking_card_ticket_no_label">Namba ya Tiketi</string>
+    <string name="booking_card_paid">Imelipwa ✓</string>
+</resources>

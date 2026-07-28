@@ -21,6 +21,9 @@ public class AdminEventAdapter extends RecyclerView.Adapter<AdminEventAdapter.Ad
     public interface OnEventActionListener {
         void onDeleteClick(Event event);
         void onViewClick(Event event);
+        void onShareClick(Event event);
+        void onShareWhatsAppClick(Event event);
+        void onScanClick(Event event);
     }
 
     public AdminEventAdapter(List<Event> events, DatabaseHelper db, OnEventActionListener listener) {
@@ -57,6 +60,14 @@ public class AdminEventAdapter extends RecyclerView.Adapter<AdminEventAdapter.Ad
 
         holder.btnDelete.setOnClickListener(v -> listener.onDeleteClick(event));
         holder.btnView.setOnClickListener(v -> listener.onViewClick(event));
+
+        boolean canShare = Event.STATUS_PUBLISHED.equals(event.getStatus()) && event.getAccessCode() != null;
+        holder.layoutShareActions.setVisibility(canShare ? View.VISIBLE : View.GONE);
+        holder.btnShare.setOnClickListener(v -> listener.onShareClick(event));
+        holder.btnShareWhatsApp.setOnClickListener(v -> listener.onShareWhatsAppClick(event));
+
+        holder.btnScanEntry.setVisibility(canShare ? View.VISIBLE : View.GONE);
+        holder.btnScanEntry.setOnClickListener(v -> listener.onScanClick(event));
     }
 
     @Override
@@ -65,7 +76,8 @@ public class AdminEventAdapter extends RecyclerView.Adapter<AdminEventAdapter.Ad
     static class AdminViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitle, tvInfo, tvStatus;
         android.widget.ImageView ivImage;
-        Button btnDelete, btnView;
+        Button btnDelete, btnView, btnShare, btnShareWhatsApp, btnScanEntry;
+        View layoutShareActions;
 
         AdminViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -75,6 +87,10 @@ public class AdminEventAdapter extends RecyclerView.Adapter<AdminEventAdapter.Ad
             ivImage = itemView.findViewById(R.id.iv_admin_event_image);
             btnDelete = itemView.findViewById(R.id.btn_delete_event);
             btnView = itemView.findViewById(R.id.btn_view_event);
+            layoutShareActions = itemView.findViewById(R.id.layout_admin_share_actions);
+            btnShare = itemView.findViewById(R.id.btn_admin_share_code);
+            btnShareWhatsApp = itemView.findViewById(R.id.btn_admin_share_whatsapp);
+            btnScanEntry = itemView.findViewById(R.id.btn_admin_scan_entry);
         }
     }
 }

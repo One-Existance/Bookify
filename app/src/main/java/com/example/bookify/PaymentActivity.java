@@ -55,7 +55,7 @@ public class PaymentActivity extends AppCompatActivity {
         String phone = etPhone.getText().toString().trim();
 
         if (TextUtils.isEmpty(phone)) {
-            Toast.makeText(this, "Enter phone number", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.payment_toast_enter_phone, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -90,18 +90,18 @@ public class PaymentActivity extends AppCompatActivity {
                     btnPay.setEnabled(true);
                     if (success) {
                         db.completePayment(userId, eventId);
-                        Toast.makeText(this, "Payment Successful! Your ticket is ready.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, R.string.payment_toast_success, Toast.LENGTH_LONG).show();
                         setResult(RESULT_OK);
                         finish();
                     } else {
-                        Toast.makeText(this, "Payment verification failed. If you paid, please contact support.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, R.string.payment_toast_verification_failed, Toast.LENGTH_LONG).show();
                     }
                 });
             } else {
                 new Handler(Looper.getMainLooper()).post(() -> {
                     progressBar.setVisibility(View.GONE);
                     btnPay.setEnabled(true);
-                    Toast.makeText(this, "Could not initiate payment. Check your network.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.payment_toast_could_not_initiate, Toast.LENGTH_SHORT).show();
                 });
             }
         }).start();

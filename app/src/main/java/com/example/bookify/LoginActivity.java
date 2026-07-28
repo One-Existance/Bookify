@@ -55,8 +55,8 @@ public class LoginActivity extends AppCompatActivity {
         String email    = etEmail.getText()    != null ? etEmail.getText().toString().trim()    : "";
         String password = etPassword.getText() != null ? etPassword.getText().toString().trim() : "";
 
-        if (TextUtils.isEmpty(email))    { showError("Please enter your email.");    return; }
-        if (TextUtils.isEmpty(password)) { showError("Please enter your password."); return; }
+        if (TextUtils.isEmpty(email))    { showError(getString(R.string.login_error_email_required));    return; }
+        if (TextUtils.isEmpty(password)) { showError(getString(R.string.login_error_password_required)); return; }
 
         if (email.equalsIgnoreCase(DatabaseHelper.TEST_USER_EMAIL)) {
             // ... (keep existing test logic)
@@ -64,7 +64,7 @@ public class LoginActivity extends AppCompatActivity {
             if (testUser != null) {
                 routeAfterLogin(testUser);
             } else {
-                showError("Test account missing — reinstall the app to reseed the database.");
+                showError(getString(R.string.login_error_test_account_missing));
             }
             return;
         }
@@ -74,7 +74,7 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> {
                     if (e instanceof FirebaseAuthInvalidUserException
                             || e instanceof FirebaseAuthInvalidCredentialsException) {
-                        showError("Invalid email or password.");
+                        showError(getString(R.string.login_error_invalid_credentials));
                     } else {
                         showError("Login failed: " + e.getMessage());
                     }

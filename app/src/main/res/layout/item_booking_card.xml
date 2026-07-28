@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:scaleType="centerCrop"
-        android:background="@color/surface_dark"
+        android:background="?attr/colorAppSurface"
         android:layout_marginBottom="10dp"
         android:visibility="gone"/>
 
@@ -24,13 +24,13 @@
             android:id="@+id/tv_booking_category"
             android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
             android:text="CONCERT"
-            android:textColor="@color/text_muted" android:textSize="11sp" android:letterSpacing="0.1" />
+            android:textColor="?attr/colorAppTextMuted" android:textSize="11sp" android:letterSpacing="0.1" />
 
         <TextView
             android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:background="@drawable/bg_active_badge"
             android:paddingHorizontal="12dp" android:paddingVertical="4dp"
-            android:text="Active" android:textColor="@color/white" android:textSize="12sp" />
+            android:text="@string/booking_card_status_active" android:textColor="@color/white" android:textSize="12sp" />
     </LinearLayout>
 
     <TextView
@@ -48,7 +48,7 @@
             android:id="@+id/tv_booking_date"
             android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
             android:text="Date"
-            android:textColor="@color/text_muted" android:textSize="13sp" />
+            android:textColor="?attr/colorAppTextMuted" android:textSize="13sp" />
 
         <TextView
             android:id="@+id/tv_booking_price"
@@ -68,7 +68,7 @@
         <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
             android:layout_weight="1" android:orientation="vertical">
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="Ticket No." android:textColor="@color/text_muted" android:textSize="11sp" />
+                android:text="@string/booking_card_ticket_no_label" android:textColor="?attr/colorAppTextMuted" android:textSize="11sp" />
             <TextView
                 android:id="@+id/tv_booking_ticket"
                 android:layout_width="wrap_content" android:layout_height="wrap_content"
@@ -94,7 +94,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Paid ✓"
+                android:text="@string/booking_card_paid"
                 android:textColor="@color/primary_purple"
                 android:textSize="10sp"
                 android:textStyle="bold"

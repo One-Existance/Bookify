@@ -19,4 +19,41 @@
     <string name="nav_explore">Explore</string>
     <string name="nav_tickets">Tickets</string>
     <string name="nav_profile">Profile</string>
+    <string name="edit_profile_title">Edit Profile</string>
+    <string name="save">Save</string>
+    <string name="error_name_required">Please enter your name</string>
+    <string name="error_generic">Something went wrong. Please try again.</string>
+    <string name="settings_section_appearance">APPEARANCE</string>
+    <string name="settings_dark_mode">Dark mode</string>
+    <string name="settings_dark_mode_desc">Switch between light and dark theme</string>
+    <string name="settings_language">Language</string>
+    <string name="language_english">English</string>
+    <string name="language_swahili">Kiswahili</string>
+
+    <!-- Profile -->
+    <string name="profile_my_bookings">My Bookings</string>
+    <string name="profile_my_organized_events">My Organized Events</string>
+    <string name="profile_become_promoter">Become a Promoter</string>
+    <string name="profile_promoter_dashboard">Promoter Dashboard</string>
+    <string name="profile_promoter_pending">Promoter application pending review</string>
+    <string name="profile_settings">Settings</string>
+    <string name="profile_logout">Log out</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_section_notifications">NOTIFICATIONS</string>
+    <string name="settings_push_notifications">Push notifications</string>
+    <string name="settings_push_notifications_desc">Get notified about your events</string>
+    <string name="settings_email_reminders">Email reminders</string>
+    <string name="settings_email_reminders_desc">Reminders sent 24h before events</string>
+    <string name="settings_section_about">ABOUT</string>
+    <string name="settings_app_version">App version</string>
+    <string name="settings_app_version_value">1.0.0</string>
+    <string name="settings_group">Group</string>
+    <string name="settings_group_value">DIT Group No. 8</string>
+    <string name="settings_class">Class</string>
+    <string name="settings_class_value">OD23IT</string>
+    <string name="settings_notification_hint">If notifications don\'t appear, enable them for Bookify in your phone\'s app settings.</string>
+    <string name="auth_required_title">Log in required</string>
+    <string name="auth_required_message">Create an account or log in to view event details and book tickets.</string>
 </resources>

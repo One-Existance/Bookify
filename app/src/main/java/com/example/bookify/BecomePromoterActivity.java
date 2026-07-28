@@ -50,7 +50,7 @@ public class BecomePromoterActivity extends AppCompatActivity {
             if (pickedAddress != null && !pickedAddress.isEmpty()) {
                 etLocation.setText(pickedAddress);
             }
-            Toast.makeText(this, "Venue location pinned!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.promoter_location_pinned, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -60,22 +60,22 @@ public class BecomePromoterActivity extends AppCompatActivity {
         String description = etDescription.getText().toString().trim();
 
         if (TextUtils.isEmpty(hallName) || TextUtils.isEmpty(location)) {
-            Toast.makeText(this, "Please fill in hall name and location", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.promoter_fill_required, Toast.LENGTH_SHORT).show();
             return;
         }
 
         if (userId == -1) {
-            Toast.makeText(this, "You must be logged in to apply", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.promoter_must_login, Toast.LENGTH_SHORT).show();
             return;
         }
 
         long id = db.submitPromoterApplication(userId, hallName, location, description,
                 pickedLatitude, pickedLongitude);
         if (id > 0) {
-            Toast.makeText(this, "Application submitted! We'll review it soon.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.promoter_application_submitted, Toast.LENGTH_LONG).show();
             finish();
         } else {
-            Toast.makeText(this, "Failed to submit application", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.promoter_application_failed, Toast.LENGTH_SHORT).show();
         }
     }
 }
