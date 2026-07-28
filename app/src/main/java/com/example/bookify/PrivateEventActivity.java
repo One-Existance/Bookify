@@ -1,6 +1,7 @@
 package com.example.bookify;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -38,6 +39,22 @@ public class PrivateEventActivity extends AppCompatActivity {
         });
         findViewById(R.id.nav_profile).setOnClickListener(v ->
                 startActivity(new Intent(this, ProfileActivity.class)));
+
+        handleDeepLink(getIntent());
+    }
+
+    /** Handles invite links of the form bookify://event/<ACCESS_CODE> by pre-filling
+     *  and auto-submitting the code, so tapping a shared link jumps straight into
+     *  the private event's details instead of requiring manual entry. */
+    private void handleDeepLink(Intent intent) {
+        Uri data = intent.getData();
+        if (data == null) return;
+
+        String code = data.getLastPathSegment();
+        if (TextUtils.isEmpty(code)) return;
+
+        etAccessCode.setText(code);
+        accessEvent();
     }
 
     private void accessEvent() {

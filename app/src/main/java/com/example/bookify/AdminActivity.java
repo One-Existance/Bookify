@@ -1,6 +1,7 @@
 package com.example.bookify;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -16,10 +17,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.bookify.adapter.AdminEventAdapter;
+import com.example.bookify.adapter.PromoterApplicationAdapter;
 import com.example.bookify.adapter.UserAdapter;
 import com.example.bookify.data.DatabaseHelper;
 import com.example.bookify.data.Event;
+import com.example.bookify.data.PromoterApplication;
 import com.example.bookify.data.User;
+import com.example.bookify.util.NotificationHelper;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import java.util.List;
@@ -30,7 +34,7 @@ public class AdminActivity extends AppCompatActivity {
     private ImageView ivPreview;
     private TextView tvTotalUsers, tvTotalEvents, tvTotalRevenue;
     private DatabaseHelper db;
-    private RecyclerView rvEvents, rvUsers;
+    private RecyclerView rvEvents, rvUsers, rvApplications;
     private AdminEventAdapter eventAdapter;
     private UserAdapter userAdapter;
     private String selectedImageUrl = "";
@@ -38,6 +42,14 @@ public class AdminActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        SharedPreferences sessionCheck = getSharedPreferences("bookify_session", MODE_PRIVATE);
+        if (!User.ROLE_ADMIN.equals(sessionCheck.getString("role", ""))) {
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+            return;
+        }
+
         setContentView(R.layout.activity_admin);
 
         db = new DatabaseHelper(this);
@@ -53,12 +65,14 @@ public class AdminActivity extends AppCompatActivity {
         ivPreview     = findViewById(R.id.iv_event_preview);
         rvEvents      = findViewById(R.id.rv_admin_events);
         rvUsers       = findViewById(R.id.rv_users);
-        
+        rvApplications = findViewById(R.id.rv_promoter_applications);
+
         tvTotalUsers   = findViewById(R.id.tv_total_users);
         tvTotalEvents  = findViewById(R.id.tv_total_events);
         tvTotalRevenue = findViewById(R.id.tv_total_revenue);
 
         setupRecyclerViews();
+        setupApplicationsList();
         updateStats();
 
         findViewById(R.id.layout_select_image).setOnClickListener(v -> selectImage());
@@ -162,6 +176,41 @@ public class AdminActivity extends AppCompatActivity {
         rvUsers.setAdapter(userAdapter);
         
         updateStats();
+    }
+
+    private void setupApplicationsList() {
+        rvApplications.setLayoutManager(new LinearLayoutManager(this));
+        refreshApplications();
+    }
+
+    private void refreshApplications() {
+        List<PromoterApplication> applications = db.getPendingPromoterApplications();
+        findViewById(R.id.tv_no_applications).setVisibility(
+                applications.isEmpty() ? View.VISIBLE : View.GONE);
+        rvApplications.setAdapter(new PromoterApplicationAdapter(applications, new PromoterApplicationAdapter.OnApplicationActionListener() {
+            @Override
+            public void onApprove(PromoterApplication application) {
+                db.approvePromoterApplication(application.getId(), application.getUserId());
+                Toast.makeText(AdminActivity.this, application.getApplicantName() + " is now a Promoter", Toast.LENGTH_SHORT).show();
+                NotificationHelper.notify(AdminActivity.this, application.getId(),
+                        "Promoter Approved",
+                        application.getApplicantName() + " is now a promoter.",
+                        new Intent(AdminActivity.this, AdminActivity.class));
+                refreshApplications();
+                refreshLists();
+            }
+
+            @Override
+            public void onReject(PromoterApplication application) {
+                db.rejectPromoterApplication(application.getId());
+                Toast.makeText(AdminActivity.this, "Application rejected", Toast.LENGTH_SHORT).show();
+                NotificationHelper.notify(AdminActivity.this, application.getId(),
+                        "Application Rejected",
+                        application.getApplicantName() + "'s promoter application was rejected.",
+                        new Intent(AdminActivity.this, AdminActivity.class));
+                refreshApplications();
+            }
+        }));
     }
 
     private void showAddPromoterDialog() {

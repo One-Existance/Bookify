@@ -38,7 +38,9 @@ public class MyEventRequestsActivity extends AppCompatActivity {
         String message = "You're invited to " + event.getTitle() + "! 🎉\n"
                 + "📅 " + event.getDate() + (event.getTime() != null && !event.getTime().isEmpty() ? " · " + event.getTime() : "") + "\n"
                 + "📍 " + event.getLocation() + "\n\n"
-                + "Enter this code in Bookify's Private Event screen to get your ticket:\n"
+                + "Tap to view your invite:\n"
+                + "bookify://event/" + event.getAccessCode() + "\n\n"
+                + "Don't have Bookify installed? Enter this code in the app's Private Event screen instead:\n"
                 + event.getAccessCode();
 
         Intent shareIntent = new Intent(Intent.ACTION_SEND);

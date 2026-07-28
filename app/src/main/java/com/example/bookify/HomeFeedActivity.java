@@ -11,6 +11,7 @@ import com.example.bookify.adapter.EventAdapter;
 import com.example.bookify.data.DatabaseHelper;
 import com.example.bookify.data.Event;
 import com.example.bookify.data.User;
+import com.example.bookify.util.NotificationHelper;
 import java.util.Calendar;
 import java.util.List;
 
@@ -26,6 +27,8 @@ public class HomeFeedActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home_feed);
 
         db = new DatabaseHelper(this);
+
+        NotificationHelper.requestPermissionIfNeeded(this, 1001);
 
         SharedPreferences prefs = getSharedPreferences("bookify_session", MODE_PRIVATE);
         userName = prefs.getString("user_name", getIntent().getStringExtra("user_name"));
