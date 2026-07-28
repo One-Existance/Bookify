@@ -254,9 +254,13 @@ MainActivity (Splash — no longer the launcher; reached via explicit navigation
         └── (success, role=ADMIN)    → AdminActivity [clears stack]
 
 AuthGate prompt (Home/Explore event tap or Home FAB, guest only)
-  ├── "Log In"          → LoginActivity
-  ├── "Create Account"  → RegisterActivity
+  ├── "Log In"          → LoginActivity (carries the tapped event, if any, as an extra)
+  ├── "Create Account"  → RegisterActivity (same)
   └── "Cancel"           → dismiss, stay put
+
+  On success, if a pending event extra is present: HomeFeedActivity is pushed as the
+  task root, then EventDetailActivity for that event on top — so the user lands
+  straight back on the event they tapped, and back navigation still works normally.
 
 OrganizeEventActivity (any logged-in user, reached via the Home FAB)
   ├── Submit request → MyEventRequestsActivity [finishes]

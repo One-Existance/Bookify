@@ -29,7 +29,7 @@ public class ExploreActivity extends AppCompatActivity {
         adapter = new EventAdapter(db.getAllEvents());
         adapter.setOnEventClickListener(event -> {
             if (!AuthGate.isLoggedIn(this)) {
-                AuthGate.promptLogin(this);
+                AuthGate.promptLogin(this, event);
                 return;
             }
             Intent intent = new Intent(this, EventDetailActivity.class);

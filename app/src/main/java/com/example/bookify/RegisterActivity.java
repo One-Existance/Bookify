@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.bookify.data.DatabaseHelper;
 import com.example.bookify.data.User;
+import com.example.bookify.util.AuthGate;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
@@ -53,7 +54,10 @@ public class RegisterActivity extends AppCompatActivity {
         });
 
         findViewById(R.id.tv_login_link).setOnClickListener(v -> {
-            startActivity(new Intent(this, LoginActivity.class));
+            Intent intent = new Intent(this, LoginActivity.class);
+            android.os.Bundle pendingEvent = getIntent().getBundleExtra(AuthGate.PENDING_EVENT_EXTRA);
+            if (pendingEvent != null) intent.putExtra(AuthGate.PENDING_EVENT_EXTRA, pendingEvent);
+            startActivity(intent);
             finish();
         });
     }
@@ -96,6 +100,12 @@ public class RegisterActivity extends AppCompatActivity {
                     }
 
                     saveSession((int) localId, fullName, email);
+
+                    android.os.Bundle pendingEvent = getIntent().getBundleExtra(AuthGate.PENDING_EVENT_EXTRA);
+                    if (pendingEvent != null) {
+                        AuthGate.continueToPendingEvent(this, pendingEvent);
+                        return;
+                    }
 
                     Intent intent = new Intent(this, HomeFeedActivity.class);
                     intent.putExtra("user_name", fullName);

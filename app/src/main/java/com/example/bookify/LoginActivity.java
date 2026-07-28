@@ -13,6 +13,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.bookify.data.DatabaseHelper;
 import com.example.bookify.data.User;
+import com.example.bookify.util.AuthGate;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
@@ -46,7 +47,10 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         findViewById(R.id.tv_signup_link).setOnClickListener(v -> {
-            startActivity(new Intent(this, RegisterActivity.class));
+            Intent intent = new Intent(this, RegisterActivity.class);
+            android.os.Bundle pendingEvent = getIntent().getBundleExtra(AuthGate.PENDING_EVENT_EXTRA);
+            if (pendingEvent != null) intent.putExtra(AuthGate.PENDING_EVENT_EXTRA, pendingEvent);
+            startActivity(intent);
             finish();
         });
     }
@@ -105,6 +109,12 @@ public class LoginActivity extends AppCompatActivity {
 
     private void routeAfterLogin(User user) {
         saveSession(user.getId(), user.getFullName(), user.getEmail(), user.getRole());
+
+        android.os.Bundle pendingEvent = getIntent().getBundleExtra(AuthGate.PENDING_EVENT_EXTRA);
+        if (pendingEvent != null) {
+            AuthGate.continueToPendingEvent(this, pendingEvent);
+            return;
+        }
 
         Intent intent;
         if (user.isAdmin()) {
