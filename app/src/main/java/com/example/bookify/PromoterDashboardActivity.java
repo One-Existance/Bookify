@@ -15,6 +15,7 @@ import com.example.bookify.data.DatabaseHelper;
 import com.example.bookify.data.EventRequest;
 import com.example.bookify.data.PromoterProfile;
 import com.example.bookify.data.User;
+import com.example.bookify.util.FieldFormatters;
 import com.example.bookify.util.NotificationHelper;
 import java.util.List;
 
@@ -91,16 +92,19 @@ public class PromoterDashboardActivity extends AppCompatActivity {
         EditText etPrice = new EditText(this);
         etPrice.setHint(R.string.promoter_hint_price);
         etPrice.setText(request.getEvent().getPrice());
+        etPrice.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
         layout.addView(etPrice);
 
         EditText etDate = new EditText(this);
         etDate.setHint(R.string.hint_date);
         etDate.setText(request.getEvent().getDate());
+        FieldFormatters.attachDatePicker(this, etDate);
         layout.addView(etDate);
 
         EditText etTime = new EditText(this);
         etTime.setHint(R.string.hint_time);
         etTime.setText(request.getEvent().getTime());
+        FieldFormatters.attachTimePicker(this, etTime);
         layout.addView(etTime);
 
         new AlertDialog.Builder(this)
@@ -109,7 +113,7 @@ public class PromoterDashboardActivity extends AppCompatActivity {
                 .setPositiveButton(R.string.action_accept, (dialog, which) -> {
                     db.approveEventRequest(
                             request.getEvent().getId(),
-                            etPrice.getText().toString().trim(),
+                            FieldFormatters.formatPrice(etPrice.getText().toString()),
                             etDate.getText().toString().trim(),
                             etTime.getText().toString().trim(),
                             request.getEvent().isPrivate());

@@ -11,10 +11,10 @@
     <string name="admin_category_hint">Category (e.g. Concert, Gala)</string>
     <string name="admin_location_hint">Location</string>
     <string name="admin_pin_button">PIN</string>
-    <string name="admin_date_hint">Date (e.g. Jun 20)</string>
-    <string name="admin_time_hint">Time (e.g. 7:00 P...)</string>
-    <string name="admin_price_hint">Price (e.g. Tsh 15k)</string>
-    <string name="admin_slots_hint">Slots (Number)</string>
+    <string name="admin_date_hint">Select date</string>
+    <string name="admin_time_hint">Select time</string>
+    <string name="admin_price_hint">Ticket price (Tsh)</string>
+    <string name="admin_slots_hint">Total slots</string>
     <string name="admin_description_hint">Description</string>
     <string name="admin_view_as_user">View as Regular User</string>
     <string name="admin_all_users_title">All Users</string>

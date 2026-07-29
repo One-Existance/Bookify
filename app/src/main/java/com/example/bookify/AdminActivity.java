@@ -23,6 +23,7 @@ import com.example.bookify.data.DatabaseHelper;
 import com.example.bookify.data.Event;
 import com.example.bookify.data.PromoterApplication;
 import com.example.bookify.data.User;
+import com.example.bookify.util.FieldFormatters;
 import com.example.bookify.util.InviteShareHelper;
 import com.example.bookify.util.NotificationHelper;
 import com.google.firebase.auth.FirebaseAuth;
@@ -74,6 +75,9 @@ public class AdminActivity extends AppCompatActivity {
         tvTotalUsers   = findViewById(R.id.tv_total_users);
         tvTotalEvents  = findViewById(R.id.tv_total_events);
         tvTotalRevenue = findViewById(R.id.tv_total_revenue);
+
+        FieldFormatters.attachDatePicker(this, etDate);
+        FieldFormatters.attachTimePicker(this, etTime);
 
         findViewById(R.id.layout_select_image).setOnClickListener(v -> selectImage());
         findViewById(R.id.btn_save).setOnClickListener(v -> saveEvent());
@@ -292,7 +296,7 @@ public class AdminActivity extends AppCompatActivity {
         String location = etLocation.getText().toString().trim();
         String date     = etDate.getText().toString().trim();
         String category = etCategory.getText().toString().trim();
-        String price    = etPrice.getText().toString().trim();
+        String price    = FieldFormatters.formatPrice(etPrice.getText().toString());
         String time     = etTime.getText().toString().trim();
         String slots    = etSlots.getText().toString().trim();
         String desc     = etDescription.getText().toString().trim();
@@ -302,7 +306,7 @@ public class AdminActivity extends AppCompatActivity {
             return;
         }
 
-        long id = db.addEvent(title, location, date, category, "Tsh " + price, false, selectedImageUrl, time, slots, desc, pickedLat, pickedLng);
+        long id = db.addEvent(title, location, date, category, price, false, selectedImageUrl, time, slots, desc, pickedLat, pickedLng);
         if (id > 0) {
             Toast.makeText(this, R.string.admin_event_posted_success, Toast.LENGTH_SHORT).show();
             clearFields();

@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 import com.example.bookify.data.DatabaseHelper;
 import com.example.bookify.data.PromoterProfile;
+import com.example.bookify.util.FieldFormatters;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,6 +50,9 @@ public class OrganizeEventActivity extends AppCompatActivity {
         spinnerPromoter = findViewById(R.id.spinner_promoter);
         switchPrivate   = findViewById(R.id.switch_private);
         ivPreview       = findViewById(R.id.iv_event_preview);
+
+        FieldFormatters.attachDatePicker(this, etDate);
+        FieldFormatters.attachTimePicker(this, etTime);
 
         findViewById(R.id.tv_back).setOnClickListener(v -> finish());
         findViewById(R.id.layout_select_image).setOnClickListener(v -> selectImage());
@@ -117,7 +121,7 @@ public class OrganizeEventActivity extends AppCompatActivity {
         String category = etCategory.getText().toString().trim();
         String date     = etDate.getText().toString().trim();
         String time     = etTime.getText().toString().trim();
-        String price    = etPrice.getText().toString().trim();
+        String price    = FieldFormatters.formatPrice(etPrice.getText().toString());
         String slots    = etSlots.getText().toString().trim();
         String desc     = etDescription.getText().toString().trim();
 

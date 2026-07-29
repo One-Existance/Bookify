@@ -11,10 +11,10 @@
     <string name="admin_category_hint">Aina (mfano: Tamasha, Gala)</string>
     <string name="admin_location_hint">Mahali</string>
     <string name="admin_pin_button">PIN</string>
-    <string name="admin_date_hint">Tarehe (mfano: Jun 20)</string>
-    <string name="admin_time_hint">Muda (mfano: 7:00 M...)</string>
-    <string name="admin_price_hint">Bei (mfano: Tsh 15k)</string>
-    <string name="admin_slots_hint">Nafasi (Namba)</string>
+    <string name="admin_date_hint">Chagua tarehe</string>
+    <string name="admin_time_hint">Chagua muda</string>
+    <string name="admin_price_hint">Bei ya tiketi (Tsh)</string>
+    <string name="admin_slots_hint">Jumla ya nafasi</string>
     <string name="admin_description_hint">Maelezo</string>
     <string name="admin_view_as_user">Tazama Kama Mtumiaji wa Kawaida</string>
     <string name="admin_all_users_title">Watumiaji Wote</string>

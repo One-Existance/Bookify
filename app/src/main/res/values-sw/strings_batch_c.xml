@@ -2,8 +2,8 @@
 <resources>
     <!-- Shared -->
     <string name="nav_back_arrow">← Rudi</string>
-    <string name="hint_date">Tarehe</string>
-    <string name="hint_time">Muda</string>
+    <string name="hint_date">Chagua tarehe</string>
+    <string name="hint_time">Chagua muda</string>
     <string name="action_accept">Kubali</string>
     <string name="action_reject">Kataa</string>
     <string name="action_cancel">Ghairi</string>
@@ -35,7 +35,7 @@
     <string name="promoter_notif_rejected_title">Tukio Limekataliwa</string>
     <string name="promoter_notif_rejected_body">Umekataa \"%1$s\".</string>
     <string name="promoter_confirm_title">Thibitisha masharti na kubali</string>
-    <string name="promoter_hint_price">Bei</string>
+    <string name="promoter_hint_price">Bei ya tiketi (Tsh)</string>
     <string name="promoter_event_approved">Tukio limekubaliwa!</string>
     <string name="promoter_notif_approved_title">Tukio Limekubaliwa</string>
     <string name="promoter_notif_approved_body">Umekubali \"%1$s\" — sasa liko hewani.</string>
@@ -49,8 +49,8 @@
     <string name="organize_location_hint">Mahali Mahususi</string>
     <string name="organize_pin_button">WEKA PIN</string>
     <string name="organize_category_hint">Aina (mf. Harusi, Tamasha)</string>
-    <string name="organize_price_hint">Bei iliyopendekezwa ya tiketi</string>
-    <string name="organize_slots_hint">Nafasi (Idadi)</string>
+    <string name="organize_price_hint">Bei ya tiketi (Tsh)</string>
+    <string name="organize_slots_hint">Jumla ya nafasi</string>
     <string name="organize_description_hint">Maelezo</string>
     <string name="organize_submit_request">TUMA OMBI KWA MTANGAZAJI</string>
     <string name="organize_no_promoters">Hakuna watangazaji waliopo bado</string>
