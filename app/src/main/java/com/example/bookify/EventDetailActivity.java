@@ -4,15 +4,20 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.bookify.data.DatabaseHelper;
+import com.example.bookify.data.Event;
+import com.example.bookify.data.EventsRepository;
 import com.example.bookify.util.NotificationHelper;
 
 public class EventDetailActivity extends AppCompatActivity {
 
     private DatabaseHelper db;
-    private int eventId;
+    private EventsRepository repo;
+    private String eventId;
+    private Event event;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,32 +25,58 @@ public class EventDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_event_detail);
 
         db = new DatabaseHelper(this);
+        repo = new EventsRepository();
 
-        eventId = getIntent().getIntExtra("event_id", -1);
-        String title    = getIntent().getStringExtra("event_title");
-        String location = getIntent().getStringExtra("event_location");
-        String date     = getIntent().getStringExtra("event_date");
-        String price    = getIntent().getStringExtra("event_price");
-        String time     = getIntent().getStringExtra("event_time");
-        String slots    = getIntent().getStringExtra("event_slots");
-        String about    = getIntent().getStringExtra("event_about");
-        String image    = getIntent().getStringExtra("event_image");
-        double lat      = getIntent().getDoubleExtra("event_lat", 0);
-        double lng      = getIntent().getDoubleExtra("event_lng", 0);
+        eventId = getIntent().getStringExtra("event_id");
 
-        if (title    != null) ((TextView) findViewById(R.id.tv_event_title)).setText(title);
-        if (price    != null) ((TextView) findViewById(R.id.tv_price)).setText(price);
-        if (date     != null) ((TextView) findViewById(R.id.tv_date)).setText(date);
-        if (time     != null) ((TextView) findViewById(R.id.tv_time)).setText(time);
-        
+        findViewById(R.id.btn_back).setOnClickListener(v -> finish());
+        findViewById(R.id.btn_book).setOnClickListener(v -> bookTicket());
+
+        if (eventId == null) {
+            Toast.makeText(this, R.string.error_generic, Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
+        loadEvent();
+    }
+
+    private void loadEvent() {
+        repo.getEventById(eventId)
+                .addOnSuccessListener(loaded -> {
+                    if (loaded == null) {
+                        Toast.makeText(this, R.string.error_generic, Toast.LENGTH_SHORT).show();
+                        finish();
+                        return;
+                    }
+                    event = loaded;
+                    bindEvent(loaded);
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, R.string.error_generic, Toast.LENGTH_SHORT).show();
+                    finish();
+                });
+    }
+
+    private void bindEvent(Event event) {
+        findViewById(R.id.progress_loading).setVisibility(android.view.View.GONE);
+        findViewById(R.id.scroll_content).setVisibility(android.view.View.VISIBLE);
+        findViewById(R.id.bottom_bar).setVisibility(android.view.View.VISIBLE);
+
+        ((TextView) findViewById(R.id.tv_event_title)).setText(event.getTitle());
+        ((TextView) findViewById(R.id.tv_price)).setText(event.getPrice());
+        ((TextView) findViewById(R.id.tv_date)).setText(event.getDate());
+        ((TextView) findViewById(R.id.tv_time)).setText(event.getTime());
+
         int taken = db.getTicketCount(eventId, true);
         int totalSlots = 0;
-        try { totalSlots = Integer.parseInt(slots); } catch (Exception ignored) {}
+        try { totalSlots = Integer.parseInt(event.getSlots()); } catch (Exception ignored) {}
         int remaining = Math.max(0, totalSlots - taken);
         ((TextView) findViewById(R.id.tv_slots)).setText(remaining + " seats remaining");
 
-        if (about    != null) ((TextView) findViewById(R.id.tv_about)).setText(about);
+        ((TextView) findViewById(R.id.tv_about)).setText(event.getDescription());
 
+        String image = event.getImageUrl();
         if (image != null && !image.isEmpty()) {
             android.widget.ImageView iv = findViewById(R.id.iv_detail_image);
             iv.setVisibility(android.view.View.VISIBLE);
@@ -54,25 +85,24 @@ public class EventDetailActivity extends AppCompatActivity {
             findViewById(R.id.iv_detail_icon).setVisibility(android.view.View.GONE);
         }
 
-        if (location != null && date != null)
-            ((TextView) findViewById(R.id.tv_event_location_date)).setText(location + " · " + date);
+        ((TextView) findViewById(R.id.tv_event_location_date)).setText(event.getLocation() + " · " + event.getDate());
 
-        findViewById(R.id.btn_back).setOnClickListener(v -> finish());
-        findViewById(R.id.btn_book).setOnClickListener(v -> bookTicket());
         findViewById(R.id.btn_view_map).setOnClickListener(v -> {
             Intent intent = new Intent(this, MapActivity.class);
-            intent.putExtra("location_name", location);
-            intent.putExtra("event_lat", lat);
-            intent.putExtra("event_lng", lng);
+            intent.putExtra("location_name", event.getLocation());
+            intent.putExtra("event_lat", event.getLatitude());
+            intent.putExtra("event_lng", event.getLongitude());
             startActivity(intent);
         });
     }
 
     private void bookTicket() {
+        if (event == null) return;
+
         SharedPreferences prefs = getSharedPreferences("bookify_session", MODE_PRIVATE);
         int userId = prefs.getInt("user_id", -1);
 
-        if (userId == -1 || eventId == -1) {
+        if (userId == -1) {
             showDialog(getString(R.string.event_detail_not_logged_in_title), getString(R.string.event_detail_not_logged_in_message), null);
             return;
         }
@@ -88,7 +118,8 @@ public class EventDetailActivity extends AppCompatActivity {
             return;
         }
 
-        long result = db.bookEvent(userId, eventId);
+        long result = db.bookEvent(userId, eventId, event.getTitle(), event.getDate(),
+                event.getCategory(), event.getPrice(), event.getImageUrl());
         if (result > 0) {
             goToPayment();
         } else {
@@ -99,8 +130,8 @@ public class EventDetailActivity extends AppCompatActivity {
     private void goToPayment() {
         Intent intent = new Intent(this, PaymentActivity.class);
         intent.putExtra("event_id", eventId);
-        intent.putExtra("event_title", ((TextView) findViewById(R.id.tv_event_title)).getText().toString());
-        intent.putExtra("event_price", ((TextView) findViewById(R.id.tv_price)).getText().toString());
+        intent.putExtra("event_title", event.getTitle());
+        intent.putExtra("event_price", event.getPrice());
         startActivityForResult(intent, 100);
     }
 
@@ -111,15 +142,15 @@ public class EventDetailActivity extends AppCompatActivity {
             SharedPreferences prefs = getSharedPreferences("bookify_session", MODE_PRIVATE);
             int userId = prefs.getInt("user_id", -1);
             String ticketNumber = db.getTicketNumber(userId, eventId);
-            
+
             // Go directly to ticket detail to show QR code
-            String eventTitle = ((TextView) findViewById(R.id.tv_event_title)).getText().toString();
+            String eventTitle = event.getTitle();
             Intent intent = new Intent(this, TicketDetailActivity.class);
             intent.putExtra("event_title", eventTitle);
-            intent.putExtra("event_info", getIntent().getStringExtra("event_date"));
+            intent.putExtra("event_info", event.getDate());
             intent.putExtra("ticket_number", ticketNumber);
 
-            NotificationHelper.notify(this, eventId,
+            NotificationHelper.notify(this, eventId.hashCode(),
                     "Booking Confirmed",
                     "Your ticket for " + eventTitle + " is ready. Tap to view your QR code.",
                     new Intent(intent));

@@ -13,6 +13,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 import com.example.bookify.data.DatabaseHelper;
+import com.example.bookify.data.Event;
+import com.example.bookify.data.EventsRepository;
 import com.example.bookify.data.PromoterProfile;
 import com.example.bookify.util.FieldFormatters;
 import java.util.ArrayList;
@@ -25,9 +27,12 @@ public class OrganizeEventActivity extends AppCompatActivity {
     private SwitchCompat switchPrivate;
     private ImageView ivPreview;
     private DatabaseHelper db;
+    private EventsRepository repo;
     private List<PromoterProfile> promoters;
     private String selectedImageUrl = "";
     private int userId;
+    private String userUid;
+    private String userName;
     private double pickedLat = 0, pickedLng = 0;
 
     @Override
@@ -36,8 +41,11 @@ public class OrganizeEventActivity extends AppCompatActivity {
         setContentView(R.layout.activity_organize_event);
 
         db = new DatabaseHelper(this);
+        repo = new EventsRepository();
         SharedPreferences prefs = getSharedPreferences("bookify_session", MODE_PRIVATE);
         userId = prefs.getInt("user_id", -1);
+        userUid = prefs.getString("firebase_uid", "");
+        userName = prefs.getString("user_name", "");
 
         etTitle       = findViewById(R.id.et_title);
         etLocation    = findViewById(R.id.et_location);
@@ -136,16 +144,17 @@ public class OrganizeEventActivity extends AppCompatActivity {
         // Use specific location if entered, else promoter's hall location
         String finalLocation = TextUtils.isEmpty(specificLocation) ? promoter.getLocation() : specificLocation;
 
-        long id = db.requestEvent(title, finalLocation, date, category, price,
-                isPrivate, selectedImageUrl, time, slots, desc, userId, promoter.getUserId(),
-                pickedLat, pickedLng);
+        Event draft = new Event("", title, finalLocation, date, category, price, isPrivate,
+                selectedImageUrl, time, slots, desc,
+                userUid, userName, promoter.getFirebaseUid(), promoter.getFullName(),
+                Event.STATUS_PENDING, null, pickedLat, pickedLng);
 
-        if (id > 0) {
-            Toast.makeText(this, getString(R.string.organize_request_sent, promoter.getHallName()), Toast.LENGTH_LONG).show();
-            startActivity(new Intent(this, MyEventRequestsActivity.class));
-            finish();
-        } else {
-            Toast.makeText(this, R.string.organize_request_failed, Toast.LENGTH_SHORT).show();
-        }
+        repo.requestEvent(draft)
+                .addOnSuccessListener(id -> {
+                    Toast.makeText(this, getString(R.string.organize_request_sent, promoter.getHallName()), Toast.LENGTH_LONG).show();
+                    startActivity(new Intent(this, MyEventRequestsActivity.class));
+                    finish();
+                })
+                .addOnFailureListener(e -> Toast.makeText(this, R.string.organize_request_failed, Toast.LENGTH_SHORT).show());
     }
 }

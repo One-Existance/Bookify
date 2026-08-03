@@ -5,28 +5,30 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
-import com.example.bookify.data.DatabaseHelper;
-import com.example.bookify.data.Event;
+import com.example.bookify.data.EventsRepository;
 
 public class PrivateEventActivity extends AppCompatActivity {
 
     private EditText etAccessCode;
     private TextView tvError;
-    private DatabaseHelper db;
+    private Button btnAccess;
+    private EventsRepository repo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_private_event);
 
-        db = new DatabaseHelper(this);
+        repo = new EventsRepository();
         etAccessCode = findViewById(R.id.et_access_code);
         tvError = findViewById(R.id.tv_error);
+        btnAccess = findViewById(R.id.btn_access);
 
-        findViewById(R.id.btn_access).setOnClickListener(v -> accessEvent());
+        btnAccess.setOnClickListener(v -> accessEvent());
 
         // Bottom nav
         findViewById(R.id.nav_home).setOnClickListener(v -> {
@@ -64,24 +66,29 @@ public class PrivateEventActivity extends AppCompatActivity {
             return;
         }
 
-        Event event = db.getEventByAccessCode(code.toUpperCase());
-        if (event == null) {
-            showError(getString(R.string.private_event_error_invalid_code));
-            return;
-        }
-
         tvError.setVisibility(View.GONE);
-        Intent intent = new Intent(this, EventDetailActivity.class);
-        intent.putExtra("event_id",       event.getId());
-        intent.putExtra("event_title",    event.getTitle());
-        intent.putExtra("event_location", event.getLocation());
-        intent.putExtra("event_date",     event.getDate());
-        intent.putExtra("event_price",    event.getPrice());
-        intent.putExtra("event_time",     event.getTime());
-        intent.putExtra("event_slots",    event.getSlots());
-        intent.putExtra("event_about",    event.getDescription());
-        intent.putExtra("event_image",    event.getImageUrl());
-        startActivity(intent);
+        setLoading(true);
+
+        repo.getEventByAccessCode(code.toUpperCase())
+                .addOnSuccessListener(event -> {
+                    setLoading(false);
+                    if (event == null) {
+                        showError(getString(R.string.private_event_error_invalid_code));
+                        return;
+                    }
+                    Intent intent = new Intent(this, EventDetailActivity.class);
+                    intent.putExtra("event_id", event.getId());
+                    startActivity(intent);
+                })
+                .addOnFailureListener(e -> {
+                    setLoading(false);
+                    showError(getString(R.string.private_event_error_network));
+                });
+    }
+
+    private void setLoading(boolean loading) {
+        btnAccess.setEnabled(!loading);
+        btnAccess.setText(loading ? R.string.private_event_checking : R.string.private_event_access_button);
     }
 
     private void showError(String message) {

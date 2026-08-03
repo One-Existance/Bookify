@@ -36,8 +36,10 @@
     <string name="private_event_access_code_label">Msimbo wa ufikiaji</string>
     <string name="private_event_access_code_hint">Weka msimbo wa ufikiaji…</string>
     <string name="private_event_access_button">Fungua Tukio →</string>
+    <string name="private_event_checking">Inaangalia…</string>
     <string name="private_event_error_empty_code">Tafadhali weka msimbo wa ufikiaji.</string>
     <string name="private_event_error_invalid_code">Msimbo si sahihi au umeisha muda.</string>
+    <string name="private_event_error_network">Imeshindwa kufikia seva. Angalia mtandao wako kisha jaribu tena.</string>
 
     <!-- Payment -->
     <string name="payment_title">Bookify Checkout</string>

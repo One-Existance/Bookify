@@ -16,6 +16,7 @@
     <string name="admin_price_hint">Bei ya tiketi (Tsh)</string>
     <string name="admin_slots_hint">Jumla ya nafasi</string>
     <string name="admin_description_hint">Maelezo</string>
+    <string name="admin_private_event_label">Tukio la faragha (kwa mwaliko tu)</string>
     <string name="admin_view_as_user">Tazama Kama Mtumiaji wa Kawaida</string>
     <string name="admin_all_users_title">Watumiaji Wote</string>
     <string name="admin_add_promoter_button">Ongeza Mtangazaji</string>

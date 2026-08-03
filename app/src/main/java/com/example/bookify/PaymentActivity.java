@@ -24,7 +24,8 @@ public class PaymentActivity extends AppCompatActivity {
 
     private String apiKey = BuildConfig.MONGIKE_API_KEY;
     private String eventPrice, eventTitle;
-    private int eventId, userId;
+    private String eventId;
+    private int userId;
     private DatabaseHelper db;
     private TextInputEditText etPhone;
     private ProgressBar progressBar;
@@ -39,7 +40,7 @@ public class PaymentActivity extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences("bookify_session", MODE_PRIVATE);
         userId = prefs.getInt("user_id", -1);
 
-        eventId    = getIntent().getIntExtra("event_id", -1);
+        eventId    = getIntent().getStringExtra("event_id");
         eventPrice = getIntent().getStringExtra("event_price");
         eventTitle = getIntent().getStringExtra("event_title");
 

@@ -8,13 +8,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.bookify.adapter.EventAdapter;
-import com.example.bookify.data.DatabaseHelper;
+import com.example.bookify.data.EventsRepository;
 import com.example.bookify.util.AuthGate;
 import com.google.android.material.textfield.TextInputEditText;
+import java.util.ArrayList;
 
 public class ExploreActivity extends AppCompatActivity {
 
-    private DatabaseHelper db;
+    private EventsRepository repo;
     private EventAdapter adapter;
 
     @Override
@@ -22,31 +23,24 @@ public class ExploreActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_explore);
 
-        db = new DatabaseHelper(this);
+        repo = new EventsRepository();
 
         RecyclerView rvEvents = findViewById(R.id.rv_explore_events);
         rvEvents.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new EventAdapter(db.getAllEvents());
+        adapter = new EventAdapter(new ArrayList<>());
         adapter.setOnEventClickListener(event -> {
             if (!AuthGate.isLoggedIn(this)) {
                 AuthGate.promptLogin(this, event);
                 return;
             }
             Intent intent = new Intent(this, EventDetailActivity.class);
-            intent.putExtra("event_id",       event.getId());
-            intent.putExtra("event_title",    event.getTitle());
-            intent.putExtra("event_location", event.getLocation());
-            intent.putExtra("event_date",     event.getDate());
-            intent.putExtra("event_price",    event.getPrice());
-            intent.putExtra("event_time",     event.getTime());
-            intent.putExtra("event_slots",    event.getSlots());
-            intent.putExtra("event_about",    event.getDescription());
-            intent.putExtra("event_image",    event.getImageUrl());
-            intent.putExtra("event_lat",      event.getLatitude());
-            intent.putExtra("event_lng",      event.getLongitude());
+            intent.putExtra("event_id", event.getId());
             startActivity(intent);
         });
         rvEvents.setAdapter(adapter);
+        repo.getAllEvents()
+                .addOnSuccessListener(events -> adapter.updateData(events))
+                .addOnFailureListener(e -> android.widget.Toast.makeText(this, R.string.error_generic, android.widget.Toast.LENGTH_SHORT).show());
 
         TextInputEditText etSearch = findViewById(R.id.et_search);
         etSearch.addTextChangedListener(new TextWatcher() {

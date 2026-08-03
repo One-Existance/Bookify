@@ -29,7 +29,7 @@ public class ScanEntryActivity extends AppCompatActivity {
     private static final String DEEP_LINK_PREFIX = "bookify://event/";
 
     private DatabaseHelper db;
-    private int eventId;
+    private String eventId;
     private String eventAccessCode;
 
     private ImageView ivResultIcon;
@@ -49,7 +49,7 @@ public class ScanEntryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_scan_entry);
 
         db = new DatabaseHelper(this);
-        eventId = getIntent().getIntExtra("event_id", -1);
+        eventId = getIntent().getStringExtra("event_id");
         eventAccessCode = getIntent().getStringExtra("event_access_code");
         String eventTitle = getIntent().getStringExtra("event_title");
 

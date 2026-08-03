@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -21,6 +22,7 @@ import com.example.bookify.adapter.PromoterApplicationAdapter;
 import com.example.bookify.adapter.UserAdapter;
 import com.example.bookify.data.DatabaseHelper;
 import com.example.bookify.data.Event;
+import com.example.bookify.data.EventsRepository;
 import com.example.bookify.data.PromoterApplication;
 import com.example.bookify.data.User;
 import com.example.bookify.util.FieldFormatters;
@@ -34,9 +36,11 @@ import java.util.List;
 public class AdminActivity extends AppCompatActivity {
 
     private EditText etTitle, etLocation, etDate, etCategory, etPrice, etTime, etSlots, etDescription;
+    private SwitchCompat switchPrivate;
     private ImageView ivPreview;
     private TextView tvTotalUsers, tvTotalEvents, tvTotalRevenue;
     private DatabaseHelper db;
+    private EventsRepository repo;
     private RecyclerView rvEvents, rvUsers, rvApplications;
     private AdminEventAdapter eventAdapter;
     private UserAdapter userAdapter;
@@ -58,6 +62,7 @@ public class AdminActivity extends AppCompatActivity {
         setContentView(R.layout.activity_admin);
 
         db = new DatabaseHelper(this);
+        repo = new EventsRepository();
 
         etTitle       = findViewById(R.id.et_title);
         etLocation    = findViewById(R.id.et_location);
@@ -67,6 +72,7 @@ public class AdminActivity extends AppCompatActivity {
         etTime        = findViewById(R.id.et_time);
         etSlots       = findViewById(R.id.et_slots);
         etDescription = findViewById(R.id.et_description);
+        switchPrivate = findViewById(R.id.switch_private);
         ivPreview     = findViewById(R.id.iv_event_preview);
         rvEvents      = findViewById(R.id.rv_admin_events);
         rvUsers       = findViewById(R.id.rv_users);
@@ -97,81 +103,92 @@ public class AdminActivity extends AppCompatActivity {
         });
 
         setupRecyclerViews();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Reloads every time this screen becomes visible (e.g. returning from EditEventActivity)
+        // so edits/deletes made elsewhere are reflected without extra plumbing.
+        refreshEventsList();
+        refreshUsersList();
+        refreshApplicationsList();
         updateStats();
     }
 
     private void setupRecyclerViews() {
         rvEvents.setLayoutManager(new LinearLayoutManager(this));
-        refreshEventsList();
-
         rvUsers.setLayoutManager(new LinearLayoutManager(this));
-        refreshUsersList();
-
         rvApplications.setLayoutManager(new LinearLayoutManager(this));
-        refreshApplicationsList();
     }
 
     private void updateStats() {
         List<User> users = db.getAllUsers();
-        List<Event> events = db.getAllEventsForAdmin();
-        double revenue = 0;
-        for (Event e : events) {
-            revenue += db.getRevenue(e.getId());
-        }
-
         tvTotalUsers.setText(String.valueOf(users.size()));
-        tvTotalEvents.setText(String.valueOf(events.size()));
-        tvTotalRevenue.setText(String.format("%.1fk", revenue / 1000));
+
+        repo.getAllEventsForAdmin()
+                .addOnSuccessListener(events -> {
+                    double revenue = 0;
+                    for (Event e : events) {
+                        revenue += db.getRevenue(e.getId());
+                    }
+                    tvTotalEvents.setText(String.valueOf(events.size()));
+                    tvTotalRevenue.setText(String.format("%.1fk", revenue / 1000));
+                })
+                .addOnFailureListener(e -> Toast.makeText(this, R.string.error_generic, Toast.LENGTH_SHORT).show());
     }
 
     private void refreshEventsList() {
-        List<Event> events = db.getAllEventsForAdmin();
-        eventAdapter = new AdminEventAdapter(events, db, new AdminEventAdapter.OnEventActionListener() {
-            @Override
-            public void onDeleteClick(Event event) {
-                db.deleteEvent(event.getId());
-                refreshEventsList();
-                updateStats();
-                Toast.makeText(AdminActivity.this, R.string.admin_event_deleted, Toast.LENGTH_SHORT).show();
-            }
+        repo.getAllEventsForAdmin()
+                .addOnSuccessListener(events -> {
+                    eventAdapter = new AdminEventAdapter(events, db, new AdminEventAdapter.OnEventActionListener() {
+                        @Override
+                        public void onDeleteClick(Event event) {
+                            repo.deleteEvent(event.getId())
+                                    .addOnSuccessListener(v -> {
+                                        refreshEventsList();
+                                        updateStats();
+                                        Toast.makeText(AdminActivity.this, R.string.admin_event_deleted, Toast.LENGTH_SHORT).show();
+                                    })
+                                    .addOnFailureListener(e -> Toast.makeText(AdminActivity.this, R.string.error_generic, Toast.LENGTH_SHORT).show());
+                        }
 
-            @Override
-            public void onViewClick(Event event) {
-                Intent intent = new Intent(AdminActivity.this, EventDetailActivity.class);
-                intent.putExtra("event_id",       event.getId());
-                intent.putExtra("event_title",    event.getTitle());
-                intent.putExtra("event_location", event.getLocation());
-                intent.putExtra("event_date",     event.getDate());
-                intent.putExtra("event_price",    event.getPrice());
-                intent.putExtra("event_time",     event.getTime());
-                intent.putExtra("event_slots",    event.getSlots());
-                intent.putExtra("event_about",    event.getDescription());
-                intent.putExtra("event_image",    event.getImageUrl());
-                intent.putExtra("event_lat",      event.getLatitude());
-                intent.putExtra("event_lng",      event.getLongitude());
-                startActivity(intent);
-            }
+                        @Override
+                        public void onViewClick(Event event) {
+                            Intent intent = new Intent(AdminActivity.this, EventDetailActivity.class);
+                            intent.putExtra("event_id", event.getId());
+                            startActivity(intent);
+                        }
 
-            @Override
-            public void onShareClick(Event event) {
-                InviteShareHelper.shareGeneric(AdminActivity.this, event);
-            }
+                        @Override
+                        public void onEditClick(Event event) {
+                            Intent intent = new Intent(AdminActivity.this, EditEventActivity.class);
+                            intent.putExtra("event_id", event.getId());
+                            startActivity(intent);
+                        }
 
-            @Override
-            public void onShareWhatsAppClick(Event event) {
-                InviteShareHelper.shareViaWhatsApp(AdminActivity.this, event);
-            }
+                        @Override
+                        public void onShareClick(Event event) {
+                            InviteShareHelper.shareGeneric(AdminActivity.this, event);
+                        }
 
-            @Override
-            public void onScanClick(Event event) {
-                Intent intent = new Intent(AdminActivity.this, ScanEntryActivity.class);
-                intent.putExtra("event_id", event.getId());
-                intent.putExtra("event_access_code", event.getAccessCode());
-                intent.putExtra("event_title", event.getTitle());
-                startActivity(intent);
-            }
-        });
-        rvEvents.setAdapter(eventAdapter);
+                        @Override
+                        public void onShareWhatsAppClick(Event event) {
+                            InviteShareHelper.shareViaWhatsApp(AdminActivity.this, event);
+                        }
+
+                        @Override
+                        public void onScanClick(Event event) {
+                            Intent intent = new Intent(AdminActivity.this, ScanEntryActivity.class);
+                            intent.putExtra("event_id", event.getId());
+                            intent.putExtra("event_access_code", event.getAccessCode());
+                            intent.putExtra("event_title", event.getTitle());
+                            startActivity(intent);
+                        }
+                    });
+                    rvEvents.setAdapter(eventAdapter);
+                })
+                .addOnFailureListener(e -> Toast.makeText(this, R.string.error_generic, Toast.LENGTH_SHORT).show());
     }
 
     private void refreshUsersList() {
@@ -306,15 +323,18 @@ public class AdminActivity extends AppCompatActivity {
             return;
         }
 
-        long id = db.addEvent(title, location, date, category, price, false, selectedImageUrl, time, slots, desc, pickedLat, pickedLng);
-        if (id > 0) {
-            Toast.makeText(this, R.string.admin_event_posted_success, Toast.LENGTH_SHORT).show();
-            clearFields();
-            refreshEventsList();
-            updateStats();
-        } else {
-            Toast.makeText(this, R.string.admin_post_event_failed, Toast.LENGTH_SHORT).show();
-        }
+        Event draft = new Event("", title, location, date, category, price, switchPrivate.isChecked(),
+                selectedImageUrl, time, slots, desc, "", "", "", "",
+                Event.STATUS_PUBLISHED, null, pickedLat, pickedLng);
+
+        repo.addEvent(draft)
+                .addOnSuccessListener(id -> {
+                    Toast.makeText(this, R.string.admin_event_posted_success, Toast.LENGTH_SHORT).show();
+                    clearFields();
+                    refreshEventsList();
+                    updateStats();
+                })
+                .addOnFailureListener(e -> Toast.makeText(this, R.string.admin_post_event_failed, Toast.LENGTH_SHORT).show());
     }
 
     private void clearFields() {
@@ -326,6 +346,7 @@ public class AdminActivity extends AppCompatActivity {
         etTime.setText("");
         etSlots.setText("");
         etDescription.setText("");
+        switchPrivate.setChecked(false);
         selectedImageUrl = "";
         pickedLat = 0;
         pickedLng = 0;
