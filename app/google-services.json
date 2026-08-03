@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "794083071012",
+    "project_id": "bookify-461a7",
+    "storage_bucket": "bookify-461a7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:794083071012:android:8e36d6e9c2994b6dc6f4b1",
+        "android_client_info": {
+          "package_name": "com.example.bookify"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD3XYKB8VCtD8hqvbTQvDnIBmPyP3HsjR4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
