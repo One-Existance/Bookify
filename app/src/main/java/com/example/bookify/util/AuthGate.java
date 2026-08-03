@@ -58,17 +58,7 @@ public class AuthGate {
 
     private static Bundle buildEventExtras(Event event) {
         Bundle b = new Bundle();
-        b.putInt("event_id", event.getId());
-        b.putString("event_title", event.getTitle());
-        b.putString("event_location", event.getLocation());
-        b.putString("event_date", event.getDate());
-        b.putString("event_price", event.getPrice());
-        b.putString("event_time", event.getTime());
-        b.putString("event_slots", event.getSlots());
-        b.putString("event_about", event.getDescription());
-        b.putString("event_image", event.getImageUrl());
-        b.putDouble("event_lat", event.getLatitude());
-        b.putDouble("event_lng", event.getLongitude());
+        b.putString("event_id", event.getId());
         return b;
     }
 

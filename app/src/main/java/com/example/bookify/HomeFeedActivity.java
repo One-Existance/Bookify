@@ -8,17 +8,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.bookify.adapter.EventAdapter;
-import com.example.bookify.data.DatabaseHelper;
-import com.example.bookify.data.Event;
+import com.example.bookify.data.EventsRepository;
 import com.example.bookify.data.User;
 import com.example.bookify.util.AuthGate;
 import com.example.bookify.util.NotificationHelper;
-import java.util.Calendar;
-import java.util.List;
+import java.util.ArrayList;
 
 public class HomeFeedActivity extends AppCompatActivity {
 
-    private DatabaseHelper db;
+    private EventsRepository repo;
     private EventAdapter eventAdapter;
     private String userName;
 
@@ -27,7 +25,7 @@ public class HomeFeedActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_feed);
 
-        db = new DatabaseHelper(this);
+        repo = new EventsRepository();
 
         NotificationHelper.requestPermissionIfNeeded(this, 1001);
 
@@ -49,34 +47,30 @@ public class HomeFeedActivity extends AppCompatActivity {
         });
 
         // Events RecyclerView
-        List<Event> events = db.getAllEvents();
         RecyclerView rvEvents = findViewById(R.id.rv_events);
         rvEvents.setLayoutManager(new LinearLayoutManager(this));
-        eventAdapter = new EventAdapter(events);
+        eventAdapter = new EventAdapter(new ArrayList<>());
         eventAdapter.setOnEventClickListener(event -> {
             if (!AuthGate.isLoggedIn(this)) {
                 AuthGate.promptLogin(this, event);
                 return;
             }
             Intent intent = new Intent(this, EventDetailActivity.class);
-            intent.putExtra("event_id",       event.getId());
-            intent.putExtra("event_title",    event.getTitle());
-            intent.putExtra("event_location", event.getLocation());
-            intent.putExtra("event_date",     event.getDate());
-            intent.putExtra("event_price",    event.getPrice());
-            intent.putExtra("event_time",     event.getTime());
-            intent.putExtra("event_slots",    event.getSlots());
-            intent.putExtra("event_about",    event.getDescription());
-            intent.putExtra("event_image",    event.getImageUrl());
-            intent.putExtra("event_lat",      event.getLatitude());
-            intent.putExtra("event_lng",      event.getLongitude());
+            intent.putExtra("event_id", event.getId());
             startActivity(intent);
         });
         rvEvents.setAdapter(eventAdapter);
+        loadEvents();
 
         setupCategoryChips();
         setupBottomNav();
         setupRoleFab(prefs.getString("role", User.ROLE_USER));
+    }
+
+    private void loadEvents() {
+        repo.getAllEvents()
+                .addOnSuccessListener(events -> eventAdapter.updateData(events))
+                .addOnFailureListener(e -> android.widget.Toast.makeText(this, R.string.error_generic, android.widget.Toast.LENGTH_SHORT).show());
     }
 
     private void setupRoleFab(String role) {

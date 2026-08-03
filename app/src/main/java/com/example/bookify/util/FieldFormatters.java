@@ -6,6 +6,9 @@ import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.timepicker.MaterialTimePicker;
 import com.google.android.material.timepicker.TimeFormat;
 
+import android.text.TextUtils;
+
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -85,6 +88,35 @@ public class FieldFormatters {
             return "Tsh " + String.format(Locale.US, "%,d", value);
         } catch (NumberFormatException e) {
             return trimmed;
+        }
+    }
+
+    /**
+     * Whether an event dated/timed like this hasn't happened yet - used to gate the edit
+     * action, since editing an event after it's already taken place doesn't make sense.
+     * A missing time is treated as "editable until the end of that day." Fails open
+     * (treats unparseable dates as still upcoming) since this is only a client-side UX
+     * gate, not a correctness guarantee - the app has no server-side validation anywhere else.
+     */
+    public static boolean isUpcoming(String date, String time) {
+        if (TextUtils.isEmpty(date)) return true;
+        try {
+            if (TextUtils.isEmpty(time)) {
+                SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTERN, Locale.US);
+                Date parsed = sdf.parse(date);
+                if (parsed == null) return true;
+                Calendar endOfDay = Calendar.getInstance();
+                endOfDay.setTime(parsed);
+                endOfDay.set(Calendar.HOUR_OF_DAY, 23);
+                endOfDay.set(Calendar.MINUTE, 59);
+                endOfDay.set(Calendar.SECOND, 59);
+                return endOfDay.getTime().after(new Date());
+            }
+            SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTERN + " " + TIME_PATTERN, Locale.US);
+            Date parsed = sdf.parse(date + " " + time);
+            return parsed == null || parsed.after(new Date());
+        } catch (ParseException e) {
+            return true;
         }
     }
 }

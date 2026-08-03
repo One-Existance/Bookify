@@ -92,4 +92,18 @@
         android:visibility="gone"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_edit_request"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/action_edit_event"
+        android:textColor="@color/primary_purple"
+        android:textSize="13sp"
+        app:icon="@drawable/ic_edit"
+        app:iconTint="@color/primary_purple"
+        app:iconGravity="textStart"
+        app:strokeColor="@color/primary_purple"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+
 </LinearLayout>

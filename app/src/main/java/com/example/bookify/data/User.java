@@ -6,13 +6,15 @@ public class User {
     public static final String ROLE_ADMIN    = "ADMIN";
 
     private int id;
+    private String firebaseUid;
     private String fullName;
     private String email;
     private String phone;
     private String role;
 
-    public User(int id, String fullName, String email, String phone, String role) {
+    public User(int id, String firebaseUid, String fullName, String email, String phone, String role) {
         this.id = id;
+        this.firebaseUid = firebaseUid;
         this.fullName = fullName;
         this.email = email;
         this.phone = phone;
@@ -20,6 +22,7 @@ public class User {
     }
 
     public int getId()          { return id; }
+    public String getFirebaseUid() { return firebaseUid; }
     public String getFullName() { return fullName; }
     public String getEmail()    { return email; }
     public String getPhone()    { return phone; }

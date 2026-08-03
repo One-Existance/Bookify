@@ -5,10 +5,21 @@
     android:layout_height="match_parent"
     android:background="?attr/colorAppBackground">
 
+    <ProgressBar
+        android:id="@+id/progress_loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <ScrollView
+        android:id="@+id/scroll_content"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/btn_save"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/btn_save_changes"
         app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
@@ -20,106 +31,35 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp">
+                android:layout_marginBottom="16dp">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/admin_dashboard_title"
+                    android:text="@string/edit_event_title"
                     android:textColor="?attr/colorAppTextPrimary"
                     android:textSize="20sp"
                     android:textStyle="bold" />
                 <TextView
-                    android:id="@+id/tv_logout"
+                    android:id="@+id/tv_back"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
-                    android:text="@string/admin_logout"
+                    android:text="@string/nav_back_arrow"
                     android:textColor="@color/primary_purple"
                     android:textSize="14sp" />
             </RelativeLayout>
 
-            <!-- Stats -->
-            <LinearLayout
+            <TextView
+                android:id="@+id/tv_past_event_notice"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="24dp">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:background="@drawable/bg_admin_input"
-                    android:padding="12dp"
-                    android:layout_marginEnd="6dp">
-                    <TextView
-                        android:id="@+id/tv_total_users"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="0"
-                        android:textColor="?attr/colorAppTextPrimary"
-                        android:textSize="18sp"
-                        android:textStyle="bold"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/admin_stat_users"
-                        android:textColor="?attr/colorAppTextMuted"
-                        android:textSize="11sp"/>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:background="@drawable/bg_admin_input"
-                    android:padding="12dp"
-                    android:layout_marginHorizontal="6dp">
-                    <TextView
-                        android:id="@+id/tv_total_events"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="0"
-                        android:textColor="?attr/colorAppTextPrimary"
-                        android:textSize="18sp"
-                        android:textStyle="bold"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/admin_stat_events"
-                        android:textColor="?attr/colorAppTextMuted"
-                        android:textSize="11sp"/>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:background="@drawable/bg_admin_input"
-                    android:padding="12dp"
-                    android:layout_marginStart="6dp">
-                    <TextView
-                        android:id="@+id/tv_total_revenue"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="0.0k"
-                        android:textColor="?attr/colorAppTextPrimary"
-                        android:textSize="18sp"
-                        android:textStyle="bold"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/admin_stat_revenue"
-                        android:textColor="?attr/colorAppTextMuted"
-                        android:textSize="11sp"/>
-                </LinearLayout>
-            </LinearLayout>
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/bg_admin_input"
+                android:padding="14dp"
+                android:text="@string/edit_event_past_event_message"
+                android:textColor="@color/error_red"
+                android:textSize="13sp"
+                android:visibility="gone"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -133,7 +73,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/admin_private_event_label"
+                    android:text="@string/organize_private_event_label"
                     android:textColor="?attr/colorAppTextPrimary"
                     android:textSize="15sp"/>
                 <androidx.appcompat.widget.SwitchCompat
@@ -160,7 +100,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:text="@string/admin_select_event_picture"
+                    android:text="@string/organize_select_picture"
                     android:textColor="?attr/colorAppTextPrimary"
                     android:textSize="14sp"
                     android:textStyle="bold"
@@ -172,19 +112,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="54dp"
                 android:background="@drawable/bg_admin_input"
-                android:hint="@string/admin_event_title_hint"
-                android:paddingHorizontal="20dp"
-                android:textColor="?attr/colorAppTextPrimary"
-                android:textColorHint="?attr/colorAppTextMuted"
-                android:textSize="15sp"
-                android:layout_marginBottom="16dp"/>
-
-            <EditText
-                android:id="@+id/et_category"
-                android:layout_width="match_parent"
-                android:layout_height="54dp"
-                android:background="@drawable/bg_admin_input"
-                android:hint="@string/admin_category_hint"
+                android:hint="@string/organize_title_hint"
                 android:paddingHorizontal="20dp"
                 android:textColor="?attr/colorAppTextPrimary"
                 android:textColorHint="?attr/colorAppTextMuted"
@@ -202,7 +130,7 @@
                     android:layout_height="54dp"
                     android:layout_weight="1"
                     android:background="@drawable/bg_admin_input"
-                    android:hint="@string/admin_location_hint"
+                    android:hint="@string/organize_location_hint"
                     android:paddingHorizontal="20dp"
                     android:textColor="?attr/colorAppTextPrimary"
                     android:textColorHint="?attr/colorAppTextMuted"
@@ -212,9 +140,21 @@
                     android:layout_width="wrap_content"
                     android:layout_height="54dp"
                     android:layout_marginStart="8dp"
-                    android:text="@string/admin_pin_button"
+                    android:text="@string/organize_pin_button"
                     app:backgroundTint="?attr/colorAppSurface" />
             </LinearLayout>
+
+            <EditText
+                android:id="@+id/et_category"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:background="@drawable/bg_admin_input"
+                android:hint="@string/organize_category_hint"
+                android:paddingHorizontal="20dp"
+                android:textColor="?attr/colorAppTextPrimary"
+                android:textColorHint="?attr/colorAppTextMuted"
+                android:textSize="15sp"
+                android:layout_marginBottom="16dp"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -227,7 +167,7 @@
                     android:layout_height="54dp"
                     android:layout_weight="1"
                     android:background="@drawable/bg_admin_input"
-                    android:hint="@string/admin_date_hint"
+                    android:hint="@string/hint_date"
                     android:paddingHorizontal="20dp"
                     android:textColor="?attr/colorAppTextPrimary"
                     android:textColorHint="?attr/colorAppTextMuted"
@@ -241,7 +181,7 @@
                     android:layout_height="54dp"
                     android:layout_weight="1"
                     android:background="@drawable/bg_admin_input"
-                    android:hint="@string/admin_time_hint"
+                    android:hint="@string/hint_time"
                     android:paddingHorizontal="20dp"
                     android:textColor="?attr/colorAppTextPrimary"
                     android:textColorHint="?attr/colorAppTextMuted"
@@ -262,7 +202,7 @@
                     android:layout_height="54dp"
                     android:layout_weight="1"
                     android:background="@drawable/bg_admin_input"
-                    android:hint="@string/admin_price_hint"
+                    android:hint="@string/organize_price_hint"
                     android:paddingHorizontal="20dp"
                     android:textColor="?attr/colorAppTextPrimary"
                     android:textColorHint="?attr/colorAppTextMuted"
@@ -275,7 +215,7 @@
                     android:layout_height="54dp"
                     android:layout_weight="1"
                     android:background="@drawable/bg_admin_input"
-                    android:hint="@string/admin_slots_hint"
+                    android:hint="@string/organize_slots_hint"
                     android:paddingHorizontal="20dp"
                     android:textColor="?attr/colorAppTextPrimary"
                     android:textColorHint="?attr/colorAppTextMuted"
@@ -289,105 +229,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
                 android:background="@drawable/bg_admin_input"
-                android:hint="@string/admin_description_hint"
+                android:hint="@string/organize_description_hint"
                 android:gravity="top"
                 android:padding="20dp"
                 android:textColor="?attr/colorAppTextPrimary"
                 android:textColorHint="?attr/colorAppTextMuted"
                 android:textSize="15sp"
-                android:layout_marginBottom="24dp"/>
-
-            <TextView
-                android:id="@+id/tv_user_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="@string/admin_view_as_user"
-                android:textColor="?attr/colorAppTextMuted"
-                android:textSize="14sp"
-                android:padding="12dp"
-                android:layout_marginBottom="12dp"/>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/admin_all_users_title"
-                    android:textColor="?attr/colorAppTextPrimary"
-                    android:textSize="16sp"
-                    android:textStyle="bold"/>
-                <Button
-                    android:id="@+id/btn_add_promoter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:text="@string/admin_add_promoter_button"
-                    android:backgroundTint="@color/primary_purple"
-                    android:textColor="@color/white"
-                    android:textSize="12sp"/>
-            </RelativeLayout>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_users"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false"
-                android:layout_marginBottom="20dp"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/admin_pending_applications_title"
-                android:textColor="?attr/colorAppTextPrimary"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="12dp"/>
-
-            <TextView
-                android:id="@+id/tv_no_applications"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/admin_no_pending_applications"
-                android:textColor="?attr/colorAppTextMuted"
-                android:textSize="13sp"
-                android:visibility="gone"
-                android:layout_marginBottom="12dp"/>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_promoter_applications"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false"
-                android:layout_marginBottom="20dp"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/admin_manage_events_title"
-                android:textColor="?attr/colorAppTextPrimary"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="12dp"/>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_admin_events"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false"/>
+                android:layout_marginBottom="16dp"/>
 
         </LinearLayout>
     </ScrollView>
 
     <Button
-        android:id="@+id/btn_save"
+        android:id="@+id/btn_save_changes"
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:layout_margin="20dp"
         android:backgroundTint="@color/primary_purple"
-        android:text="@string/admin_post_event_now"
+        android:text="@string/edit_event_save_button"
         android:textColor="@color/white"
         android:textStyle="bold"
         app:cornerRadius="12dp"

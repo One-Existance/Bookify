@@ -7,6 +7,13 @@
     <string name="action_accept">Accept</string>
     <string name="action_reject">Reject</string>
     <string name="action_cancel">Cancel</string>
+    <string name="action_edit_event">Edit Event</string>
+    <string name="edit_event_title">Edit Event</string>
+    <string name="edit_event_save_button">Save Changes</string>
+    <string name="edit_event_saved_success">Event updated</string>
+    <string name="edit_event_save_failed">Couldn\'t save changes</string>
+    <string name="edit_event_past_event_message">This event has already happened and can no longer be edited</string>
+    <string name="edit_event_load_failed">Couldn\'t load this event</string>
     <string name="share_invite_chooser_title">Share invite</string>
     <string name="share_via_whatsapp">WhatsApp</string>
     <string name="whatsapp_not_installed">WhatsApp isn\'t installed on this device</string>

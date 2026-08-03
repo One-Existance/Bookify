@@ -7,35 +7,55 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.bookify.adapter.MyEventRequestAdapter;
-import com.example.bookify.data.DatabaseHelper;
 import com.example.bookify.data.Event;
+import com.example.bookify.data.EventsRepository;
 import com.example.bookify.util.InviteShareHelper;
-import java.util.List;
 
 public class MyEventRequestsActivity extends AppCompatActivity {
 
-    private DatabaseHelper db;
+    private EventsRepository repo;
+    private RecyclerView rv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_event_requests);
 
-        db = new DatabaseHelper(this);
-        SharedPreferences prefs = getSharedPreferences("bookify_session", MODE_PRIVATE);
-        int userId = prefs.getInt("user_id", -1);
+        repo = new EventsRepository();
 
         findViewById(R.id.tv_back).setOnClickListener(v -> finish());
 
-        List<Event> events = db.getEventsByOrganizer(userId);
-        findViewById(R.id.tv_empty).setVisibility(events.isEmpty() ? android.view.View.VISIBLE : android.view.View.GONE);
-
-        RecyclerView rv = findViewById(R.id.rv_my_requests);
+        rv = findViewById(R.id.rv_my_requests);
         rv.setLayoutManager(new LinearLayoutManager(this));
-        rv.setAdapter(new MyEventRequestAdapter(events,
-                event -> InviteShareHelper.shareGeneric(this, event),
-                event -> InviteShareHelper.shareViaWhatsApp(this, event),
-                this::launchScanner));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Reloads on every return (e.g. from EditEventActivity) so edits show immediately.
+        loadEvents();
+    }
+
+    private void loadEvents() {
+        SharedPreferences prefs = getSharedPreferences("bookify_session", MODE_PRIVATE);
+        String userUid = prefs.getString("firebase_uid", "");
+
+        repo.getEventsByOrganizer(userUid)
+                .addOnSuccessListener(events -> {
+                    findViewById(R.id.tv_empty).setVisibility(events.isEmpty() ? android.view.View.VISIBLE : android.view.View.GONE);
+                    rv.setAdapter(new MyEventRequestAdapter(events,
+                            event -> InviteShareHelper.shareGeneric(this, event),
+                            event -> InviteShareHelper.shareViaWhatsApp(this, event),
+                            this::launchScanner,
+                            this::launchEdit));
+                })
+                .addOnFailureListener(e -> android.widget.Toast.makeText(this, R.string.error_generic, android.widget.Toast.LENGTH_SHORT).show());
+    }
+
+    private void launchEdit(Event event) {
+        Intent intent = new Intent(this, EditEventActivity.class);
+        intent.putExtra("event_id", event.getId());
+        startActivity(intent);
     }
 
     private void launchScanner(Event event) {

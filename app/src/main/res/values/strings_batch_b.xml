@@ -36,8 +36,10 @@
     <string name="private_event_access_code_label">Access code</string>
     <string name="private_event_access_code_hint">Enter access code…</string>
     <string name="private_event_access_button">Access event →</string>
+    <string name="private_event_checking">Checking…</string>
     <string name="private_event_error_empty_code">Please enter an access code.</string>
     <string name="private_event_error_invalid_code">Invalid or expired code.</string>
+    <string name="private_event_error_network">Couldn\'t reach the server. Check your connection and try again.</string>
 
     <!-- Payment -->
     <string name="payment_title">Mongike Checkout</string>

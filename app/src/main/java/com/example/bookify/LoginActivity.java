@@ -100,7 +100,7 @@ public class LoginActivity extends AppCompatActivity {
                 String displayName = firebaseUser.getDisplayName();
                 String fullName = TextUtils.isEmpty(displayName) ? email : displayName;
                 long localId = db.registerLocalProfile(fullName, email, uid, "");
-                user = new User((int) localId, fullName, email, "", User.ROLE_USER);
+                user = new User((int) localId, uid, fullName, email, "", User.ROLE_USER);
             }
         }
 
@@ -108,7 +108,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void routeAfterLogin(User user) {
-        saveSession(user.getId(), user.getFullName(), user.getEmail(), user.getRole());
+        saveSession(user.getId(), user.getFirebaseUid(), user.getFullName(), user.getEmail(), user.getRole());
 
         android.os.Bundle pendingEvent = getIntent().getBundleExtra(AuthGate.PENDING_EVENT_EXTRA);
         if (pendingEvent != null) {
@@ -130,9 +130,10 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void saveSession(int userId, String name, String email, String role) {
+    private void saveSession(int userId, String firebaseUid, String name, String email, String role) {
         getSharedPreferences("bookify_session", MODE_PRIVATE).edit()
                 .putInt("user_id", userId)
+                .putString("firebase_uid", firebaseUid)
                 .putString("user_name", name)
                 .putString("user_email", email)
                 .putString("role", role)

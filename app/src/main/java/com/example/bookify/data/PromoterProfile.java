@@ -2,6 +2,7 @@ package com.example.bookify.data;
 
 public class PromoterProfile {
     private int userId;
+    private String firebaseUid;
     private String fullName;
     private String email;
     private String hallName;
@@ -10,10 +11,11 @@ public class PromoterProfile {
     private Double latitude;
     private Double longitude;
 
-    public PromoterProfile(int userId, String fullName, String email,
+    public PromoterProfile(int userId, String firebaseUid, String fullName, String email,
                             String hallName, String location, String description,
                             Double latitude, Double longitude) {
         this.userId = userId;
+        this.firebaseUid = firebaseUid;
         this.fullName = fullName;
         this.email = email;
         this.hallName = hallName;
@@ -24,6 +26,7 @@ public class PromoterProfile {
     }
 
     public int getUserId()         { return userId; }
+    public String getFirebaseUid() { return firebaseUid; }
     public String getFullName()    { return fullName; }
     public String getEmail()       { return email; }
     public String getHallName()    { return hallName; }

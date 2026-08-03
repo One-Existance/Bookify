@@ -1,6 +1,7 @@
 package com.example.bookify.util;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -35,7 +36,12 @@ public class NotificationHelper {
         }
     }
 
-    /** Posts a notification if the user hasn't turned them off in Settings and the OS permission is granted. */
+    /**
+     * Posts a notification if the user hasn't turned them off in Settings and the OS permission
+     * is granted. Lint can't trace the permission check through {@link #hasPermission}, but the
+     * early return on line below makes this call unreachable without POST_NOTIFICATIONS granted.
+     */
+    @SuppressLint("MissingPermission")
     public static void notify(Context context, int notificationId, String title, String text, Intent contentIntent) {
         SharedPreferences settings = context.getSharedPreferences(SETTINGS_PREFS, Context.MODE_PRIVATE);
         if (!settings.getBoolean("notifications", true)) return;

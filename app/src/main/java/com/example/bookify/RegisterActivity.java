@@ -99,7 +99,7 @@ public class RegisterActivity extends AppCompatActivity {
                         return;
                     }
 
-                    saveSession((int) localId, fullName, email);
+                    saveSession((int) localId, firebaseUser.getUid(), fullName, email);
 
                     android.os.Bundle pendingEvent = getIntent().getBundleExtra(AuthGate.PENDING_EVENT_EXTRA);
                     if (pendingEvent != null) {
@@ -126,9 +126,10 @@ public class RegisterActivity extends AppCompatActivity {
                 });
     }
 
-    private void saveSession(int userId, String name, String email) {
+    private void saveSession(int userId, String firebaseUid, String name, String email) {
         getSharedPreferences("bookify_session", MODE_PRIVATE).edit()
                 .putInt("user_id", userId)
+                .putString("firebase_uid", firebaseUid)
                 .putString("user_name", name)
                 .putString("user_email", email)
                 .putString("role", User.ROLE_USER)

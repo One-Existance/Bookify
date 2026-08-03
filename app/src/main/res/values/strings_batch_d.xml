@@ -16,6 +16,7 @@
     <string name="admin_price_hint">Ticket price (Tsh)</string>
     <string name="admin_slots_hint">Total slots</string>
     <string name="admin_description_hint">Description</string>
+    <string name="admin_private_event_label">Private event (invite-only)</string>
     <string name="admin_view_as_user">View as Regular User</string>
     <string name="admin_all_users_title">All Users</string>
     <string name="admin_add_promoter_button">Add Promoter</string>

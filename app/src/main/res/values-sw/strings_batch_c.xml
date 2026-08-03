@@ -7,6 +7,13 @@
     <string name="action_accept">Kubali</string>
     <string name="action_reject">Kataa</string>
     <string name="action_cancel">Ghairi</string>
+    <string name="action_edit_event">Hariri Tukio</string>
+    <string name="edit_event_title">Hariri Tukio</string>
+    <string name="edit_event_save_button">Hifadhi Mabadiliko</string>
+    <string name="edit_event_saved_success">Tukio limesasishwa</string>
+    <string name="edit_event_save_failed">Imeshindwa kuhifadhi mabadiliko</string>
+    <string name="edit_event_past_event_message">Tukio hili tayari limepita na haliwezi kuhaririwa tena</string>
+    <string name="edit_event_load_failed">Imeshindwa kupakia tukio hili</string>
     <string name="share_invite_chooser_title">Shiriki mwaliko</string>
     <string name="share_via_whatsapp">WhatsApp</string>
     <string name="whatsapp_not_installed">WhatsApp haijasakinishwa kwenye kifaa hiki</string>

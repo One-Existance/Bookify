@@ -60,6 +60,7 @@
         <activity android:name=".TicketDetailActivity"  android:exported="false" android:label="Ticket Details" />
         <activity android:name=".MapActivity"           android:exported="false" android:label="Event Map" />
         <activity android:name=".OrganizeEventActivity" android:exported="false" android:label="Organize Event" />
+        <activity android:name=".EditEventActivity"     android:exported="false" android:label="Edit Event" />
         <activity android:name=".BecomePromoterActivity" android:exported="false" android:label="Become a Promoter" />
         <activity android:name=".MyEventRequestsActivity" android:exported="false" android:label="My Event Requests" />
         <activity android:name=".LocationPickerActivity" android:exported="false" android:label="Pick Location" />

@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.bookify.R;
 import com.example.bookify.data.Event;
+import com.example.bookify.util.FieldFormatters;
 import java.util.List;
 
 public class MyEventRequestAdapter extends RecyclerView.Adapter<MyEventRequestAdapter.ViewHolder> {
@@ -17,17 +18,20 @@ public class MyEventRequestAdapter extends RecyclerView.Adapter<MyEventRequestAd
     private final OnShareClickListener shareListener;
     private final OnShareClickListener whatsAppListener;
     private final OnShareClickListener scanListener;
+    private final OnShareClickListener editListener;
 
     public interface OnShareClickListener {
         void onShareClick(Event event);
     }
 
     public MyEventRequestAdapter(List<Event> events, OnShareClickListener shareListener,
-                                  OnShareClickListener whatsAppListener, OnShareClickListener scanListener) {
+                                  OnShareClickListener whatsAppListener, OnShareClickListener scanListener,
+                                  OnShareClickListener editListener) {
         this.events = events;
         this.shareListener = shareListener;
         this.whatsAppListener = whatsAppListener;
         this.scanListener = scanListener;
+        this.editListener = editListener;
     }
 
     @NonNull
@@ -53,6 +57,10 @@ public class MyEventRequestAdapter extends RecyclerView.Adapter<MyEventRequestAd
 
         holder.btnScanEntry.setVisibility(canShare ? View.VISIBLE : View.GONE);
         holder.btnScanEntry.setOnClickListener(v -> scanListener.onShareClick(event));
+
+        boolean editable = FieldFormatters.isUpcoming(event.getDate(), event.getTime());
+        holder.btnEdit.setVisibility(editable ? View.VISIBLE : View.GONE);
+        holder.btnEdit.setOnClickListener(v -> editListener.onShareClick(event));
     }
 
     @Override
@@ -61,7 +69,7 @@ public class MyEventRequestAdapter extends RecyclerView.Adapter<MyEventRequestAd
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitle, tvInfo, tvStatus;
         View layoutShareActions;
-        Button btnShare, btnShareWhatsApp, btnScanEntry;
+        Button btnShare, btnShareWhatsApp, btnScanEntry, btnEdit;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -72,6 +80,7 @@ public class MyEventRequestAdapter extends RecyclerView.Adapter<MyEventRequestAd
             btnShare = itemView.findViewById(R.id.btn_share_code);
             btnShareWhatsApp = itemView.findViewById(R.id.btn_share_whatsapp);
             btnScanEntry = itemView.findViewById(R.id.btn_scan_entry);
+            btnEdit = itemView.findViewById(R.id.btn_edit_request);
         }
     }
 }
