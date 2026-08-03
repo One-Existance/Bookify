@@ -40,7 +40,7 @@
     <string name="private_event_error_invalid_code">Invalid or expired code.</string>
 
     <!-- Payment -->
-    <string name="payment_title">Mongike Checkout</string>
+    <string name="payment_title">Bookify Checkout</string>
     <string name="payment_select_provider">Select Mobile Money Provider</string>
     <string name="payment_provider_mpesa">Vodacom M-Pesa</string>
     <string name="payment_provider_tigo">Tigo Pesa</string>
