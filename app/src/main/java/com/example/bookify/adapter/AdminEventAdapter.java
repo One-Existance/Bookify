@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import com.bumptech.glide.Glide;
 import com.example.bookify.R;
 import com.example.bookify.data.DatabaseHelper;
 import com.example.bookify.data.Event;
@@ -51,11 +52,10 @@ public class AdminEventAdapter extends RecyclerView.Adapter<AdminEventAdapter.Ad
         holder.tvStatus.setText(event.getStatus() + (event.isPrivate() ? " · Private" : " · Public"));
 
         if (event.getImageUrl() != null && !event.getImageUrl().isEmpty()) {
-            try {
-                holder.ivImage.setImageURI(android.net.Uri.parse(event.getImageUrl()));
-            } catch (Exception e) {
-                holder.ivImage.setImageResource(R.drawable.ic_launcher_background);
-            }
+            Glide.with(holder.itemView.getContext())
+                    .load(event.getImageUrl())
+                    .error(R.drawable.ic_launcher_background)
+                    .into(holder.ivImage);
         } else {
             holder.ivImage.setImageResource(R.drawable.ic_launcher_background);
         }

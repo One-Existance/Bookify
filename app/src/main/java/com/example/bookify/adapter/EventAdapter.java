@@ -1,11 +1,18 @@
 package com.example.bookify.adapter;
 
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.example.bookify.R;
 import com.example.bookify.data.Event;
 import java.util.ArrayList;
@@ -92,12 +99,22 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         if (event.getImageUrl() != null && !event.getImageUrl().isEmpty()) {
             holder.ivImage.setVisibility(View.VISIBLE);
             holder.tvIcon.setVisibility(View.GONE);
-            try {
-                holder.ivImage.setImageURI(android.net.Uri.parse(event.getImageUrl()));
-            } catch (Exception e) {
-                holder.ivImage.setVisibility(View.GONE);
-                holder.tvIcon.setVisibility(View.VISIBLE);
-            }
+            Glide.with(holder.itemView.getContext())
+                    .load(event.getImageUrl())
+                    .listener(new RequestListener<Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                            holder.ivImage.setVisibility(View.GONE);
+                            holder.tvIcon.setVisibility(View.VISIBLE);
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                            return false;
+                        }
+                    })
+                    .into(holder.ivImage);
         } else {
             holder.ivImage.setVisibility(View.GONE);
             holder.tvIcon.setVisibility(View.VISIBLE);

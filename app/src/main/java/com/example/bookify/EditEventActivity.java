@@ -4,14 +4,17 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
+import com.bumptech.glide.Glide;
 import com.example.bookify.data.Event;
 import com.example.bookify.data.EventsRepository;
 import com.example.bookify.util.FieldFormatters;
+import com.example.bookify.util.ImageUploadHelper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,6 +24,7 @@ public class EditEventActivity extends AppCompatActivity {
     private EditText etTitle, etLocation, etCategory, etDate, etTime, etPrice, etSlots, etDescription;
     private SwitchCompat switchPrivate;
     private ImageView ivPreview;
+    private Button btnSaveChanges;
     private EventsRepository repo;
     private String eventId;
     private Event event;
@@ -52,7 +56,8 @@ public class EditEventActivity extends AppCompatActivity {
 
         findViewById(R.id.tv_back).setOnClickListener(v -> finish());
         findViewById(R.id.layout_select_image).setOnClickListener(v -> selectImage());
-        findViewById(R.id.btn_save_changes).setOnClickListener(v -> saveChanges());
+        btnSaveChanges = findViewById(R.id.btn_save_changes);
+        btnSaveChanges.setOnClickListener(v -> saveChanges());
         findViewById(R.id.btn_pick_location).setOnClickListener(v ->
                 startActivityForResult(new Intent(this, LocationPickerActivity.class), 300));
 
@@ -100,16 +105,14 @@ public class EditEventActivity extends AppCompatActivity {
         switchPrivate.setChecked(event.isPrivate());
 
         if (!TextUtils.isEmpty(event.getImageUrl())) {
-            try {
-                ivPreview.setImageURI(Uri.parse(event.getImageUrl()));
-                ivPreview.setAlpha(1.0f);
-            } catch (Exception ignored) {}
+            Glide.with(this).load(event.getImageUrl()).into(ivPreview);
+            ivPreview.setAlpha(1.0f);
         }
 
         editable = FieldFormatters.isUpcoming(event.getDate(), event.getTime());
         if (!editable) {
             findViewById(R.id.tv_past_event_notice).setVisibility(android.view.View.VISIBLE);
-            findViewById(R.id.btn_save_changes).setEnabled(false);
+            btnSaveChanges.setEnabled(false);
             setFieldsEnabled(false);
         }
     }
@@ -174,25 +177,36 @@ public class EditEventActivity extends AppCompatActivity {
             return;
         }
 
-        Map<String, Object> fields = new HashMap<>();
-        fields.put("title", title);
-        fields.put("location", location);
-        fields.put("date", date);
-        fields.put("time", time);
-        fields.put("category", category);
-        fields.put("price", price);
-        fields.put("slots", slots);
-        fields.put("description", desc);
-        fields.put("imageUrl", selectedImageUrl);
-        fields.put("isPrivate", switchPrivate.isChecked());
-        fields.put("latitude", pickedLat);
-        fields.put("longitude", pickedLng);
+        btnSaveChanges.setEnabled(false);
+        ImageUploadHelper.resolveImageUrl(this, selectedImageUrl)
+                .addOnSuccessListener(finalImageUrl -> {
+                    Map<String, Object> fields = new HashMap<>();
+                    fields.put("title", title);
+                    fields.put("location", location);
+                    fields.put("date", date);
+                    fields.put("time", time);
+                    fields.put("category", category);
+                    fields.put("price", price);
+                    fields.put("slots", slots);
+                    fields.put("description", desc);
+                    fields.put("imageUrl", finalImageUrl);
+                    fields.put("isPrivate", switchPrivate.isChecked());
+                    fields.put("latitude", pickedLat);
+                    fields.put("longitude", pickedLng);
 
-        repo.updateEvent(eventId, fields)
-                .addOnSuccessListener(v -> {
-                    Toast.makeText(this, R.string.edit_event_saved_success, Toast.LENGTH_SHORT).show();
-                    finish();
+                    repo.updateEvent(eventId, fields)
+                            .addOnSuccessListener(v -> {
+                                Toast.makeText(this, R.string.edit_event_saved_success, Toast.LENGTH_SHORT).show();
+                                finish();
+                            })
+                            .addOnFailureListener(e -> {
+                                btnSaveChanges.setEnabled(true);
+                                Toast.makeText(this, R.string.edit_event_save_failed, Toast.LENGTH_SHORT).show();
+                            });
                 })
-                .addOnFailureListener(e -> Toast.makeText(this, R.string.edit_event_save_failed, Toast.LENGTH_SHORT).show());
+                .addOnFailureListener(e -> {
+                    btnSaveChanges.setEnabled(true);
+                    Toast.makeText(this, R.string.edit_event_save_failed, Toast.LENGTH_SHORT).show();
+                });
     }
 }

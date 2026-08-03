@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import com.bumptech.glide.Glide;
 import com.example.bookify.R;
 import com.example.bookify.TicketDetailActivity;
 import com.example.bookify.data.Booking;
@@ -40,11 +41,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
         // Load event image
         if (b.getImageUrl() != null && !b.getImageUrl().isEmpty()) {
             holder.ivEventImage.setVisibility(View.VISIBLE);
-            try {
-                holder.ivEventImage.setImageURI(android.net.Uri.parse(b.getImageUrl()));
-            } catch (Exception e) {
-                holder.ivEventImage.setVisibility(View.GONE);
-            }
+            Glide.with(holder.itemView.getContext()).load(b.getImageUrl()).into(holder.ivEventImage);
         } else {
             holder.ivEventImage.setVisibility(View.GONE);
         }

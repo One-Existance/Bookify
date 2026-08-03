@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -26,6 +27,7 @@ import com.example.bookify.data.EventsRepository;
 import com.example.bookify.data.PromoterApplication;
 import com.example.bookify.data.User;
 import com.example.bookify.util.FieldFormatters;
+import com.example.bookify.util.ImageUploadHelper;
 import com.example.bookify.util.InviteShareHelper;
 import com.example.bookify.util.NotificationHelper;
 import com.google.firebase.auth.FirebaseAuth;
@@ -38,6 +40,7 @@ public class AdminActivity extends AppCompatActivity {
     private EditText etTitle, etLocation, etDate, etCategory, etPrice, etTime, etSlots, etDescription;
     private SwitchCompat switchPrivate;
     private ImageView ivPreview;
+    private Button btnSave;
     private TextView tvTotalUsers, tvTotalEvents, tvTotalRevenue;
     private DatabaseHelper db;
     private EventsRepository repo;
@@ -86,7 +89,8 @@ public class AdminActivity extends AppCompatActivity {
         FieldFormatters.attachTimePicker(this, etTime);
 
         findViewById(R.id.layout_select_image).setOnClickListener(v -> selectImage());
-        findViewById(R.id.btn_save).setOnClickListener(v -> saveEvent());
+        btnSave = findViewById(R.id.btn_save);
+        btnSave.setOnClickListener(v -> saveEvent());
         findViewById(R.id.btn_add_promoter).setOnClickListener(v -> showAddPromoterDialog());
         findViewById(R.id.btn_pick_location).setOnClickListener(v -> {
             startActivityForResult(new Intent(this, LocationPickerActivity.class), 300);
@@ -323,18 +327,30 @@ public class AdminActivity extends AppCompatActivity {
             return;
         }
 
-        Event draft = new Event("", title, location, date, category, price, switchPrivate.isChecked(),
-                selectedImageUrl, time, slots, desc, "", "", "", "",
-                Event.STATUS_PUBLISHED, null, pickedLat, pickedLng);
+        btnSave.setEnabled(false);
+        ImageUploadHelper.resolveImageUrl(this, selectedImageUrl)
+                .addOnSuccessListener(finalImageUrl -> {
+                    Event draft = new Event("", title, location, date, category, price, switchPrivate.isChecked(),
+                            finalImageUrl, time, slots, desc, "", "", "", "",
+                            Event.STATUS_PUBLISHED, null, pickedLat, pickedLng);
 
-        repo.addEvent(draft)
-                .addOnSuccessListener(id -> {
-                    Toast.makeText(this, R.string.admin_event_posted_success, Toast.LENGTH_SHORT).show();
-                    clearFields();
-                    refreshEventsList();
-                    updateStats();
+                    repo.addEvent(draft)
+                            .addOnSuccessListener(id -> {
+                                btnSave.setEnabled(true);
+                                Toast.makeText(this, R.string.admin_event_posted_success, Toast.LENGTH_SHORT).show();
+                                clearFields();
+                                refreshEventsList();
+                                updateStats();
+                            })
+                            .addOnFailureListener(e -> {
+                                btnSave.setEnabled(true);
+                                Toast.makeText(this, R.string.admin_post_event_failed, Toast.LENGTH_SHORT).show();
+                            });
                 })
-                .addOnFailureListener(e -> Toast.makeText(this, R.string.admin_post_event_failed, Toast.LENGTH_SHORT).show());
+                .addOnFailureListener(e -> {
+                    btnSave.setEnabled(true);
+                    Toast.makeText(this, R.string.admin_post_event_failed, Toast.LENGTH_SHORT).show();
+                });
     }
 
     private void clearFields() {

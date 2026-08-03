@@ -10,6 +10,7 @@ activityCompose = "1.13.0"
 composeBom = "2024.09.00"
 firebaseBom = "34.16.0"
 googleServices = "4.5.0"
+glideVersion = "4.16.0"
 playServicesMaps = "20.0.0"
 
 [libraries]
@@ -30,6 +31,8 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3" 
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore" }
+firebase-storage = { group = "com.google.firebase", name = "firebase-storage" }
+glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glideVersion" }
 play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playServicesMaps" }
 
 [plugins]

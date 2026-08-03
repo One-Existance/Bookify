@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
+import com.bumptech.glide.Glide;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
@@ -31,7 +32,7 @@ public class TicketDetailActivity extends AppCompatActivity {
             android.widget.ImageView ivEvent = findViewById(R.id.iv_event_image);
             if (ivEvent != null) {
                 ivEvent.setVisibility(android.view.View.VISIBLE);
-                ivEvent.setImageURI(android.net.Uri.parse(image));
+                Glide.with(this).load(image).into(ivEvent);
             }
         }
 

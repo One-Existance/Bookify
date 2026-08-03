@@ -7,6 +7,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import com.bumptech.glide.Glide;
 import com.example.bookify.data.DatabaseHelper;
 import com.example.bookify.data.Event;
 import com.example.bookify.data.EventsRepository;
@@ -80,7 +81,7 @@ public class EventDetailActivity extends AppCompatActivity {
         if (image != null && !image.isEmpty()) {
             android.widget.ImageView iv = findViewById(R.id.iv_detail_image);
             iv.setVisibility(android.view.View.VISIBLE);
-            iv.setImageURI(android.net.Uri.parse(image));
+            Glide.with(this).load(image).into(iv);
             findViewById(R.id.image_overlay).setVisibility(android.view.View.VISIBLE);
             findViewById(R.id.iv_detail_icon).setVisibility(android.view.View.GONE);
         }

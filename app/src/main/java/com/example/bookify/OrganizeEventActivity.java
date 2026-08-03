@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -17,6 +18,7 @@ import com.example.bookify.data.Event;
 import com.example.bookify.data.EventsRepository;
 import com.example.bookify.data.PromoterProfile;
 import com.example.bookify.util.FieldFormatters;
+import com.example.bookify.util.ImageUploadHelper;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +28,7 @@ public class OrganizeEventActivity extends AppCompatActivity {
     private Spinner spinnerPromoter;
     private SwitchCompat switchPrivate;
     private ImageView ivPreview;
+    private Button btnSubmit;
     private DatabaseHelper db;
     private EventsRepository repo;
     private List<PromoterProfile> promoters;
@@ -64,7 +67,8 @@ public class OrganizeEventActivity extends AppCompatActivity {
 
         findViewById(R.id.tv_back).setOnClickListener(v -> finish());
         findViewById(R.id.layout_select_image).setOnClickListener(v -> selectImage());
-        findViewById(R.id.btn_submit_request).setOnClickListener(v -> submitRequest());
+        btnSubmit = findViewById(R.id.btn_submit_request);
+        btnSubmit.setOnClickListener(v -> submitRequest());
         findViewById(R.id.btn_pick_location).setOnClickListener(v -> {
             startActivityForResult(new Intent(this, LocationPickerActivity.class), 300);
         });
@@ -144,17 +148,28 @@ public class OrganizeEventActivity extends AppCompatActivity {
         // Use specific location if entered, else promoter's hall location
         String finalLocation = TextUtils.isEmpty(specificLocation) ? promoter.getLocation() : specificLocation;
 
-        Event draft = new Event("", title, finalLocation, date, category, price, isPrivate,
-                selectedImageUrl, time, slots, desc,
-                userUid, userName, promoter.getFirebaseUid(), promoter.getFullName(),
-                Event.STATUS_PENDING, null, pickedLat, pickedLng);
+        btnSubmit.setEnabled(false);
+        ImageUploadHelper.resolveImageUrl(this, selectedImageUrl)
+                .addOnSuccessListener(finalImageUrl -> {
+                    Event draft = new Event("", title, finalLocation, date, category, price, isPrivate,
+                            finalImageUrl, time, slots, desc,
+                            userUid, userName, promoter.getFirebaseUid(), promoter.getFullName(),
+                            Event.STATUS_PENDING, null, pickedLat, pickedLng);
 
-        repo.requestEvent(draft)
-                .addOnSuccessListener(id -> {
-                    Toast.makeText(this, getString(R.string.organize_request_sent, promoter.getHallName()), Toast.LENGTH_LONG).show();
-                    startActivity(new Intent(this, MyEventRequestsActivity.class));
-                    finish();
+                    repo.requestEvent(draft)
+                            .addOnSuccessListener(id -> {
+                                Toast.makeText(this, getString(R.string.organize_request_sent, promoter.getHallName()), Toast.LENGTH_LONG).show();
+                                startActivity(new Intent(this, MyEventRequestsActivity.class));
+                                finish();
+                            })
+                            .addOnFailureListener(e -> {
+                                btnSubmit.setEnabled(true);
+                                Toast.makeText(this, R.string.organize_request_failed, Toast.LENGTH_SHORT).show();
+                            });
                 })
-                .addOnFailureListener(e -> Toast.makeText(this, R.string.organize_request_failed, Toast.LENGTH_SHORT).show());
+                .addOnFailureListener(e -> {
+                    btnSubmit.setEnabled(true);
+                    Toast.makeText(this, R.string.organize_request_failed, Toast.LENGTH_SHORT).show();
+                });
     }
 }
