@@ -15,6 +15,7 @@
     <string name="search_hint">Tafuta matukio karibu nawe…</string>
     <string name="nearby_events">Matukio karibu nawe</string>
     <string name="see_all">Ona yote →</string>
+    <string name="refresh_events">Onyesha upya matukio</string>
     <string name="nav_home">Nyumbani</string>
     <string name="nav_explore">Chunguza</string>
     <string name="nav_tickets">Tiketi</string>

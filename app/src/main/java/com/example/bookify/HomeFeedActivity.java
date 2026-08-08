@@ -65,6 +65,11 @@ public class HomeFeedActivity extends AppCompatActivity {
         setupCategoryChips();
         setupBottomNav();
         setupRoleFab(prefs.getString("role", User.ROLE_USER));
+
+        findViewById(R.id.btn_refresh).setOnClickListener(v -> {
+            v.animate().rotationBy(360f).setDuration(400).start();
+            loadEvents();
+        });
     }
 
     private void loadEvents() {
