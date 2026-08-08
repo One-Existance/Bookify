@@ -30,6 +30,8 @@
     <string name="admin_reject_button">Kataa</string>
     <string name="admin_approve_button">Kubali</string>
     <string name="admin_make_promoter_button">Fanya Mtangazaji</string>
+    <string name="admin_add_hall_info_button">Ongeza Taarifa za Ukumbi</string>
+    <string name="admin_hall_info_dialog_title">Taarifa za Ukumbi wa Mtangazaji</string>
     <string name="admin_email_hint">Barua pepe</string>
     <string name="admin_temp_password_hint">Nenosiri la muda (herufi 6 au zaidi)</string>
 

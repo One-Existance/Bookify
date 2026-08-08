@@ -30,6 +30,8 @@
     <string name="admin_reject_button">Reject</string>
     <string name="admin_approve_button">Approve</string>
     <string name="admin_make_promoter_button">Make Promoter</string>
+    <string name="admin_add_hall_info_button">Add Hall Info</string>
+    <string name="admin_hall_info_dialog_title">Promoter Hall Info</string>
     <string name="admin_email_hint">Email</string>
     <string name="admin_temp_password_hint">Temporary password (min 6 chars)</string>
 

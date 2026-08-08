@@ -375,10 +375,46 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return getWritableDatabase().insert("users", null, cv);
     }
 
+    /**
+     * Registers a brand-new promoter AND its matching approved promoter_applications row in
+     * one step. registerUserWithRole() alone only inserts the users row - getApprovedPromoters()/
+     * getPromoterProfile() inner-join promoter_applications, so a promoter created that way was
+     * PROMOTER-role but permanently invisible to organizers picking a promoter for their event.
+     */
+    public long registerPromoterWithHall(String fullName, String email, String firebaseUid, String phone,
+                                          String hallName, String location, String description) {
+        long userId = registerUserWithRole(fullName, email, firebaseUid, phone, User.ROLE_PROMOTER);
+        if (userId <= 0) return userId;
+        insertApprovedApplication((int) userId, hallName, location, description);
+        return userId;
+    }
+
     public void verifyPromoter(int userId) {
         ContentValues cv = new ContentValues();
         cv.put("role", User.ROLE_PROMOTER);
         getWritableDatabase().update("users", cv, "id=?", new String[]{String.valueOf(userId)});
+    }
+
+    /**
+     * Promotes an existing user to PROMOTER and attaches their approved hall application in one
+     * step - unlike the bare verifyPromoter() above, this is what actually makes them selectable
+     * in getApprovedPromoters(). Also doubles as the repair path for promoter accounts that were
+     * created via registerUserWithRole()/verifyPromoter() before this fix and are still missing
+     * their promoter_applications row: calling this again for an already-PROMOTER user just adds it.
+     */
+    public long verifyPromoterWithHall(int userId, String hallName, String location, String description) {
+        verifyPromoter(userId);
+        return insertApprovedApplication(userId, hallName, location, description);
+    }
+
+    private long insertApprovedApplication(int userId, String hallName, String location, String description) {
+        ContentValues cv = new ContentValues();
+        cv.put("user_id", userId);
+        cv.put("hall_name", hallName);
+        cv.put("location", location);
+        cv.put("description", description);
+        cv.put("status", PromoterApplication.STATUS_APPROVED);
+        return getWritableDatabase().insert("promoter_applications", null, cv);
     }
 
     /**

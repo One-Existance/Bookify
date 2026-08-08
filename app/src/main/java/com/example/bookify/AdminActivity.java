@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
@@ -197,12 +198,16 @@ public class AdminActivity extends AppCompatActivity {
 
     private void refreshUsersList() {
         List<User> users = db.getAllUsers();
-        userAdapter = new UserAdapter(users, user -> {
-            db.verifyPromoter(user.getId());
-            refreshUsersList();
-            updateStats();
-            Toast.makeText(this, getString(R.string.admin_promoter_verified_fmt, user.getFullName()), Toast.LENGTH_SHORT).show();
-        });
+
+        // Promoters whose promoter_applications row already exists (hall/location set) -
+        // anyone PROMOTER-role but missing from this set was created via the old
+        // registerUserWithRole()/verifyPromoter() bug and still needs hall info attached.
+        java.util.Set<Integer> promotersWithHall = new java.util.HashSet<>();
+        for (com.example.bookify.data.PromoterProfile p : db.getApprovedPromoters()) {
+            promotersWithHall.add(p.getUserId());
+        }
+
+        userAdapter = new UserAdapter(users, promotersWithHall, this::showHallInfoDialog);
         rvUsers.setAdapter(userAdapter);
     }
 
@@ -244,6 +249,8 @@ public class AdminActivity extends AppCompatActivity {
         EditText etName = dialogView.findViewById(R.id.et_promoter_name);
         EditText etEmail = dialogView.findViewById(R.id.et_promoter_email);
         EditText etPass = dialogView.findViewById(R.id.et_promoter_password);
+        EditText etHall = dialogView.findViewById(R.id.et_promoter_hall);
+        EditText etLocation = dialogView.findViewById(R.id.et_promoter_location);
 
         new AlertDialog.Builder(this)
                 .setTitle(R.string.admin_register_new_promoter_title)
@@ -252,8 +259,10 @@ public class AdminActivity extends AppCompatActivity {
                     String name = etName.getText().toString().trim();
                     String email = etEmail.getText().toString().trim();
                     String pass = etPass.getText().toString().trim();
+                    String hall = etHall.getText().toString().trim();
+                    String location = etLocation.getText().toString().trim();
 
-                    if (name.isEmpty() || email.isEmpty() || pass.isEmpty()) {
+                    if (name.isEmpty() || email.isEmpty() || pass.isEmpty() || hall.isEmpty() || location.isEmpty()) {
                         Toast.makeText(this, R.string.admin_fill_all_fields, Toast.LENGTH_SHORT).show();
                         return;
                     }
@@ -266,7 +275,7 @@ public class AdminActivity extends AppCompatActivity {
                     FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, pass)
                             .addOnSuccessListener(result -> {
                                 FirebaseUser firebaseUser = result.getUser();
-                                long id = db.registerUserWithRole(name, email, firebaseUser.getUid(), "", User.ROLE_PROMOTER);
+                                long id = db.registerPromoterWithHall(name, email, firebaseUser.getUid(), "", hall, location, "");
                                 if (id > 0) {
                                     Toast.makeText(this, R.string.admin_promoter_registered, Toast.LENGTH_SHORT).show();
                                     refreshUsersList();
@@ -277,6 +286,46 @@ public class AdminActivity extends AppCompatActivity {
                             })
                             .addOnFailureListener(e ->
                                     Toast.makeText(this, "Registration failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                })
+                .setNegativeButton(R.string.admin_cancel, null)
+                .show();
+    }
+
+    /**
+     * Collects hall name/location before promoting a plain user to PROMOTER, or before
+     * repairing an existing PROMOTER-role account that's missing its promoter_applications
+     * row (see UserAdapter's promotersWithHall check) - either way ends at
+     * DatabaseHelper.verifyPromoterWithHall() so the promoter is actually selectable by
+     * organizers afterward, not just role-flipped.
+     */
+    private void showHallInfoDialog(User user) {
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        int padding = (int) (20 * getResources().getDisplayMetrics().density);
+        layout.setPadding(padding, padding, padding, padding);
+
+        EditText etHall = new EditText(this);
+        etHall.setHint(R.string.promoter_hall_name_hint);
+        layout.addView(etHall);
+
+        EditText etLocation = new EditText(this);
+        etLocation.setHint(R.string.promoter_location_hint);
+        layout.addView(etLocation);
+
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.admin_hall_info_dialog_title)
+                .setView(layout)
+                .setPositiveButton(R.string.admin_register_button, (dialog, which) -> {
+                    String hall = etHall.getText().toString().trim();
+                    String location = etLocation.getText().toString().trim();
+                    if (hall.isEmpty() || location.isEmpty()) {
+                        Toast.makeText(this, R.string.admin_fill_all_fields, Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    db.verifyPromoterWithHall(user.getId(), hall, location, "");
+                    Toast.makeText(this, getString(R.string.admin_promoter_verified_fmt, user.getFullName()), Toast.LENGTH_SHORT).show();
+                    refreshUsersList();
+                    updateStats();
                 })
                 .setNegativeButton(R.string.admin_cancel, null)
                 .show();

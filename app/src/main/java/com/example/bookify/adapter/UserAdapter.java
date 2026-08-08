@@ -10,18 +10,24 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.bookify.R;
 import com.example.bookify.data.User;
 import java.util.List;
+import java.util.Set;
 
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> {
 
     private final List<User> users;
+    private final Set<Integer> promotersWithHall;
     private final OnVerifyClickListener listener;
 
     public interface OnVerifyClickListener {
         void onVerifyClick(User user);
     }
 
-    public UserAdapter(List<User> users, OnVerifyClickListener listener) {
+    /** promotersWithHall: user ids of PROMOTER-role users who already have an approved
+     *  promoter_applications row (hall/location) - anyone PROMOTER but missing from this set
+     *  was created through the old admin flow that skipped hall info and still needs it. */
+    public UserAdapter(List<User> users, Set<Integer> promotersWithHall, OnVerifyClickListener listener) {
         this.users = users;
+        this.promotersWithHall = promotersWithHall;
         this.listener = listener;
     }
 
@@ -40,8 +46,12 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         holder.tvEmail.setText(user.getEmail());
         holder.tvRole.setText(user.getRole());
 
-        if (user.isUser()) {
+        boolean promoterMissingHall = user.isPromoter() && !promotersWithHall.contains(user.getId());
+        if (user.isUser() || promoterMissingHall) {
             holder.btnVerify.setVisibility(View.VISIBLE);
+            holder.btnVerify.setText(promoterMissingHall
+                    ? R.string.admin_add_hall_info_button
+                    : R.string.admin_make_promoter_button);
             holder.btnVerify.setOnClickListener(v -> listener.onVerifyClick(user));
         } else {
             holder.btnVerify.setVisibility(View.GONE);
