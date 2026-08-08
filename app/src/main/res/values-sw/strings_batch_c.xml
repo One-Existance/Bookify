@@ -55,13 +55,13 @@
     <string name="organize_title_hint">Jina la Tukio</string>
     <string name="organize_location_hint">Mahali Mahususi</string>
     <string name="organize_pin_button">WEKA PIN</string>
+    <string name="organize_location_label">Mahali</string>
     <string name="organize_category_hint">Aina (mf. Harusi, Tamasha)</string>
     <string name="organize_price_hint">Bei ya tiketi (Tsh)</string>
     <string name="organize_slots_hint">Jumla ya nafasi</string>
     <string name="organize_description_hint">Maelezo</string>
     <string name="organize_submit_request">TUMA OMBI KWA MTANGAZAJI</string>
     <string name="organize_no_promoters">Hakuna watangazaji waliopo bado</string>
-    <string name="organize_location_pinned">Mahali pamewekwa!</string>
     <string name="organize_no_promoters_toast">Hakuna watangazaji walioidhinishwa wa kuomba bado — rudi baadaye</string>
     <string name="organize_must_login">Lazima uingie ili kupanga tukio</string>
     <string name="organize_fill_required">Tafadhali jaza jina, tarehe na bei</string>

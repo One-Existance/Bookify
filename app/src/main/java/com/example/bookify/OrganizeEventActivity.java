@@ -5,11 +5,14 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
@@ -24,8 +27,9 @@ import java.util.List;
 
 public class OrganizeEventActivity extends AppCompatActivity {
 
-    private EditText etTitle, etLocation, etCategory, etDate, etTime, etPrice, etSlots, etDescription;
+    private EditText etTitle, etCategory, etDate, etTime, etPrice, etSlots, etDescription;
     private Spinner spinnerPromoter;
+    private TextView tvPromoterLocation;
     private SwitchCompat switchPrivate;
     private ImageView ivPreview;
     private Button btnSubmit;
@@ -36,7 +40,6 @@ public class OrganizeEventActivity extends AppCompatActivity {
     private int userId;
     private String userUid;
     private String userName;
-    private double pickedLat = 0, pickedLng = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +54,6 @@ public class OrganizeEventActivity extends AppCompatActivity {
         userName = prefs.getString("user_name", "");
 
         etTitle       = findViewById(R.id.et_title);
-        etLocation    = findViewById(R.id.et_location);
         etCategory    = findViewById(R.id.et_category);
         etDate        = findViewById(R.id.et_date);
         etTime        = findViewById(R.id.et_time);
@@ -59,6 +61,7 @@ public class OrganizeEventActivity extends AppCompatActivity {
         etSlots       = findViewById(R.id.et_slots);
         etDescription = findViewById(R.id.et_description);
         spinnerPromoter = findViewById(R.id.spinner_promoter);
+        tvPromoterLocation = findViewById(R.id.tv_promoter_location);
         switchPrivate   = findViewById(R.id.switch_private);
         ivPreview       = findViewById(R.id.iv_event_preview);
 
@@ -69,9 +72,6 @@ public class OrganizeEventActivity extends AppCompatActivity {
         findViewById(R.id.layout_select_image).setOnClickListener(v -> selectImage());
         btnSubmit = findViewById(R.id.btn_submit_request);
         btnSubmit.setOnClickListener(v -> submitRequest());
-        findViewById(R.id.btn_pick_location).setOnClickListener(v -> {
-            startActivityForResult(new Intent(this, LocationPickerActivity.class), 300);
-        });
 
         setupPromoterSpinner();
     }
@@ -87,6 +87,20 @@ public class OrganizeEventActivity extends AppCompatActivity {
         }
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, labels);
         spinnerPromoter.setAdapter(adapter);
+
+        // The event's location always comes from the chosen promoter's hall - no free-text entry,
+        // so it can't drift from where the promoter actually is. Kept in sync as the selection changes.
+        spinnerPromoter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                tvPromoterLocation.setText(promoters.isEmpty() ? "" : promoters.get(position).getLocation());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                tvPromoterLocation.setText("");
+            }
+        });
     }
 
     private void selectImage() {
@@ -107,14 +121,6 @@ public class OrganizeEventActivity extends AppCompatActivity {
                 ivPreview.setImageURI(imageUri);
                 ivPreview.setAlpha(1.0f);
             }
-        } else if (requestCode == 300 && resultCode == RESULT_OK && data != null) {
-            pickedLat = data.getDoubleExtra("latitude", 0);
-            pickedLng = data.getDoubleExtra("longitude", 0);
-            String address = data.getStringExtra("address");
-            if (address != null && !address.isEmpty()) {
-                etLocation.setText(address);
-            }
-            Toast.makeText(this, R.string.organize_location_pinned, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -129,7 +135,6 @@ public class OrganizeEventActivity extends AppCompatActivity {
         }
 
         String title    = etTitle.getText().toString().trim();
-        String specificLocation = etLocation.getText().toString().trim();
         String category = etCategory.getText().toString().trim();
         String date     = etDate.getText().toString().trim();
         String time     = etTime.getText().toString().trim();
@@ -145,16 +150,17 @@ public class OrganizeEventActivity extends AppCompatActivity {
         PromoterProfile promoter = promoters.get(spinnerPromoter.getSelectedItemPosition());
         boolean isPrivate = switchPrivate.isChecked();
 
-        // Use specific location if entered, else promoter's hall location
-        String finalLocation = TextUtils.isEmpty(specificLocation) ? promoter.getLocation() : specificLocation;
+        // Location always comes from the selected promoter's hall - see setupPromoterSpinner().
+        double promoterLat = promoter.getLatitude() != null ? promoter.getLatitude() : 0;
+        double promoterLng = promoter.getLongitude() != null ? promoter.getLongitude() : 0;
 
         btnSubmit.setEnabled(false);
         ImageUploadHelper.resolveImageUrl(this, selectedImageUrl)
                 .addOnSuccessListener(finalImageUrl -> {
-                    Event draft = new Event("", title, finalLocation, date, category, price, isPrivate,
+                    Event draft = new Event("", title, promoter.getLocation(), date, category, price, isPrivate,
                             finalImageUrl, time, slots, desc,
                             userUid, userName, promoter.getFirebaseUid(), promoter.getFullName(),
-                            Event.STATUS_PENDING, null, pickedLat, pickedLng);
+                            Event.STATUS_PENDING, null, promoterLat, promoterLng);
 
                     repo.requestEvent(draft)
                             .addOnSuccessListener(id -> {

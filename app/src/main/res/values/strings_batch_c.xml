@@ -55,13 +55,13 @@
     <string name="organize_title_hint">Event Title</string>
     <string name="organize_location_hint">Specific Location</string>
     <string name="organize_pin_button">PIN</string>
+    <string name="organize_location_label">Location</string>
     <string name="organize_category_hint">Category (e.g. Wedding, Concert)</string>
     <string name="organize_price_hint">Ticket price (Tsh)</string>
     <string name="organize_slots_hint">Total slots</string>
     <string name="organize_description_hint">Description</string>
     <string name="organize_submit_request">SEND REQUEST TO PROMOTER</string>
     <string name="organize_no_promoters">No promoters available yet</string>
-    <string name="organize_location_pinned">Location pinned!</string>
     <string name="organize_no_promoters_toast">No approved promoters to request yet — check back later</string>
     <string name="organize_must_login">You must be logged in to organize an event</string>
     <string name="organize_fill_required">Please fill title, date and price</string>

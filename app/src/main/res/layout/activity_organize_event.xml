@@ -114,27 +114,29 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="54dp"
                 android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@drawable/bg_admin_input"
+                android:paddingHorizontal="20dp"
                 android:layout_marginBottom="16dp">
-                <EditText
-                    android:id="@+id/et_location"
-                    android:layout_width="0dp"
-                    android:layout_height="54dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/bg_admin_input"
-                    android:hint="@string/organize_location_hint"
-                    android:paddingHorizontal="20dp"
-                    android:textColor="?attr/colorAppTextPrimary"
-                    android:textColorHint="?attr/colorAppTextMuted"
-                    android:textSize="15sp"/>
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_pick_location"
+                <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="54dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/organize_location_label"
+                    android:textColor="?attr/colorAppTextMuted"
+                    android:textSize="15sp"/>
+                <TextView
+                    android:id="@+id/tv_promoter_location"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:layout_marginStart="8dp"
-                    android:text="@string/organize_pin_button"
-                    app:backgroundTint="?attr/colorAppSurface" />
+                    android:gravity="end"
+                    android:textColor="?attr/colorAppTextPrimary"
+                    android:textSize="15sp"
+                    android:singleLine="true"
+                    android:ellipsize="end"/>
             </LinearLayout>
 
             <EditText
